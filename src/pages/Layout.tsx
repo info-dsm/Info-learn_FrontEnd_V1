@@ -2,7 +2,9 @@ import React from "react";
 import { Outlet, Link } from "react-router-dom";
 import styled from "styled-components";
 import TextLogo from "../assets/textLogo.png";
-import { Button } from "../components/Button";
+import { PrimaryButton } from "../components/PrimaryButton";
+import { TextButton } from "../components/TextButton";
+import { text } from "./textType";
 
 const Layout = () => {
   return (
@@ -10,14 +12,14 @@ const Layout = () => {
       <Header>
         <FlexDiv>
           <Image src={TextLogo} />
-          <Link to="/le">강의</Link>
-          <Link to="/comunity">커뮤니티</Link>
+          <TextButton><Link to="/le"><Text size="12px">강의</Text></Link></TextButton>
+          <TextButton><Link to="/comunity"><Text size="12px">커뮤니티</Text></Link></TextButton>
         </FlexDiv>
         <FlexDiv>
         </FlexDiv>
       </Header>
       <Body>
-        <Button fill={"FPrimary500"}>Text</Button>
+        <PrimaryButton><Text color="white">This is text</Text></PrimaryButton>
         <Outlet />
       </Body>
     </>
@@ -26,6 +28,11 @@ const Layout = () => {
 
 export default Layout;
 
+const Text = styled.p<text>`
+  font-size: ${props => props.size ?? '16px'};
+  font-weight: ${props => props.weight ?? 400};
+  color: ${props => props.color ?? "black"};
+`
 const Header = styled.header`
   height: 50px;
   background-color: blue;
@@ -35,8 +42,7 @@ const Header = styled.header`
   background: rgba(255, 255, 255, 0.01);
   backdrop-filter: blur(50px);
 `
-const Body = styled.body`
-  background-color: red;
+const Body = styled.div`
   padding: 0 460px;
 `
 const Image = styled.img`
@@ -45,7 +51,6 @@ const Image = styled.img`
 const FlexDiv = styled.div`
   display: flex;
   align-items:center;
-  gap: 40px;
   a{
     font-size: 12px;
     color: black;

@@ -55,6 +55,7 @@ export const Colors = {
   Danger700: "#B71839",
   Danger800: "#930F36",
   Danger900: "#7A0935",
+  PrimaryGradient: 'linear-gradient(90deg, #0080FF 0%, #B800FF 100%)',
 } as const
 
 export type colorsKeyOfType = keyof typeof Colors
