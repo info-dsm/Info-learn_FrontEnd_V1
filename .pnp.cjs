@@ -51,6 +51,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-is", "npm:18.2.0"],\
             ["react-router-dom", "virtual:392d27d50f0fe7ee83f8f89b356f6a56df1e7dc3053826d204c500449cf4f20ffb94e3f4dcd08dbfa37b35b0a221f18656b0d8f8f06f33def2820d42057246e0#npm:6.9.0"],\
             ["react-scripts", "virtual:392d27d50f0fe7ee83f8f89b356f6a56df1e7dc3053826d204c500449cf4f20ffb94e3f4dcd08dbfa37b35b0a221f18656b0d8f8f06f33def2820d42057246e0#npm:5.0.1"],\
+            ["remixicon", "npm:2.5.0"],\
             ["styled-components", "virtual:392d27d50f0fe7ee83f8f89b356f6a56df1e7dc3053826d204c500449cf4f20ffb94e3f4dcd08dbfa37b35b0a221f18656b0d8f8f06f33def2820d42057246e0#npm:5.3.9"],\
             ["typescript", "patch:typescript@npm%3A4.9.5#~builtin<compat/typescript>::version=4.9.5&hash=23ec76"],\
             ["web-vitals", "npm:2.1.4"]\
@@ -10116,6 +10117,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-is", "npm:18.2.0"],\
             ["react-router-dom", "virtual:392d27d50f0fe7ee83f8f89b356f6a56df1e7dc3053826d204c500449cf4f20ffb94e3f4dcd08dbfa37b35b0a221f18656b0d8f8f06f33def2820d42057246e0#npm:6.9.0"],\
             ["react-scripts", "virtual:392d27d50f0fe7ee83f8f89b356f6a56df1e7dc3053826d204c500449cf4f20ffb94e3f4dcd08dbfa37b35b0a221f18656b0d8f8f06f33def2820d42057246e0#npm:5.0.1"],\
+            ["remixicon", "npm:2.5.0"],\
             ["styled-components", "virtual:392d27d50f0fe7ee83f8f89b356f6a56df1e7dc3053826d204c500449cf4f20ffb94e3f4dcd08dbfa37b35b0a221f18656b0d8f8f06f33def2820d42057246e0#npm:5.3.9"],\
             ["typescript", "patch:typescript@npm%3A4.9.5#~builtin<compat/typescript>::version=4.9.5&hash=23ec76"],\
             ["web-vitals", "npm:2.1.4"]\
@@ -15220,6 +15222,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/relateurl-npm-0.2.7-7687cc0a2a-5891e792ea.zip/node_modules/relateurl/",\
           "packageDependencies": [\
             ["relateurl", "npm:0.2.7"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["remixicon", [\
+        ["npm:2.5.0", {\
+          "packageLocation": "./.yarn/cache/remixicon-npm-2.5.0-b5ebdc5aaa-7fa8f3643e.zip/node_modules/remixicon/",\
+          "packageDependencies": [\
+            ["remixicon", "npm:2.5.0"]\
           ],\
           "linkType": "HARD"\
         }]\

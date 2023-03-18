@@ -7189,6 +7189,7 @@ __metadata:
     react-is: ^18.2.0
     react-router-dom: ^6.9.0
     react-scripts: 5.0.1
+    remixicon: ^2.5.0
     styled-components: ^5.3.9
     typescript: ^4.9.5
     web-vitals: ^2.1.4
@@ -11016,6 +11017,13 @@ __metadata:
   version: 0.2.7
   resolution: "relateurl@npm:0.2.7"
   checksum: 5891e792eae1dfc3da91c6fda76d6c3de0333a60aa5ad848982ebb6dccaa06e86385fb1235a1582c680a3d445d31be01c6bfc0804ebbcab5aaf53fa856fde6b6
+  languageName: node
+  linkType: hard
+
+"remixicon@npm:^2.5.0":
+  version: 2.5.0
+  resolution: "remixicon@npm:2.5.0"
+  checksum: 7fa8f3643e3f24d7fa1cdbf37391bb4b3bfc0fda6643ba4e09e92fb8639351cee03f51539f18640747c2055e3622c8b81369f323857793ffbe7d2292cbac60c6
   languageName: node
   linkType: hard
 

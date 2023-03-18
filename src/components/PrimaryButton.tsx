@@ -15,6 +15,7 @@ export const PrimaryButton = ({width, height, children}: ButtonProps & {children
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
     &:hover {
       background-color: ${Colors.FPrimary400};
     }
