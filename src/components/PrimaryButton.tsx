@@ -1,12 +1,21 @@
-import React from "react";
+import React, { PropsWithChildren } from "react";
 import styled from "styled-components";
 import { ButtonProps } from "./buttonType";
 import { Colors } from "../styles/theme/color";
+interface ButtonPropsOnclick extends ButtonProps {
+  onClick:()=>void;
+}
+export const PrimaryButton = ({children,...props}: PropsWithChildren<ButtonPropsOnclick>) => {
 
-export const PrimaryButton = ({width, height, children}: ButtonProps & {children:React.ReactNode}) => {
-  const Buttons = styled.button`
-    width: ${width ?? "auto"};
-    height: ${height ?? "auto"};
+  return(
+    <Buttons {...props}>
+      {children}
+    </Buttons>
+  )
+}   
+const Buttons = styled.button<ButtonProps>`
+    width: ${(props) => props.width ?? "auto"};
+    height: ${(props) =>props.height ?? "auto"};
     border: none;
     background: ${Colors.PrimaryGradient};
     color: ${Colors.White};
@@ -22,10 +31,5 @@ export const PrimaryButton = ({width, height, children}: ButtonProps & {children
     &:active {
       background-color: ${Colors.FPrimary700};
     }
+    cursor: pointer;
   `
-  return(
-    <Buttons>
-      {children}
-    </Buttons>
-  )
-}
