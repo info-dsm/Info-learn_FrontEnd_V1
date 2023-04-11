@@ -4,16 +4,18 @@ import { PrimaryButton } from "../../components/PrimaryButton";
 import { Colors, colorsKeyOfType } from "../../styles/theme/color";
 import 'remixicon/fonts/remixicon.css'
 import { useNavigate } from "react-router-dom";
-
+type valueType = "id" | 'password' | 'email' | 'authentication' | 'image' | 'nickname';
 interface ValueProps {
-  name: string;
+  name: valueType;
   data: string;
 }
 
 const Signup = () => {
   const navigate = useNavigate();
   const [Index, setIndex] = useState(0);
-  const [value, setValue] = useState({
+  const [value, setValue] = useState<{
+    [key in valueType]: string;
+  }>({
     id: '',
     password: '',
     email: '',
@@ -23,10 +25,10 @@ const Signup = () => {
   });
 
   const ChangeValue = ({ name, data }: ValueProps): void => {
-    setValue({
+    setValue((value)=>{return{
       ...value,
       [name]: data
-    })
+    }})
   }
 
   return (
@@ -176,7 +178,7 @@ const InputBox = ({ Title, placeholder, eyes, change, value }: InputProps) => {
         <InputMain
           type={eye ? 'password' : 'text'}
           placeholder={placeholder}
-          onChange={(e) => change({ name: Title.toLowerCase(), data: e.target.value })}
+          onChange={(e) => change({ name: Title.toLowerCase() as valueType, data: e.target.value })}
           value={value}
         />
         {
