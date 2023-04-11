@@ -1,7 +1,7 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Login from "./auth/Login";
-import Signup from "./auth/Signup";
+import Signup from "./auth/signup/Signup";
 import Main from "./Main";
 import AuthLayout from "./router/AuthLayout";
 import StudentLayout from "./router/StudentLayout";
