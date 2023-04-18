@@ -1,19 +1,19 @@
 import React from "react";
-import InputBox from "../../../components/inputBox";
+import InputBox from "../../../components/Input";
 import { PrimaryButton } from "../../../components/PrimaryButton";
 import BottomTitle from "./BottomTitle";
 import ImageView from "./ImageView";
 import * as _ from './style'
 
 type ValueType = 'id' | 'password' | 'email' | 'authentication' | 'nickname';
-interface ValueProps {
-  name: ValueType;
+interface ChangeProps {
+  name: string;
   data: string;
 }
 
 interface ComponentsProps {
   value: { [key in ValueType]: string };
-  change: ({ name, data }: ValueProps) => void;
+  change: ({ name, data }: ChangeProps) => void;
   setIndex: React.Dispatch<React.SetStateAction<number>>;
   Index: number;
   setImg: React.Dispatch<React.SetStateAction<File | undefined>>;
@@ -24,7 +24,7 @@ interface ComponentsProps {
 const LConponent = ({ value, change, Index, setIndex, ...Props }: ComponentsProps) => {
     const {email, authentication, nickname } = value;
     return (
-      <_.SignBox bool={Index === 2} visible={!(email && authentication)}>
+      <_.SignBox bool={Index === 2} visible={!!(email && authentication)}>
         <_.SignUpMain>
         <_.BeforeIcon
             className="ri-arrow-left-s-line"
@@ -38,7 +38,6 @@ const LConponent = ({ value, change, Index, setIndex, ...Props }: ComponentsProp
               Title='닉네임'
               name='nickname'
               placeholder='별명을 입력해주세요'
-              eyes={false}
               change={change}
               value={nickname}
             />

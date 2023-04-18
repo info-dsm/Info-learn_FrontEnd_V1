@@ -1,18 +1,18 @@
 import React from "react";
-import InputBox from "../../../components/inputBox";
+import InputBox from "../../../components/Input";
 import { PrimaryButton } from "../../../components/PrimaryButton";
 import BottomTitle from "./BottomTitle";
 import * as _ from './style'
 
 type ValueType = 'id' | 'password' | 'email' | 'authentication' | 'nickname';
-interface ValueProps {
-  name: ValueType;
+interface ChangeProps {
+  name: string;
   data: string;
 }
 
 interface ComponentsProps {
   value: { [key in ValueType]: string };
-  change: ({ name, data }: ValueProps) => void;
+  change: ({ name, data }: ChangeProps) => void;
   setIndex: React.Dispatch<React.SetStateAction<number>>;
   Index: number;
 }
@@ -40,7 +40,6 @@ const SConponent = ({ value, change, Index, setIndex }: ComponentsProps) => {
             Title='인증번호'
             name='authentication'
             placeholder='인증번호를 입력해주세요'
-            eyes={false}
             change={change}
             value={authentication}
           />

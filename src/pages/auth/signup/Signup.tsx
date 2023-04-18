@@ -7,7 +7,7 @@ import * as _ from './style'
 
 type ValueType = 'id' | 'password' | 'email' | 'authentication' | 'nickname';
 interface ValueProps {
-  name: ValueType;
+  name: string;
   data: string;
 }
 

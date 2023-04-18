@@ -5,6 +5,7 @@ export const Flexbox = styled.div`
   display: flex;
   flex-direction: column;
   margin: 60px 0;
+  gap: 20px;
   & > :first-child {
     animation-duration: 0.95s;
   }
@@ -225,4 +226,13 @@ export const ImageSelectBox = styled.label.attrs({
   justify-content: center;
   align-items: center;
   cursor: pointer;
+`
+
+export const ForwardBox = styled(ImageBlur)`
+  background: rgba(255, 255, 255, 0.05);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  z-index: 10;
 `
