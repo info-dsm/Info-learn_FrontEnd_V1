@@ -8,6 +8,7 @@ const GlobalStyle = createGlobalStyle`
     font-family: 'Pretendard', sans-serif;
     font-size: 14px;
     font-weight: 400;
+    user-select:none
   }
 `
 
