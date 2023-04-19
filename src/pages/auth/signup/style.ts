@@ -124,7 +124,7 @@ interface IconBoxProps {
 
 export const Icon = styled.i<IconBoxProps>`
   font-size: ${(props) => props.size ?? 24}px;
-  color: ${(props) => Colors[props.fill!] ?? Colors.Black};
+  color: ${(props) => props.fill ? Colors[props.fill] : Colors.Black};
 `
 export const BeforeIcon = styled(Icon)<{ bool?: boolean }>`
   position: absolute;
