@@ -37,6 +37,7 @@ const Header = () => {
     const [opacity, setOpacity] = useState<number>(0);
     const [padding, setPadding] = useState<string>('0 24%');
     const [height, setHeight] = useState<string>('0');
+    const [event, setEvent] = useState<string>('none');
 
     const dropDownOpen = (e: React.MouseEvent<HTMLImageElement>) => {
         const target = e.target as HTMLImageElement;
@@ -49,6 +50,7 @@ const Header = () => {
             setOpacity(1);
             setPadding('40px 24% 80px');
             setHeight('fit-content');
+            setEvent('auto');
         } else {
             dropDownClose();
         }
@@ -64,6 +66,7 @@ const Header = () => {
         setOpacity(0);
         setPadding('0 24%');
         setHeight('0');
+        setEvent('none');
     }
 
     const IconBtn = ({src, id, onClick}: IconButtonProps) => {
@@ -85,7 +88,7 @@ const Header = () => {
                 </FlexDiv>
             </Headers>
             <DropInput opacity={opacity} padding={padding} height={height}/>
-            <BackBlur opacity={opacity} className={hover.isSearch ? "search" : ""} onMouseEnter={dropDownClose}></BackBlur>
+            <BackBlur event={event} opacity={opacity} className={hover.isSearch ? "search" : ""} onMouseEnter={dropDownClose}></BackBlur>
         </HeadDiv>
     )
 }
@@ -116,6 +119,7 @@ interface HeaderColor {
 
 interface Blur {
     opacity: number;
+    event: string;
 }
 
 interface InputType {
@@ -126,6 +130,7 @@ interface InputType {
 
 const BackBlur = styled.div<Blur>`
   position: absolute;
+  pointer-events: ${props => props.event};
   top: 50px;
   left: 0;
   width: 100%;

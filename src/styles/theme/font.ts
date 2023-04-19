@@ -8,7 +8,7 @@ export const Fonts = {
     size: "28px"
   },
   Body1: {
-    weight: 500,
+    weight: 600,
     size: "16px"
   },
   Body2: {
