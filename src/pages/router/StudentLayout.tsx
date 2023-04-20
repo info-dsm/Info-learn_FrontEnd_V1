@@ -4,6 +4,7 @@ import styled from "styled-components";
 import 'remixicon/fonts/remixicon.css'
 import Header from "../../components/Header";
 import {Colors} from "../../styles/theme/color";
+import Footer from "../../components/Footer";
 
 const StudentLayout = () => {
     return (
@@ -12,7 +13,7 @@ const StudentLayout = () => {
             <Body>
                 <Outlet/>
             </Body>
-            {/* Footer 넣어야됨 */}
+            <Footer/>
         </>
     )
 }

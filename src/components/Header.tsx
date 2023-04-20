@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import styled from "styled-components";
 import {TextButton} from "./TextButton";
 import {Link} from "react-router-dom";
@@ -37,6 +37,7 @@ const Header = () => {
     const [opacity, setOpacity] = useState<number>(0);
     const [padding, setPadding] = useState<string>('0 24%');
     const [height, setHeight] = useState<string>('0');
+    const [event, setEvent] = useState<string>('none');
 
     const dropDownOpen = (e: React.MouseEvent<HTMLImageElement>) => {
         const target = e.target as HTMLImageElement;
@@ -47,8 +48,9 @@ const Header = () => {
         if (!hover.isSearch) {
             setHeaderColor(true);
             setOpacity(1);
-            setPadding('40px 24% 80px');
+            setPadding('40px 0 80px');
             setHeight('fit-content');
+            setEvent('auto');
         } else {
             dropDownClose();
         }
@@ -62,8 +64,9 @@ const Header = () => {
         }
         setHeaderColor(false);
         setOpacity(0);
-        setPadding('0 24%');
+        setPadding('0');
         setHeight('0');
+        setEvent('none');
     }
 
     const IconBtn = ({src, id, onClick}: IconButtonProps) => {
@@ -84,19 +87,22 @@ const Header = () => {
                     <IconBtn id="isUser" src={AccountIco}/>
                 </FlexDiv>
             </Headers>
-            <DropInput opacity={opacity} padding={padding} height={height}/>
-            <BackBlur opacity={opacity} className={hover.isSearch ? "search" : ""} onMouseEnter={dropDownClose}></BackBlur>
+            <DropInput opacity={opacity} padding={padding} height={height} isInput={hover.isSearch}/>
+            <BackBlur event={event} opacity={opacity} className={hover.isSearch ? "search" : ""} onMouseEnter={dropDownClose}></BackBlur>
         </HeadDiv>
     )
 }
 
-const DropInput = ({padding, height, opacity}: InputType) => {
+const DropInput = ({padding, height, opacity, isInput}: InputType) => {
     const [inputData, setInputData] = useState<string>('');
     const searchInput = useRef<HTMLInputElement>(null);
     const inputClear = () => {
         setInputData('');
         searchInput.current?.focus();
     }
+    useEffect(() => {
+        setTimeout(inputClear, 200);
+    }, [isInput])
     return (
         <BgDiv opacity={opacity} padding={padding} height={height}>
             <InputDiv>
@@ -116,16 +122,19 @@ interface HeaderColor {
 
 interface Blur {
     opacity: number;
+    event: string;
 }
 
 interface InputType {
     padding: string;
     height: string;
     opacity: number;
+    isInput?: boolean;
 }
 
 const BackBlur = styled.div<Blur>`
   position: absolute;
+  pointer-events: ${props => props.event};
   top: 50px;
   left: 0;
   width: 100%;
@@ -148,11 +157,15 @@ const Input = styled.input`
   }
 `
 const InputDiv = styled.div`
-  width: 100%;
+  width: 1000px;
   height: fit-content;
   display: flex;
   align-items: center;
   gap: 10px;
+  
+  @media only screen and (max-width: 1080px) {
+    width: 94%;
+  }
 `
 const Icon = styled.img`
   width: 24px;
@@ -171,6 +184,9 @@ const BgDiv = styled.div<InputType>`
   transition: 0.3s;
   z-index: 3;
   overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   &::-webkit-scrollbar {
     width: 0;
