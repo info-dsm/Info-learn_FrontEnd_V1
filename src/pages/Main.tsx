@@ -53,6 +53,10 @@ const Main = () => {
                         <Post isLecture={true} img={data.imageUrl} name={data.writer} date={data.date} title={data.title} subTitle={data.subTitle} tag={data.tag} key={index}/>
                     )}
                 </PostDiv>
+                <FlexDiv margin="100px 0 40px" wrap="wrap">
+                    <Text gradient={true} font="Title2">최신 TIL.</Text>
+                    <Text font="Title2">새로나온 지식 이야기.</Text>
+                </FlexDiv>
             </Content>
         </>
     )
@@ -75,9 +79,11 @@ interface flex {
 const PostDiv = styled.div`
   display: flex;
   justify-content: space-between;
-  gap: 8px;
+  column-gap: 8px;
+  row-gap: 40px;
   height: fit-content;
   width: 100%;
+  flex-wrap: wrap;
 `
 const DefaultWidth = styled.div`
   width: 1000px;

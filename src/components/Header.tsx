@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import styled from "styled-components";
 import {TextButton} from "./TextButton";
 import {Link} from "react-router-dom";
@@ -87,19 +87,22 @@ const Header = () => {
                     <IconBtn id="isUser" src={AccountIco}/>
                 </FlexDiv>
             </Headers>
-            <DropInput opacity={opacity} padding={padding} height={height}/>
+            <DropInput opacity={opacity} padding={padding} height={height} isInput={hover.isSearch}/>
             <BackBlur event={event} opacity={opacity} className={hover.isSearch ? "search" : ""} onMouseEnter={dropDownClose}></BackBlur>
         </HeadDiv>
     )
 }
 
-const DropInput = ({padding, height, opacity}: InputType) => {
+const DropInput = ({padding, height, opacity, isInput}: InputType) => {
     const [inputData, setInputData] = useState<string>('');
     const searchInput = useRef<HTMLInputElement>(null);
     const inputClear = () => {
         setInputData('');
         searchInput.current?.focus();
     }
+    useEffect(() => {
+        setTimeout(inputClear, 200);
+    }, [isInput])
     return (
         <BgDiv opacity={opacity} padding={padding} height={height}>
             <InputDiv>
@@ -126,6 +129,7 @@ interface InputType {
     padding: string;
     height: string;
     opacity: number;
+    isInput?: boolean;
 }
 
 const BackBlur = styled.div<Blur>`
