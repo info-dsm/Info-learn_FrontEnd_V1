@@ -23,7 +23,17 @@ const Main = () => {
         {imageUrl: HeadImg, writer: "태곤임", date: "2023.04.01", title: "싱글벙글 HTML로 코딩하기", subTitle: "전세계 최대의 난제인 HTML로 코딩할 수 있는가...", tag: ["#Frontend", "HTML", "#CSS"]},
         {imageUrl: HeadImg, writer: "태곤임", date: "2023.04.01", title: "싱글벙글 HTML로 코딩하기", subTitle: "전세계 최대의 난제인 HTML로 코딩할 수 있는가...", tag: ["#Frontend", "HTML", "#CSS"]},
         {imageUrl: HeadImg, writer: "태곤임", date: "2023.04.01", title: "싱글벙글 HTML로 코딩하기", subTitle: "전세계 최대의 난제인 HTML로 코딩할 수 있는가...", tag: ["#Frontend", "HTML", "#CSS"]},
-    ]
+    ];
+    const newTil = [
+        {imageUrl: HeadImg, writer: "승우최", date: "2023.03.03", title: "정처기를 공부해 보았다", subTitle: "정처기를 합격하기 위한 발버둥!", tag: ["#Study"]},
+        {imageUrl: HeadImg, writer: "Mooner510", date: "2023.03.03", title: "Frontend 씹어먹기", subTitle: "아 프론트엔드 Easy 하네요", tag: ["#Frontend"]},
+        {imageUrl: HeadImg, writer: "원준도", date: "2023.03.03", title: "30만원 맛있다", subTitle: "아 30만원짜리 맛있네요 개추", tag: ["#Study", "#Monkey"]},
+        {imageUrl: HeadImg, writer: "조지은", date: "2023.03.02", title: "마라탕이란 무엇인가?", subTitle: "내가 지금까지 마라탕과 살아가며 정리한 것이다.", tag: ["#Study", "#Maratang", "#Jo"]},
+        {imageUrl: HeadImg, writer: "Hood", date: "2023.03.02", title: "This is my hood life", subTitle: "My best friend is Hyun Suk Kim.", tag: ["#일상"]},
+        {imageUrl: HeadImg, writer: "짱지", date: "2023.03.02", title: "히히", subTitle: "맛있는 //", tag: ["#Frontend"]},
+        {imageUrl: HeadImg, writer: "서무성", date: "2023.03.02", title: "편안한 마음", subTitle: "마참내 나의 강의 사이트가 만들어진다고 하는데...", tag: ["#Project"]},
+        {imageUrl: HeadImg, writer: "현석조", date: "2023.03.01", title: "원준이와 함께 하고픈 일", subTitle: "원준이 맥북 해킹으로 먹고 싶농", tag: ["#Security"]},
+    ];
     return (
         <>
             <TextDiv>
@@ -36,7 +46,7 @@ const Main = () => {
                 </DefaultWidth>
             </TextDiv>
             <Content>
-                <FlexDiv margin="80px 0 0" gap={60}>
+                <FlexDiv margin="80px 0 0" gap={60} width="100%">
                     {titleCategory.map((category) => (
                         <FlexDiv key={category.name} direction="column" align="center" gap={20}>
                             <Image src={category.imageUrl}/>
@@ -53,10 +63,16 @@ const Main = () => {
                         <Post isLecture={true} img={data.imageUrl} name={data.writer} date={data.date} title={data.title} subTitle={data.subTitle} tag={data.tag} key={index}/>
                     )}
                 </PostDiv>
-                <FlexDiv margin="100px 0 40px" wrap="wrap">
+                <FlexDiv margin="100px 0 0" wrap="wrap">
                     <Text gradient={true} font="Title2">최신 TIL.</Text>
                     <Text font="Title2">새로나온 지식 이야기.</Text>
                 </FlexDiv>
+                <PostDiv>
+                    {newTil.map((data, index) =>
+                        <Post isLecture={true} img={data.imageUrl} name={data.writer} date={data.date} title={data.title} subTitle={data.subTitle} tag={data.tag} key={index}/>
+                    )}
+                </PostDiv>
+                <TagDiv></TagDiv>
             </Content>
         </>
     )
@@ -76,14 +92,19 @@ interface flex {
     isTitle?: boolean;
 }
 
+const TagDiv = styled.div`
+  display: flex;
+  gap: 10px;
+`
 const PostDiv = styled.div`
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
   column-gap: 8px;
   row-gap: 40px;
   height: fit-content;
-  width: 100%;
-  flex-wrap: wrap;
+  @media only screen and (max-width: 576px) {
+    width: 100%;
+  }
 `
 const DefaultWidth = styled.div`
   width: 1000px;
@@ -130,6 +151,8 @@ const TextDiv = styled.div`
   }
 `
 const Content = styled.div`
+  display: flex;
+  flex-direction: column;
   padding: 300px 0 0;
   width: 1000px;
   @media only screen and (max-width: 1080px) {

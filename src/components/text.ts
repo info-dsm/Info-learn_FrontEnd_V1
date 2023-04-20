@@ -14,4 +14,5 @@ export const Text = styled.p<text>`
   background: ${props => props.gradient ? "linear-gradient(90deg, #0080FF 0%, #B800FF 100%)" : "none"};
   -webkit-background-clip: text;
   -webkit-text-fill-color: ${props => props.gradient ? "transparent" : "none"};
+  word-break: keep-all;
 `

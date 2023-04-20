@@ -48,7 +48,7 @@ const Header = () => {
         if (!hover.isSearch) {
             setHeaderColor(true);
             setOpacity(1);
-            setPadding('40px 24% 80px');
+            setPadding('40px 0 80px');
             setHeight('fit-content');
             setEvent('auto');
         } else {
@@ -64,7 +64,7 @@ const Header = () => {
         }
         setHeaderColor(false);
         setOpacity(0);
-        setPadding('0 24%');
+        setPadding('0');
         setHeight('0');
         setEvent('none');
     }
@@ -157,11 +157,15 @@ const Input = styled.input`
   }
 `
 const InputDiv = styled.div`
-  width: 100%;
+  width: 1000px;
   height: fit-content;
   display: flex;
   align-items: center;
   gap: 10px;
+  
+  @media only screen and (max-width: 1080px) {
+    width: 94%;
+  }
 `
 const Icon = styled.img`
   width: 24px;
@@ -180,6 +184,9 @@ const BgDiv = styled.div<InputType>`
   transition: 0.3s;
   z-index: 3;
   overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   &::-webkit-scrollbar {
     width: 0;

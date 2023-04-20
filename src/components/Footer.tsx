@@ -34,6 +34,9 @@ const Footers = styled.div`
   flex-direction: column;
   gap: 24px;
   width: 1000px;
+  @media only screen and (max-width: 1080px) {
+    width: 94%;
+  }
 `
 const FooterDiv = styled.div`
   display: flex;

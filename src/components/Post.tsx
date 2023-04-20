@@ -44,7 +44,6 @@ export const Post = ({img, name, date, title, subTitle, tag, isLecture}: postPro
 }
 
 const UpDiv = styled.div`
-  height: 138px;
   border-radius: 8px;
   width: 100%;
   position: relative;
@@ -83,7 +82,7 @@ const PlayCircle = styled.div`
   outline: ${Colors["Gray100"]} 4px solid;
   background-color: ${Colors["FPrimary500"]};
   position: absolute;
-  top: 126px;
+  bottom: -12px;
   right: 20px;
 `
 const TitleDiv = styled.div`
@@ -99,13 +98,12 @@ const InfoDiv = styled.div`
   width: 100%;
 `
 const Img = styled.img`
-  width: 244px;
-  height: 138px;
+  width: 100%;
+  height: 100%;
   border-radius: 8px;
 `
 const PostBody = styled.div`
   width: 244px;
-  height: fit-content;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -115,5 +113,8 @@ const PostBody = styled.div`
   &:hover .upDiv {
     transform: translateY(-8px);
     box-shadow: rgba(0, 0, 0, 0.12) 0 16px 16px;
+  }
+  @media only screen and (max-width: 576px) {
+    width: 100%;
   }
 `
