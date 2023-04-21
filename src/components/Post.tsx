@@ -3,8 +3,7 @@ import {Text} from "./text";
 import {Colors} from "../styles/theme/color";
 import React from "react";
 import triangle from "../assets/Triangle.png";
-import more from "../assets/more-2-line.png";
-import heart from "../assets/heart-line.png";
+import Icon from "../assets/Icon";
 
 interface postProps {
     img: string;
@@ -36,8 +35,8 @@ export const Post = ({img, name, date, title, subTitle, tag, isLecture}: postPro
                 <TagDiv>
                     {tag.map((data, index) => <Text key={index} color={Colors["FPrimary500"]} font="Body4">{data}</Text>)}
                 </TagDiv>
-                <Icon src={heart}/>
-                <Icon src={more}/>
+                <Icon icon="heart"/>
+                <Icon icon="more"/>
             </BottomDiv>
         </PostBody>
     )
@@ -48,10 +47,6 @@ const UpDiv = styled.div`
   width: 100%;
   position: relative;
   transition: 0.2s;
-`
-const Icon = styled.img`
-  height: 16px;
-  opacity: 0;
 `
 const TagDiv = styled.div`
   display: flex;

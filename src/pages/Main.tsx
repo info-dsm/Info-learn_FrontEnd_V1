@@ -67,12 +67,12 @@ const Main = () => {
                     <Text gradient={true} font="Title2">최신 TIL.</Text>
                     <Text font="Title2">새로나온 지식 이야기.</Text>
                 </FlexDiv>
+                <TagDiv></TagDiv>
                 <PostDiv>
                     {newTil.map((data, index) =>
-                        <Post isLecture={true} img={data.imageUrl} name={data.writer} date={data.date} title={data.title} subTitle={data.subTitle} tag={data.tag} key={index}/>
+                        <Post img={data.imageUrl} name={data.writer} date={data.date} title={data.title} subTitle={data.subTitle} tag={data.tag} key={index}/>
                     )}
                 </PostDiv>
-                <TagDiv></TagDiv>
             </Content>
         </>
     )
