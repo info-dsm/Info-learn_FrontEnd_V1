@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import * as _ from './style'
 
 interface ImageProps {
@@ -9,6 +9,7 @@ interface ImageProps {
 
 const ImageView = ({ setImg, ImgString, setImgString }: ImageProps) => {
   const [DropReady, setReady] = useState<boolean>(false);
+
   const Reading = (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileReader = new FileReader();
 
@@ -27,6 +28,7 @@ const ImageView = ({ setImg, ImgString, setImgString }: ImageProps) => {
     e.preventDefault();
     const fileReader = new FileReader();
     const selectedFile = (e.dataTransfer.files as FileList)[0];
+    setReady(false);
 
     if (selectedFile !== null) {
       fileReader.readAsDataURL(selectedFile);
@@ -43,23 +45,23 @@ const ImageView = ({ setImg, ImgString, setImgString }: ImageProps) => {
     bool: boolean;
   }
 
-  const Ready = useCallback(({ e, bool }: EventProps) => {
+  const Ready = ({ e, bool }: EventProps) => {
     e.preventDefault();
-    setReady(bool);
-  },[setReady])
+    setReady(bool)
+  }
 
   return (
     <_.ImageOutBox
       onDragOver={(e) => e.preventDefault()}
       onDrop={DropImg}
       onDragEnter={(e) => Ready({ e, bool: true })}
-      onDragLeave={(e) => Ready({ e, bool: false })}
       img={ImgString as string}
     >
       <_.ImageBlur />
       {
         DropReady &&
-        <_.ForwardBox>
+        <_.ForwardBox
+          onDragLeave={(e) => Ready({ e, bool: false })}>
           <_.Icon className="ri-add-line" />
         </_.ForwardBox>
       }
