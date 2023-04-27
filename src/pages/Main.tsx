@@ -34,6 +34,7 @@ const Main = () => {
         {imageUrl: HeadImg, writer: "서무성", date: "2023.03.02", title: "편안한 마음", subTitle: "마참내 나의 강의 사이트가 만들어진다고 하는데...", tag: ["#Project"]},
         {imageUrl: HeadImg, writer: "현석조", date: "2023.03.01", title: "원준이와 함께 하고픈 일", subTitle: "원준이 맥북 해킹으로 먹고 싶농", tag: ["#Security"]},
     ];
+    const tag = ['HTML', 'CSS', 'Javascript', 'Typescript', 'React', 'Java', 'Kotlin', 'Go', 'Next', 'Nest', 'Spring', 'C', 'Dart'];
     return (
         <>
             <TextDiv>
@@ -67,7 +68,9 @@ const Main = () => {
                     <Text gradient={true} font="Title2">최신 TIL.</Text>
                     <Text font="Title2">새로나온 지식 이야기.</Text>
                 </FlexDiv>
-                <TagDiv></TagDiv>
+                <TagDiv>
+                    {tag.map((name, index) => <Tag key={index}><Text font="Body3">{name}</Text></Tag>)}
+                </TagDiv>
                 <PostDiv>
                     {newTil.map((data, index) =>
                         <Post img={data.imageUrl} name={data.writer} date={data.date} title={data.title} subTitle={data.subTitle} tag={data.tag} key={index}/>
@@ -92,9 +95,20 @@ interface flex {
     isTitle?: boolean;
 }
 
+const Tag = styled.button`
+  width: fit-content;
+  height: fit-content;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: none;
+  background-color: white;
+  cursor: pointer;
+`
 const TagDiv = styled.div`
   display: flex;
   gap: 10px;
+  overflow-x: scroll;
+  margin: 40px 0;
 `
 const PostDiv = styled.div`
   display: flex;

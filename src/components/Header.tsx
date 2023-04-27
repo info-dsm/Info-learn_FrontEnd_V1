@@ -35,10 +35,10 @@ const Header = () => {
     const {headerColor, opacity, padding, height, event} = dropdownState;
 
     const dropDownOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
-        const target = e.target as HTMLButtonElement;
+        const target = e.currentTarget.id;
         setHover({
             ...hover,
-            [target.id]: !hover[target.id]
+            [target]: !hover[target]
         })
         if (!hover.isSearch) {
             setDropdownState({
@@ -77,7 +77,7 @@ const Header = () => {
                     <TextButton><Link to="/community"><Text font="Body4">커뮤니티</Text></Link></TextButton>
                 </FlexDiv>
                 <FlexDiv style={{gap: "40px"}}>
-                    <IconButton id="isAlam"><Icon icon="alam"/></IconButton>
+                    <IconButton id="isAlam"><Icon icon="bell"/></IconButton>
                     <IconButton id="isSearch" onClick={dropDownOpen}><Icon icon="search"/></IconButton>
                     <IconButton id="isUser"><Icon icon="user"/></IconButton>
                 </FlexDiv>
@@ -105,7 +105,7 @@ const DropInput = ({padding, height, opacity, isInput}: InputType) => {
             <InputDiv>
                 <Icon icon="search"/>
                 <Input ref={searchInput} placeholder="무엇을 검색하고 싶으신가요?" value={inputData} onChange={(e) => setInputData(e.target.value)}/>
-                <IconButton onClick={inputClear}></IconButton>
+                <IconButton onClick={inputClear}><Icon icon="close"/></IconButton>
             </InputDiv>
         </BgDiv>
     )
