@@ -1,18 +1,18 @@
 import React from "react";
-import InputBox from "../../../components/inputBox";
+import InputBox from "../../../components/Input";
 import { PrimaryButton } from "../../../components/PrimaryButton";
 import BottomTitle from "./BottomTitle";
 import * as _ from './style'
 
 type ValueType = 'id' | 'password' | 'email' | 'authentication' | 'nickname';
-interface ValueProps {
-  name: ValueType;
+interface ChangeProps {
+  name: string;
   data: string;
 }
 
 interface ComponentsProps {
     value: { [key in ValueType]: string };
-    change: ({ name, data }: ValueProps) => void;
+    change: ({ name, data }: ChangeProps) => void;
     setIndex: React.Dispatch<React.SetStateAction<number>>;
     Index: number;
   }
@@ -31,12 +31,13 @@ const FConponent = ({ value, change, Index, setIndex }: ComponentsProps) => {
               placeholder='아이디를 입력해주세요'
               change={change}
               value={id}
+              textarea={true}
             />
             <InputBox
               Title='비밀번호'
               name='password'
               placeholder='영•숫자•기호 포함 8자 이상'
-              eyes={false}
+              eyes={true}
               change={change}
               value={password}
             />
