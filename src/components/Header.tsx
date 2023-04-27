@@ -3,11 +3,9 @@ import styled from "styled-components";
 import {TextButton} from "./TextButton";
 import {Link} from "react-router-dom";
 import TextLogo from "../assets/textLogo.png";
-import BellIco from "../assets/Bell.png";
-import SearchIco from "../assets/Magnifier.png";
-import AccountIco from "../assets/account.png";
 import {Text} from "./text";
 import {Colors} from "../styles/theme/color";
+import Icon from "../assets/Icon";
 
 interface hoverType {
     [key: string]: boolean,
@@ -19,12 +17,6 @@ interface hoverType {
     isAlam: boolean;
 }
 
-interface IconButtonProps {
-    src: string;
-    id: string;
-    onClick?: (e: React.MouseEvent<HTMLImageElement>) => void;
-}
-
 const Header = () => {
     const [hover, setHover] = useState<hoverType>({
         isLecture: false,
@@ -33,24 +25,29 @@ const Header = () => {
         isUser: false,
         isAlam: false
     });
-    const [headerColor, setHeaderColor] = useState<boolean>(false);
-    const [opacity, setOpacity] = useState<number>(0);
-    const [padding, setPadding] = useState<string>('0 24%');
-    const [height, setHeight] = useState<string>('0');
-    const [event, setEvent] = useState<string>('none');
+    const [dropdownState, setDropdownState] = useState({
+        headerColor: false,
+        opacity: 0,
+        padding: '0 24%',
+        height: '0',
+        event: 'none'
+    });
+    const {headerColor, opacity, padding, height, event} = dropdownState;
 
-    const dropDownOpen = (e: React.MouseEvent<HTMLImageElement>) => {
-        const target = e.target as HTMLImageElement;
+    const dropDownOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
+        const target = e.currentTarget.id;
         setHover({
             ...hover,
-            [target.id]: !hover[target.id]
+            [target]: !hover[target]
         })
         if (!hover.isSearch) {
-            setHeaderColor(true);
-            setOpacity(1);
-            setPadding('40px 0 80px');
-            setHeight('fit-content');
-            setEvent('auto');
+            setDropdownState({
+                headerColor: true,
+                opacity: 1,
+                padding: '40px 0 80px',
+                height: 'fit-content',
+                event: 'auto'
+            })
         } else {
             dropDownClose();
         }
@@ -62,15 +59,13 @@ const Header = () => {
                 isSearch: !hover.isSearch
             })
         }
-        setHeaderColor(false);
-        setOpacity(0);
-        setPadding('0');
-        setHeight('0');
-        setEvent('none');
-    }
-
-    const IconBtn = ({src, id, onClick}: IconButtonProps) => {
-        return <IconButton src={src} id={id} onClick={onClick}/>;
+        setDropdownState({
+            headerColor: false,
+            opacity: 0,
+            padding: '0',
+            height: '0',
+            event: 'none'
+        })
     }
 
     return (
@@ -82,9 +77,9 @@ const Header = () => {
                     <TextButton><Link to="/community"><Text font="Body4">커뮤니티</Text></Link></TextButton>
                 </FlexDiv>
                 <FlexDiv style={{gap: "40px"}}>
-                    <IconBtn id="isAlam" src={BellIco}/>
-                    <IconBtn id="isSearch" onClick={dropDownOpen} src={SearchIco}/>
-                    <IconBtn id="isUser" src={AccountIco}/>
+                    <IconButton id="isAlam"><Icon icon="bell"/></IconButton>
+                    <IconButton id="isSearch" onClick={dropDownOpen}><Icon icon="search"/></IconButton>
+                    <IconButton id="isUser"><Icon icon="user"/></IconButton>
                 </FlexDiv>
             </Headers>
             <DropInput opacity={opacity} padding={padding} height={height} isInput={hover.isSearch}/>
@@ -96,34 +91,27 @@ const Header = () => {
 const DropInput = ({padding, height, opacity, isInput}: InputType) => {
     const [inputData, setInputData] = useState<string>('');
     const searchInput = useRef<HTMLInputElement>(null);
+
     const inputClear = () => {
         setInputData('');
         searchInput.current?.focus();
     }
     useEffect(() => {
         setTimeout(inputClear, 200);
-    }, [isInput])
+    }, [isInput]);
+
     return (
         <BgDiv opacity={opacity} padding={padding} height={height}>
             <InputDiv>
-                <Icon src={SearchIco}/>
-                <Input ref={searchInput} placeholder="검색하기" value={inputData} onChange={(e) => setInputData(e.target.value)}/>
-                <IconButton onClick={inputClear}></IconButton>
+                <Icon icon="search"/>
+                <Input ref={searchInput} placeholder="무엇을 검색하고 싶으신가요?" value={inputData} onChange={(e) => setInputData(e.target.value)}/>
+                <IconButton onClick={inputClear}><Icon icon="close"/></IconButton>
             </InputDiv>
         </BgDiv>
     )
 }
 
 export default Header;
-
-interface HeaderColor {
-    BackColor: boolean;
-}
-
-interface Blur {
-    opacity: number;
-    event: string;
-}
 
 interface InputType {
     padding: string;
@@ -132,7 +120,7 @@ interface InputType {
     isInput?: boolean;
 }
 
-const BackBlur = styled.div<Blur>`
+const BackBlur = styled.div<{ opacity: number; event: string; }>`
   position: absolute;
   pointer-events: ${props => props.event};
   top: 50px;
@@ -162,14 +150,10 @@ const InputDiv = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
-  
+
   @media only screen and (max-width: 1080px) {
     width: 94%;
   }
-`
-const Icon = styled.img`
-  width: 24px;
-  height: 24px;
 `
 const BgDiv = styled.div<InputType>`
   width: 100%;
@@ -192,9 +176,11 @@ const BgDiv = styled.div<InputType>`
     width: 0;
   }
 `
-const IconButton = styled.img`
+const IconButton = styled.button`
   height: 24px;
   width: 24px;
+  border: none;
+  background: none;
   cursor: pointer;
 `
 const Headers = styled.header`
@@ -211,7 +197,7 @@ const Headers = styled.header`
     width: 94%;
   }
 `
-const HeadDiv = styled.div<HeaderColor>`
+const HeadDiv = styled.div<{ BackColor: boolean; }>`
   display: flex;
   width: 100%;
   justify-content: center;
