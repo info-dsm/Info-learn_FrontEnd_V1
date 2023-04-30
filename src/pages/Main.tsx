@@ -1,16 +1,89 @@
-import React from "react";
+import React, {useState} from "react";
 import styled from "styled-components";
 import {Text} from "../components/text";
 import {Colors} from "../styles/theme/color";
-import BackendImg from "../assets/Java.png";
-import FrontendImg from "../assets/Frontend.png";
-import iOSImg from "../assets/iOS.png";
-import AndroidImg from "../assets/Android.png";
-import SecurityImg from "../assets/Security.png";
-import HeadImg from "../assets/city-4991094.jpg";
+import BackendImg from "../assets/img/Java.png";
+import FrontendImg from "../assets/img/Frontend.png";
+import iOSImg from "../assets/img/iOS.png";
+import AndroidImg from "../assets/img/Android.png";
+import SecurityImg from "../assets/img/Security.png";
+import HeadImg from "../assets/img/BackgroundImg.jpg";
 import {Post} from "../components/Post";
+import {useMutation, useQuery} from "react-query";
+import axios from "axios";
+
+const AccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJURUFDSEVSIiwianRpIjoibmlnZXIiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNjgyODQ5MTg4LCJleHAiOjE2ODI5MzU1ODh9.jsLALVvbMybYnOjq8rg0SO8EnQIUbEc2MT2nVskVM5k";
 
 const Main = () => {
+    const [inputFile, setFile] = useState<File>();
+    const {data: lecture} = useQuery<any>(['getLectures'], getLectures);
+    const {mutate: postLecture} = useMutation(['nigrong'], PostLecture);
+    const {mutate: putS3} = useMutation(['nigrongrong'], PutS3);
+
+    async function getLectures() {
+        const lecturesRes = await axios({
+            method: 'GET',
+            url: '/api/infolearn/v1/lecture?limit=4',
+            headers: {
+                Authorization: `Bearer ${AccessToken}`,
+                'ngrok-skip-browser-warning': '69420'
+            }
+        })
+        return lecturesRes.data.lectures
+    }
+
+    async function PostLecture() {
+        console.log("filename = " + inputFile?.name);
+        await axios({
+            method: 'POST',
+            url: '/api/infolearn/v1/lecture',
+            data: {
+                title: "원준이와 함께 하고픈 일",
+                explanation: "원준이 맥북 해킹으로 먹고 싶농 히히",
+                searchTitle: "dnjswnsdldhk gkaRp gkrhvms dlf",
+                searchExplanation: "dnjswnsdl aorqnr gozlddmfh ajrrh tlvshd glgl",
+                tagNameList: [
+                    "현석조",
+                    "난 원준이가 좋아."
+                ],
+                lectureThumbnail: {
+                    fileName: inputFile?.name,
+                    contentType: "image/png"
+                }
+            },
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${AccessToken}`
+            }
+        }).then(response => {
+            putS3({url: response.data.preSignedUrl.url, file: inputFile!});
+        }).catch(error => {
+            console.log(error + "fuck!!!");
+        })
+    }
+
+    async function PutS3({url, file}: { url: string, file: File }) {
+        await axios({
+            method: 'PUT',
+            url: url,
+            data: file,
+            headers: {
+                "Content-Type": "image/png",
+                "Content-Disposition": "inline"
+            }
+        })
+    }
+
+    const Reading = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const fileReader = new FileReader();
+
+        const selectedFile = (e.target.files as FileList)[0];
+        if (selectedFile !== null) {
+            fileReader.readAsDataURL(selectedFile);
+            setFile(selectedFile);
+        }
+    }
+
     const titleCategory = [
         {name: "백엔드", imageUrl: BackendImg},
         {name: "프론트엔드", imageUrl: FrontendImg},
@@ -18,23 +91,30 @@ const Main = () => {
         {name: "iOS", imageUrl: iOSImg},
         {name: "보안", imageUrl: SecurityImg}
     ];
-    const newLecture = [
-        {imageUrl: HeadImg, writer: "태곤임", date: "2023.04.01", title: "아마도 요즘 유행하는 패스트캠퍼스 리엑트 강의", subTitle: "소중한 강의...!", tag: ["#React"]},
-        {imageUrl: HeadImg, writer: "태곤임", date: "2023.04.01", title: "싱글벙글 HTML로 코딩하기", subTitle: "전세계 최대의 난제인 HTML로 코딩할 수 있는가...", tag: ["#Frontend", "HTML", "#CSS"]},
-        {imageUrl: HeadImg, writer: "태곤임", date: "2023.04.01", title: "싱글벙글 HTML로 코딩하기", subTitle: "전세계 최대의 난제인 HTML로 코딩할 수 있는가...", tag: ["#Frontend", "HTML", "#CSS"]},
-        {imageUrl: HeadImg, writer: "태곤임", date: "2023.04.01", title: "싱글벙글 HTML로 코딩하기", subTitle: "전세계 최대의 난제인 HTML로 코딩할 수 있는가...", tag: ["#Frontend", "HTML", "#CSS"]},
-    ];
     const newTil = [
-        {imageUrl: HeadImg, writer: "승우최", date: "2023.03.03", title: "정처기를 공부해 보았다", subTitle: "정처기를 합격하기 위한 발버둥!", tag: ["#Study"]},
-        {imageUrl: HeadImg, writer: "Mooner510", date: "2023.03.03", title: "Frontend 씹어먹기", subTitle: "아 프론트엔드 Easy 하네요", tag: ["#Frontend"]},
-        {imageUrl: HeadImg, writer: "원준도", date: "2023.03.03", title: "30만원 맛있다", subTitle: "아 30만원짜리 맛있네요 개추", tag: ["#Study", "#Monkey"]},
-        {imageUrl: HeadImg, writer: "조지은", date: "2023.03.02", title: "마라탕이란 무엇인가?", subTitle: "내가 지금까지 마라탕과 살아가며 정리한 것이다.", tag: ["#Study", "#Maratang", "#Jo"]},
-        {imageUrl: HeadImg, writer: "Hood", date: "2023.03.02", title: "This is my hood life", subTitle: "My best friend is Hyun Suk Kim.", tag: ["#일상"]},
-        {imageUrl: HeadImg, writer: "짱지", date: "2023.03.02", title: "히히", subTitle: "맛있는 //", tag: ["#Frontend"]},
-        {imageUrl: HeadImg, writer: "서무성", date: "2023.03.02", title: "편안한 마음", subTitle: "마참내 나의 강의 사이트가 만들어진다고 하는데...", tag: ["#Project"]},
-        {imageUrl: HeadImg, writer: "현석조", date: "2023.03.01", title: "원준이와 함께 하고픈 일", subTitle: "원준이 맥북 해킹으로 먹고 싶농", tag: ["#Security"]},
+        {imageUrl: HeadImg, writer: "승우최", date: "2023.03.03", title: "정처기를 공부해 보았다", subTitle: "정처기를 합격하기 위한 발버둥!", tag: [{name: "#Study"}, {name: "#Nigro"}]},
+        {imageUrl: HeadImg, writer: "Mooner510", date: "2023.03.03", title: "Frontend 씹어먹기", subTitle: "아 프론트엔드 Easy 하네요", tag: [{name: "#Study"}]},
+        {imageUrl: HeadImg, writer: "원준도", date: "2023.03.03", title: "30만원 맛있다", subTitle: "아 30만원짜리 맛있네요 개추", tag: [{name: "#Study"}]},
+        {imageUrl: HeadImg, writer: "조지은", date: "2023.03.02", title: "마라탕이란 무엇인가?", subTitle: "내가 지금까지 마라탕과 살아가며 정리한 것이다.", tag: [{name: "#Study"}]},
+        {imageUrl: HeadImg, writer: "Hood", date: "2023.03.02", title: "This is my hood life", subTitle: "My best friend is Hyun Suk Kim.", tag: [{name: "#Study"}]},
+        {imageUrl: HeadImg, writer: "짱지", date: "2023.03.02", title: "히히", subTitle: "맛있는 //", tag: [{name: "#Study"}]},
+        {imageUrl: HeadImg, writer: "서무성", date: "2023.03.02", title: "편안한 마음", subTitle: "마참내 나의 강의 사이트가 만들어진다고 하는데...", tag: [{name: "#Study"}]},
+        {imageUrl: HeadImg, writer: "현석조", date: "2023.03.01", title: "원준이와 함께 하고픈 일", subTitle: "원준이 맥북 해킹으로 먹고 싶농", tag: [{name: "#Study"}]},
     ];
     const tag = ['HTML', 'CSS', 'Javascript', 'Typescript', 'React', 'Java', 'Kotlin', 'Go', 'Next', 'Nest', 'Spring', 'C', 'Dart'];
+
+    interface lecturesProps {
+        lectureId: number;
+        title: string;
+        explanation: string;
+        lectureThumbnailUrl: string;
+        tagNameList: {
+            name:string;
+        }[]
+        createdAt: string;
+        createdBy: string;
+    }
+
     return (
         <>
             <TextDiv>
@@ -60,8 +140,9 @@ const Main = () => {
                     <Text font="Title2">따끈따끈한 강의 이야기.</Text>
                 </FlexDiv>
                 <PostDiv>
-                    {newLecture.map((data, index) =>
-                        <Post isLecture={true} img={data.imageUrl} name={data.writer} date={data.date} title={data.title} subTitle={data.subTitle} tag={data.tag} key={index}/>
+                    {lecture && lecture.map((data: lecturesProps) =>
+                        <Post isLecture={true} img={data.lectureThumbnailUrl} name={data.createdBy} date={data.createdAt} title={data.title} subTitle={data.explanation} tag={data.tagNameList}
+                              key={data.lectureId}/>
                     )}
                 </PostDiv>
                 <FlexDiv margin="100px 0 0" wrap="wrap">
@@ -76,6 +157,12 @@ const Main = () => {
                         <Post img={data.imageUrl} name={data.writer} date={data.date} title={data.title} subTitle={data.subTitle} tag={data.tag} key={index}/>
                     )}
                 </PostDiv>
+                <input onChange={Reading} type="file"/>
+                <button onClick={() => {
+                    postLecture();
+                    console.log("눌렀자나 시봉")
+                }}>강의 POST test버튼
+                </button>
             </Content>
         </>
     )
