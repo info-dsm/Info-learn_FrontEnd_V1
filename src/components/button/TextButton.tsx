@@ -1,7 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import {Colors} from "../styles/theme/color";
-import {ButtonProps} from "./buttonType";
+import {Colors, colorsKeyOfType} from "../../styles/theme/color";
+
+interface ButtonProps {
+    width?: string;
+    height?: string;
+    color?: colorsKeyOfType;
+}
 
 export const TextButton = ({width, height, children, color}: ButtonProps & { children: React.ReactNode }) => {
     return (
