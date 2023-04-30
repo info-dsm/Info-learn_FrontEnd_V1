@@ -4,8 +4,8 @@ import { Colors, colorsKeyOfType } from "../../../styles/theme/color";
 export const Flexbox = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 60px 0;
-  gap: 20px;
+  margin: 80px 0 56px 0;
+  gap: 16px;
   & > :first-child {
     animation-duration: 0.95s;
   }
@@ -52,7 +52,7 @@ export const SignBox = styled.div<{ bool: boolean, visible?: boolean }>`
   & * {
     animation-duration: 0;
     animation-fill-mode: forwards;
-    animation-name: ${({ bool }) => bool ? slideInRight : slideOutLeft};
+    animation-name: ${({ bool }) => bool ? slideInDown : slideOutUp};
   }
   & > :first-child {
     animation: none;
@@ -158,30 +158,30 @@ export const MoveText = styled.div`
   cursor: pointer;
 `
 
-export const slideInRight = keyframes`
-0% {
-  opacity: 0;
-  transform: translateY(-100px);
-  pointer-events: none;
-}
-100% {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events:auto;
-}
+export const slideInDown = keyframes`
+  0% {
+    opacity: 0;
+    transform: translateY(-100px);
+    pointer-events: none;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events:auto;
+  }
 `;
 
-export const slideOutLeft = keyframes`
-0% {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events:auto;
-}
-100% {
-  opacity: 0;
-  transform: translateY(-100px);
-  pointer-events: none;
-}
+export const slideOutUp = keyframes`
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events:auto;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-100px);
+    pointer-events: none;
+  }
 `;
 
 export const ImageOutBox = styled.div<{img?: string | null}>`
