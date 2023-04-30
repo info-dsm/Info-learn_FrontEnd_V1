@@ -14,9 +14,11 @@ interface InputProps {
     email?: () => void;
     time?: number;
     state?: boolean;
+    message?: string;
+    readOnly?: boolean;
 }
 
-const SignInput = ({ Title, name, placeholder, eyes, change, value, max, email, time, state }: InputProps) => {
+const SignInput = ({ Title, name, placeholder, eyes, change, value, max, email, time, state, message, readOnly }: InputProps) => {
     const [eye, setEye] = useState(eyes ?? false);
 
     return (
@@ -47,6 +49,7 @@ const SignInput = ({ Title, name, placeholder, eyes, change, value, max, email, 
                     onChange={(e) => change(name, e.currentTarget.value)}
                     value={value}
                     maxLength={max}
+                    readOnly={readOnly}
                 />
 
                 {
@@ -68,23 +71,10 @@ const SignInput = ({ Title, name, placeholder, eyes, change, value, max, email, 
             </_.InputOutBox>
             {
                 state !== undefined && (
-                    name === 'password' ?
-                        state ?
-                            <Text color={Colors.Success500}>사용할 수 있는 비밀번호입니다.</Text>
-                            :
-                            <Text color={Colors.Danger500}>비밀번호 형식에 맞지 않습니다.</Text>
+                    state ?
+                        <Text color={Colors.Success500}>{message}</Text>
                         :
-                        email ?
-                            state ?
-                                <Text color={Colors.Success500}>이메일 인증번호가 발송되었습니다</Text>
-                                :
-                                <Text color={Colors.Danger500}>이메일 형식이 잘못되었습니다</Text>
-                            :
-                            state ?
-                                <Text color={Colors.Success500}>인증번호가 일치합니다</Text>
-                                :
-                                <Text color={Colors.Danger500}>인증번호가 일치하지 않습니다.</Text>
-                )
+                        <Text color={Colors.Danger500}>{message}</Text>)
             }
         </_.SignContainer>
     )

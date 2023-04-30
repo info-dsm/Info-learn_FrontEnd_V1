@@ -5,27 +5,28 @@ import BottomTitle from "./BottomTitle";
 import ImageView from "./ImageView";
 import * as _ from './style'
 
-type ValueType = 'id' | 'password' | 'email' | 'authentication' | 'nickname';
+type ValueType = 'id' | 'password' | 'email' | 'verified' | 'authentication' | 'nickname';
 
 interface ComponentsProps {
   value: { [key in ValueType]: string };
   change: (name: string, data: string) => void;
   setIndex: React.Dispatch<React.SetStateAction<number>>;
   Index: number;
+  postSignup: () => void;
   setImg: React.Dispatch<React.SetStateAction<File | undefined>>;
   ImgString: string | ArrayBuffer | null;
   setImgString: React.Dispatch<React.SetStateAction<string | ArrayBuffer | null>>
 }
 
-const LConponent = ({ value, change, Index, setIndex, ...Props }: ComponentsProps) => {
-  const { email, authentication, nickname } = value;
-
+const LConponent = ({ value, change, Index, setIndex, postSignup, ...Props }: ComponentsProps) => {
+  const { verified, authentication, nickname } = value;
+  
   return (
-    <_.SignBox bool={Index === 2} visible={!(email && authentication)}>
+    <_.SignBox bool={Index === 2} visible={!(verified && authentication)}>
       <_.SignUpMain>
         <_.BeforeIcon
           className="ri-arrow-left-s-line"
-          onClick={() => setIndex(Index - 1)}
+          onClick={() => setIndex(1)}
         />
         <_.Title>회원가입</_.Title>
         <_.SubTitle>회원가입을 하여 서비스를 이용해보세요</_.SubTitle>
@@ -39,7 +40,7 @@ const LConponent = ({ value, change, Index, setIndex, ...Props }: ComponentsProp
             value={nickname}
           />
         </_.Flexbox>
-        <PrimaryButton onClick={() => { alert('a') }} width="400px" height='47px'>
+        <PrimaryButton onClick={() => postSignup()} width="400px" height='47px'>
           회원가입
         </PrimaryButton>
         <BottomTitle LText='이미 회원이신가요?' RText='로그인' />
