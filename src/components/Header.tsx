@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 import styled from "styled-components";
 import {TextButton} from "./button/TextButton";
 import {Link} from "react-router-dom";
-import TextLogo from "../assets/textLogo.png";
+import TextLogo from "../assets/img/TextLogo.png";
 import {Text} from "./text";
 import {Colors} from "../styles/theme/color";
 import Icon from "../assets/Icon";
@@ -28,7 +28,7 @@ const Header = () => {
     const [dropdownState, setDropdownState] = useState({
         headerColor: false,
         opacity: 0,
-        padding: '0 24%',
+        padding: '0',
         height: '0',
         event: 'none'
     });

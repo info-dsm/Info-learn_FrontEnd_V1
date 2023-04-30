@@ -2,7 +2,7 @@ import styled from "styled-components";
 import {Text} from "./text";
 import {Colors} from "../styles/theme/color";
 import React from "react";
-import triangle from "../assets/Triangle.png";
+import triangle from "../assets/img/Triangle.png";
 import Icon from "../assets/Icon";
 
 interface postProps {
@@ -11,7 +11,9 @@ interface postProps {
     date: string;
     title: string;
     subTitle: string;
-    tag: string[];
+    tag: {
+        name:string;
+    }[]
     isLecture?: boolean;
 }
 
@@ -33,7 +35,7 @@ export const Post = ({img, name, date, title, subTitle, tag, isLecture}: postPro
             </TitleDiv>
             <BottomDiv>
                 <TagDiv>
-                    {tag.map((data, index) => <Text key={index} color={Colors["FPrimary500"]} font="Body4">{data}</Text>)}
+                    {tag.map((data, index) => <Text key={index} color={Colors["FPrimary500"]} font="Body4">{data.name}</Text>)}
                 </TagDiv>
                 <Icon icon="heart"/>
                 <Icon icon="more"/>
@@ -45,6 +47,7 @@ export const Post = ({img, name, date, title, subTitle, tag, isLecture}: postPro
 const UpDiv = styled.div`
   border-radius: 8px;
   width: 100%;
+  height: 138px;
   position: relative;
   transition: 0.2s;
 `
@@ -93,8 +96,9 @@ const InfoDiv = styled.div`
   width: 100%;
 `
 const Img = styled.img`
-  width: 100%;
-  height: 100%;
+  width: 244px;
+  height: 138px;
+  object-fit: cover;
   border-radius: 8px;
 `
 const PostBody = styled.div`
@@ -109,6 +113,7 @@ const PostBody = styled.div`
     transform: translateY(-8px);
     box-shadow: rgba(0, 0, 0, 0.12) 0 16px 16px;
   }
+
   @media only screen and (max-width: 576px) {
     width: 100%;
   }
