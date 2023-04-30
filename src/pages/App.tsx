@@ -5,6 +5,7 @@ import Signup from "./auth/signup/Signup";
 import Main from "./Main";
 import AuthLayout from "./router/AuthLayout";
 import StudentLayout from "./router/StudentLayout";
+import Search from "./search";
 
 function App() {
     return (
@@ -15,6 +16,7 @@ function App() {
             </Route>
             <Route element={<StudentLayout/>}>
                 <Route path="/" element={<Main/>}/>
+                <Route path="/search" element={<Search/>}/>
             </Route>
         </Routes>
     );
