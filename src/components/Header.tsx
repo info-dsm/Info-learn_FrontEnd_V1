@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import styled from "styled-components";
-import {TextButton} from "./TextButton";
+import {TextButton} from "./button/TextButton";
 import {Link} from "react-router-dom";
 import TextLogo from "../assets/textLogo.png";
 import {Text} from "./text";

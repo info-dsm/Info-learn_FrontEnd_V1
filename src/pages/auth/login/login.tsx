@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import SignInput from "../../../components/input/SignInput";
-import { PrimaryButton } from "../../../components/PrimaryButton";
+import { Button } from "../../../components/button/Button";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import BottomTitle from "./BottomTitle";
@@ -92,9 +92,9 @@ const Login = () => {
                 message={PState ? undefined : '비밀번호 형식에 맞지 않습니다'}
               />
             </_.Flexbox>
-            <PrimaryButton onClick={() => postLogin()} width="400px" height='47px'>
+            <Button onClick={() => postLogin()} width="400px" height='47px'>
               로그인
-            </PrimaryButton>
+            </Button>
             <BottomTitle LText='회원이 아니신가요?' RText='회원가입' />
           </_.LoginBox>
         </_.Containter>
