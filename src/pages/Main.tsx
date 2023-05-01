@@ -8,22 +8,23 @@ import iOSImg from "../assets/img/iOS.png";
 import AndroidImg from "../assets/img/Android.png";
 import SecurityImg from "../assets/img/Security.png";
 import HeadImg from "../assets/img/BackgroundImg.jpg";
-import {Post} from "../components/Post";
+import {Post} from "../components/posting/Post";
 import {useMutation, useQuery} from "react-query";
 import axios from "axios";
+import toast, {Toaster} from "react-hot-toast";
 
-const AccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJURUFDSEVSIiwianRpIjoibmlnZXIiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNjgyODQ5MTg4LCJleHAiOjE2ODI5MzU1ODh9.jsLALVvbMybYnOjq8rg0SO8EnQIUbEc2MT2nVskVM5k";
+const AccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJURUFDSEVSIiwianRpIjoibmlnZXIiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNjgyOTAwNTc4LCJleHAiOjE2ODI5ODY5Nzh9.YYt5p5a49Byo6TruPUWAQcyfFiRZbKns8RSIrEbUdFU";
 
 const Main = () => {
     const [inputFile, setFile] = useState<File>();
-    const {data: lecture} = useQuery<any>(['getLectures'], getLectures);
+    const {data: lecture, refetch: reLecture} = useQuery<any>(['getLectures'], getLectures);
     const {mutate: postLecture} = useMutation(['nigrong'], PostLecture);
     const {mutate: putS3} = useMutation(['nigrongrong'], PutS3);
 
     async function getLectures() {
         const lecturesRes = await axios({
             method: 'GET',
-            url: '/api/infolearn/v1/lecture?limit=4',
+            url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/lecture?limit=4`,
             headers: {
                 Authorization: `Bearer ${AccessToken}`,
                 'ngrok-skip-browser-warning': '69420'
@@ -36,7 +37,7 @@ const Main = () => {
         console.log("filename = " + inputFile?.name);
         await axios({
             method: 'POST',
-            url: '/api/infolearn/v1/lecture',
+            url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/lecture`,
             data: {
                 title: "원준이와 함께 하고픈 일",
                 explanation: "원준이 맥북 해킹으로 먹고 싶농 히히",
@@ -58,7 +59,7 @@ const Main = () => {
         }).then(response => {
             putS3({url: response.data.preSignedUrl.url, file: inputFile!});
         }).catch(error => {
-            console.log(error + "fuck!!!");
+            toast.error(error.response.data.message);
         })
     }
 
@@ -72,6 +73,7 @@ const Main = () => {
                 "Content-Disposition": "inline"
             }
         })
+        await reLecture();
     }
 
     const Reading = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -117,6 +119,20 @@ const Main = () => {
 
     return (
         <>
+            <Toaster
+                position="top-center"
+                reverseOrder={true}
+                gutter={8}
+                toastOptions={{
+                    // Define default options
+                    className: '',
+                    duration: 5000,
+                    style: {
+                        background: Colors["White"],
+                        color: Colors["Black"],
+                    },
+                }}
+            />
             <TextDiv>
                 <DefaultWidth>
                     <FlexDiv wrap="wrap">
@@ -163,6 +179,10 @@ const Main = () => {
                     console.log("눌렀자나 시봉")
                 }}>강의 POST test버튼
                 </button>
+                {lecture && lecture.map((data: lecturesProps) =>
+                    <Post img={data.lectureThumbnailUrl} name={data.createdBy} date={data.createdAt} title={data.title} subTitle={data.explanation} tag={data.tagNameList}
+                          key={data.lectureId} isSearch={true}/>
+                )}
             </Content>
         </>
     )
