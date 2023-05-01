@@ -52,11 +52,24 @@ export const InfoDiv = styled.div`
   align-items: center;
   width: 100%;
 `
-export const Img = styled.img`
+
+interface imgProps {
+    url: string;
+}
+
+export const Img = styled.div<imgProps>`
   width: 244px;
   height: 138px;
+  background-image: url(${props => props.url});
+  background-color: ${Colors["Gray200"]};
   object-fit: cover;
   border-radius: 8px;
+  background-size: 100%;
+  background-position: center center;
+  transition: background-size 0.3s ease;
+  &:hover {
+    background-size: 120%;
+  }
 `
 export const PostBody = styled.div`
   width: 244px;

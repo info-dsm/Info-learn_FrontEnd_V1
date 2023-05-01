@@ -11,13 +11,13 @@ import HeadImg from "../assets/img/BackgroundImg.jpg";
 import {Post} from "../components/posting/Post";
 import {useMutation, useQuery} from "react-query";
 import axios from "axios";
-import toast, {Toaster} from "react-hot-toast";
+import toast from "react-hot-toast";
 
 const AccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJURUFDSEVSIiwianRpIjoibmlnZXIiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNjgyOTAwNTc4LCJleHAiOjE2ODI5ODY5Nzh9.YYt5p5a49Byo6TruPUWAQcyfFiRZbKns8RSIrEbUdFU";
 
 const Main = () => {
     const [inputFile, setFile] = useState<File>();
-    const {data: lecture, refetch: reLecture} = useQuery<any>(['getLectures'], getLectures);
+    const {data: lecture, refetch: reLecture} = useQuery(['getLectures'], getLectures);
     const {mutate: postLecture} = useMutation(['nigrong'], PostLecture);
     const {mutate: putS3} = useMutation(['nigrongrong'], PutS3);
 
@@ -57,13 +57,13 @@ const Main = () => {
                 Authorization: `Bearer ${AccessToken}`
             }
         }).then(response => {
-            putS3({url: response.data.preSignedUrl.url, file: inputFile!});
+            putS3({url: response.data.preSignedUrl.url, file: inputFile});
         }).catch(error => {
             toast.error(error.response.data.message);
         })
     }
 
-    async function PutS3({url, file}: { url: string, file: File }) {
+    async function PutS3({url, file}: { url: string, file?: File }) {
         await axios({
             method: 'PUT',
             url: url,
@@ -94,14 +94,14 @@ const Main = () => {
         {name: "보안", imageUrl: SecurityImg}
     ];
     const newTil = [
-        {imageUrl: HeadImg, writer: "승우최", date: "2023.03.03", title: "정처기를 공부해 보았다", subTitle: "정처기를 합격하기 위한 발버둥!", tag: [{name: "#Study"}, {name: "#Nigro"}]},
-        {imageUrl: HeadImg, writer: "Mooner510", date: "2023.03.03", title: "Frontend 씹어먹기", subTitle: "아 프론트엔드 Easy 하네요", tag: [{name: "#Study"}]},
-        {imageUrl: HeadImg, writer: "원준도", date: "2023.03.03", title: "30만원 맛있다", subTitle: "아 30만원짜리 맛있네요 개추", tag: [{name: "#Study"}]},
-        {imageUrl: HeadImg, writer: "조지은", date: "2023.03.02", title: "마라탕이란 무엇인가?", subTitle: "내가 지금까지 마라탕과 살아가며 정리한 것이다.", tag: [{name: "#Study"}]},
-        {imageUrl: HeadImg, writer: "Hood", date: "2023.03.02", title: "This is my hood life", subTitle: "My best friend is Hyun Suk Kim.", tag: [{name: "#Study"}]},
-        {imageUrl: HeadImg, writer: "짱지", date: "2023.03.02", title: "히히", subTitle: "맛있는 //", tag: [{name: "#Study"}]},
-        {imageUrl: HeadImg, writer: "서무성", date: "2023.03.02", title: "편안한 마음", subTitle: "마참내 나의 강의 사이트가 만들어진다고 하는데...", tag: [{name: "#Study"}]},
-        {imageUrl: HeadImg, writer: "현석조", date: "2023.03.01", title: "원준이와 함께 하고픈 일", subTitle: "원준이 맥북 해킹으로 먹고 싶농", tag: [{name: "#Study"}]},
+        {imageUrl: HeadImg, writer: "승우최", date: "2023.03.03", title: "정처기를 공부해 보았다", subTitle: "정처기를 합격하기 위한 발버둥!", tag: [{name: "Study"}]},
+        {imageUrl: HeadImg, writer: "Mooner510", date: "2023.03.03", title: "Frontend 씹어먹기", subTitle: "아 프론트엔드 Easy 하네요", tag: [{name: "Study"}]},
+        {imageUrl: HeadImg, writer: "원준도", date: "2023.03.03", title: "30만원 맛있다", subTitle: "아 30만원짜리 맛있네요 개추", tag: [{name: "Study"}]},
+        {imageUrl: HeadImg, writer: "조지은", date: "2023.03.02", title: "마라탕이란 무엇인가?", subTitle: "내가 지금까지 마라탕과 살아가며 정리한 것이다.", tag: [{name: "Study"}]},
+        {imageUrl: HeadImg, writer: "Hood", date: "2023.03.02", title: "This is my hood life", subTitle: "My best friend is Hyun Suk Kim.", tag: [{name: "Study"}]},
+        {imageUrl: HeadImg, writer: "짱지", date: "2023.03.02", title: "히히", subTitle: "맛있는 //", tag: [{name: "Study"}]},
+        {imageUrl: HeadImg, writer: "서무성", date: "2023.03.02", title: "편안한 마음", subTitle: "마참내 나의 강의 사이트가 만들어진다고 하는데...", tag: [{name: "Study"}]},
+        {imageUrl: HeadImg, writer: "현석조", date: "2023.03.01", title: "원준이와 함께 하고픈 일", subTitle: "원준이 맥북 해킹으로 먹고 싶농", tag: [{name: "Study"}]},
     ];
     const tag = ['HTML', 'CSS', 'Javascript', 'Typescript', 'React', 'Java', 'Kotlin', 'Go', 'Next', 'Nest', 'Spring', 'C', 'Dart'];
 
@@ -111,7 +111,7 @@ const Main = () => {
         explanation: string;
         lectureThumbnailUrl: string;
         tagNameList: {
-            name:string;
+            name: string;
         }[]
         createdAt: string;
         createdBy: string;
@@ -131,7 +131,7 @@ const Main = () => {
             <Content>
                 <FlexDiv margin="80px 0 0" gap={60} width="100%">
                     {titleCategory.map((category) => (
-                        <FlexDiv key={category.name} direction="column" align="center" gap={20}>
+                        <FlexDiv key={category.name} direction="column" align="center" gap={20} style={{cursor: 'pointer'}}>
                             <Image src={category.imageUrl}/>
                             <Text>{category.name}</Text>
                         </FlexDiv>
@@ -222,6 +222,7 @@ const DefaultWidth = styled.div`
 const Image = styled.img`
   width: 80px;
   height: 80px;
+  transition: 0.2s;
 `
 const FlexDiv = styled.div<flex>`
   display: flex;
@@ -236,6 +237,10 @@ const FlexDiv = styled.div<flex>`
 
   p {
     ${props => props.isTitle ? `font-size:40px;font-weight:600;color:${Colors["Gray600"]}` : null};
+  }
+
+  &:hover > img {
+    transform: scale(1.2);
   }
 `
 const TextDiv = styled.div`
