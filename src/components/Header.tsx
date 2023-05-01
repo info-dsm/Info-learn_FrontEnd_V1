@@ -73,8 +73,8 @@ const Header = () => {
             <Headers>
                 <FlexDiv>
                     <Link to="/"><Image src={TextLogo}/></Link>
-                    <TextButton><Link to="/le"><Text font="Body4">강의</Text></Link></TextButton>
-                    <TextButton><Link to="/community"><Text font="Body4">커뮤니티</Text></Link></TextButton>
+                    <TextButton><Link to="/lecture"><Text font="Body4">강의</Text></Link></TextButton>
+                    <TextButton><Link to="/TIL"><Text font="Body4">TIL</Text></Link></TextButton>
                 </FlexDiv>
                 <FlexDiv style={{gap: "40px"}}>
                     <IconButton id="isAlam"><Icon icon="bell"/></IconButton>

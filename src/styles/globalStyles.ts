@@ -1,4 +1,5 @@
 import {createGlobalStyle} from "styled-components";
+import {Colors} from "./theme/color";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -9,6 +10,10 @@ const GlobalStyle = createGlobalStyle`
     font-size: 14px;
     font-weight: 400;
     user-select: none
+  }
+
+  body {
+    background-color: ${Colors["Gray100"]};
   }
 `
 
