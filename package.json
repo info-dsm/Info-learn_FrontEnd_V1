@@ -17,6 +17,7 @@
     "react": "^18.2.0",
     "react-cookie": "^4.1.1",
     "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.4.1",
     "react-is": "^18.2.0",
     "react-query": "^3.39.3",
     "react-router-dom": "^6.9.0",
@@ -60,6 +61,5 @@
     "eslint": "latest",
     "eslint-config-prettier": "^8.7.0",
     "eslint-plugin-react": "latest"
-  },
-  "proxy": "https://7026-2001-e60-3175-afd9-dc35-174c-5e42-4157.ngrok-free.app"
+  }
 }
