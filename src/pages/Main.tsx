@@ -119,20 +119,6 @@ const Main = () => {
 
     return (
         <>
-            <Toaster
-                position="top-center"
-                reverseOrder={true}
-                gutter={8}
-                toastOptions={{
-                    // Define default options
-                    className: '',
-                    duration: 5000,
-                    style: {
-                        background: Colors["White"],
-                        color: Colors["Black"],
-                    },
-                }}
-            />
             <TextDiv>
                 <DefaultWidth>
                     <FlexDiv wrap="wrap">
