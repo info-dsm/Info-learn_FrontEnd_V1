@@ -62,11 +62,11 @@ export const Img = styled.div<imgProps>`
   height: 138px;
   background-image: url(${props => props.url});
   background-color: ${Colors["Gray200"]};
-  object-fit: cover;
   border-radius: 8px;
-  background-size: 100%;
+  background-size: 106%;
   background-position: center center;
-  transition: background-size 0.3s ease;
+  background-repeat: no-repeat;
+  transition: 0.3s;
   &:hover {
     background-size: 120%;
   }

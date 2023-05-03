@@ -5,7 +5,7 @@ import 'remixicon/fonts/remixicon.css'
 import Header from "../../components/Header";
 import {Colors} from "../../styles/theme/color";
 
-const InfinityLayout = () => {
+const RegistrationLayout = () => {
     return (
         <>
             <Body>
@@ -16,10 +16,10 @@ const InfinityLayout = () => {
     )
 }
 
-export default InfinityLayout;
+export default RegistrationLayout;
 
 const Body = styled.div`
-  background-color: ${Colors.Gray100};
+  background-color: ${Colors.White};
   display: flex;
   flex-direction: column;
   align-items: center;

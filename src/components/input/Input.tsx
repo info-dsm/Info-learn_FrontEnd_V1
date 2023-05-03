@@ -1,5 +1,5 @@
 import React from "react";
-import * as _ from './input';
+import * as _ from './inputStyle';
 
 interface InputProps {
     name: string;
@@ -7,7 +7,7 @@ interface InputProps {
     change: (name: string, data: string) => void;
     value: string;
     max?: number;
-    width?: number;
+    width?: string;
 }
 
 const Input = ({ name, placeholder, change, value, max, width }: InputProps) => {

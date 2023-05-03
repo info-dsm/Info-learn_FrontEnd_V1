@@ -198,10 +198,13 @@ const Headers = styled.header`
   }
 `
 const HeadDiv = styled.div<{ BackColor: boolean; }>`
+  position: absolute;
+  top: 0;
+  left: 0;
   display: flex;
   width: 100%;
   justify-content: center;
-  background-color: ${props => props.BackColor ? Colors["White"] : Colors["Gray100"]};
+  background-color: ${props => props.BackColor ? Colors["White"] : "rgba(0,0,0,0)"};
 `
 const Image = styled.img`
   height: 30px;

@@ -13,7 +13,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    background-color: ${Colors["Gray100"]};
+    background-color: ${Colors["White"]};
   }
 `
 

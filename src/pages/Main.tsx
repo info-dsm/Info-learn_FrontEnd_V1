@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import styled from "styled-components";
 import {Text} from "../components/text";
 import {Colors} from "../styles/theme/color";
@@ -9,17 +9,14 @@ import AndroidImg from "../assets/img/Android.png";
 import SecurityImg from "../assets/img/Security.png";
 import HeadImg from "../assets/img/BackgroundImg.jpg";
 import {Post} from "../components/posting/Post";
-import {useMutation, useQuery} from "react-query";
+import {useQuery} from "react-query";
 import axios from "axios";
-import toast from "react-hot-toast";
+import * as _ from "./MainStyle";
 
-const AccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJURUFDSEVSIiwianRpIjoibmlnZXIiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNjgyOTAwNTc4LCJleHAiOjE2ODI5ODY5Nzh9.YYt5p5a49Byo6TruPUWAQcyfFiRZbKns8RSIrEbUdFU";
+const AccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJURUFDSEVSIiwianRpIjoibmlnZXIiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNjgzMDAxNjk1LCJleHAiOjE2ODMwODgwOTV9.iVl9l0qj52fsF99v3tmTfc0I2dNkYlb3yYAivNMwiKM";
 
 const Main = () => {
-    const [inputFile, setFile] = useState<File>();
-    const {data: lecture, refetch: reLecture} = useQuery(['getLectures'], getLectures);
-    const {mutate: postLecture} = useMutation(['nigrong'], PostLecture);
-    const {mutate: putS3} = useMutation(['nigrongrong'], PutS3);
+    const {data: lecture} = useQuery(['getLectures'], getLectures);
 
     async function getLectures() {
         const lecturesRes = await axios({
@@ -31,59 +28,6 @@ const Main = () => {
             }
         })
         return lecturesRes.data.lectures
-    }
-
-    async function PostLecture() {
-        console.log("filename = " + inputFile?.name);
-        await axios({
-            method: 'POST',
-            url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/lecture`,
-            data: {
-                title: "원준이와 함께 하고픈 일",
-                explanation: "원준이 맥북 해킹으로 먹고 싶농 히히",
-                searchTitle: "dnjswnsdldhk gkaRp gkrhvms dlf",
-                searchExplanation: "dnjswnsdl aorqnr gozlddmfh ajrrh tlvshd glgl",
-                tagNameList: [
-                    "현석조",
-                    "난 원준이가 좋아."
-                ],
-                lectureThumbnail: {
-                    fileName: inputFile?.name,
-                    contentType: "image/png"
-                }
-            },
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${AccessToken}`
-            }
-        }).then(response => {
-            putS3({url: response.data.preSignedUrl.url, file: inputFile});
-        }).catch(error => {
-            toast.error(error.response.data.message);
-        })
-    }
-
-    async function PutS3({url, file}: { url: string, file?: File }) {
-        await axios({
-            method: 'PUT',
-            url: url,
-            data: file,
-            headers: {
-                "Content-Type": "image/png",
-                "Content-Disposition": "inline"
-            }
-        })
-        await reLecture();
-    }
-
-    const Reading = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const fileReader = new FileReader();
-
-        const selectedFile = (e.target.files as FileList)[0];
-        if (selectedFile !== null) {
-            fileReader.readAsDataURL(selectedFile);
-            setFile(selectedFile);
-        }
     }
 
     const titleCategory = [
@@ -120,13 +64,13 @@ const Main = () => {
     return (
         <>
             <TextDiv>
-                <DefaultWidth>
+                <_.DefaultWidth>
                     <FlexDiv wrap="wrap">
                         <Text gradient={true}>인포런.</Text>
                         <Text>듣고싶은 강의를</Text>
                     </FlexDiv>
                     <Text>들을 수 있는 가장 좋은 방법.</Text>
-                </DefaultWidth>
+                </_.DefaultWidth>
             </TextDiv>
             <Content>
                 <FlexDiv margin="80px 0 0" gap={60} width="100%">
@@ -159,16 +103,6 @@ const Main = () => {
                         <Post img={data.imageUrl} name={data.writer} date={data.date} title={data.title} subTitle={data.subTitle} tag={data.tag} key={index}/>
                     )}
                 </PostDiv>
-                <input onChange={Reading} type="file"/>
-                <button onClick={() => {
-                    postLecture();
-                    console.log("눌렀자나 시봉")
-                }}>강의 POST test버튼
-                </button>
-                {lecture && lecture.map((data: lecturesProps) =>
-                    <Post img={data.lectureThumbnailUrl} name={data.createdBy} date={data.createdAt} title={data.title} subTitle={data.explanation} tag={data.tagNameList}
-                          key={data.lectureId} isSearch={true}/>
-                )}
             </Content>
         </>
     )
@@ -211,12 +145,6 @@ const PostDiv = styled.div`
   height: fit-content;
   @media only screen and (max-width: 576px) {
     width: 100%;
-  }
-`
-const DefaultWidth = styled.div`
-  width: 1000px;
-  @media only screen and (max-width: 1080px) {
-    width: 94%;
   }
 `
 const Image = styled.img`
@@ -262,6 +190,7 @@ const TextDiv = styled.div`
     color: ${Colors["White"]};
   }
 `
+
 const Content = styled.div`
   display: flex;
   flex-direction: column;
