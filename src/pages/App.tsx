@@ -7,6 +7,7 @@ import AuthLayout from "./router/AuthLayout";
 import StudentLayout from "./router/StudentLayout";
 import LectureAll from "./lecture";
 import InfinityLayout from "./router/InfinityLayout";
+import Search from "./search";
 
 function App() {
     return (
@@ -17,6 +18,7 @@ function App() {
             </Route>
             <Route element={<StudentLayout/>}>
                 <Route path="/" element={<Main/>}/>
+                <Route path="/search" element={<Search/>}/>
             </Route>
             <Route element={<InfinityLayout/>}>
                 <Route path="/lecture" element={<LectureAll/>}/>
