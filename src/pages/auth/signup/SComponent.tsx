@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import SignInput from "../../../components/input/SignInput";
-import { PrimaryButton } from "../../../components/PrimaryButton";
+import { Button } from "../../../components/button/Button";
 import BottomTitle from "./BottomTitle";
 import axios from 'axios'
 import * as _ from './style'
@@ -136,9 +136,9 @@ const SConponent = ({ value, change, Index, setIndex }: ComponentsProps) => {
             readOnly={EState !== true || AState || time <= 0}
           />
         </_.Flexbox>
-        <PrimaryButton onClick={() => codeCheck()} width="400px" height='47px'>
+        <Button onClick={() => codeCheck()} width="400px" height='47px'>
           다음
-        </PrimaryButton>
+        </Button>
         <BottomTitle LText='이미 회원이신가요?' RText='로그인' />
       </_.SignUpMain>
     </_.SignBox>

@@ -1,6 +1,6 @@
 import React from "react";
 import SignInput from "../../../components/input/SignInput";
-import { PrimaryButton } from "../../../components/PrimaryButton";
+import { Button } from "../../../components/button/Button";
 import BottomTitle from "./BottomTitle";
 import ImageView from "./ImageView";
 import * as _ from './style'
@@ -40,9 +40,9 @@ const LConponent = ({ value, change, Index, setIndex, postSignup, ...Props }: Co
             value={nickname}
           />
         </_.Flexbox>
-        <PrimaryButton onClick={() => postSignup()} width="400px" height='47px'>
+        <Button onClick={() => postSignup()} width="400px" height='47px'>
           회원가입
-        </PrimaryButton>
+        </Button>
         <BottomTitle LText='이미 회원이신가요?' RText='로그인' />
       </_.SignUpMain>
     </_.SignBox>

@@ -3,8 +3,9 @@ import {Outlet} from "react-router-dom";
 import styled from "styled-components";
 import 'remixicon/fonts/remixicon.css'
 import Header from "../../components/Header";
+import {Colors} from "../../styles/theme/color";
 
-const AuthLayout = () => {
+const InfinityLayout = () => {
     return (
         <>
             <Body>
@@ -15,8 +16,12 @@ const AuthLayout = () => {
     )
 }
 
-export default AuthLayout;
+export default InfinityLayout;
 
 const Body = styled.div`
-  padding: 50px 460px 0;
+  background-color: ${Colors.Gray100};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px 0 0;
 `

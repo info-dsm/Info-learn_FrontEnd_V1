@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import * as _ from './input';
+import * as _ from './inputStyle';
 import { Colors } from "../../styles/theme/color";
 import { Text } from "../text";
 
