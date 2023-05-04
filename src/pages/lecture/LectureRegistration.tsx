@@ -74,10 +74,14 @@ const LectureRegistration = () => {
             searchExplanation: korTypeToEng(value.explanation),
             tagNameList: tag,
             lectureThumbnail: {
-                // fileName: ,
+                fileName: inputFile?.name,
                 contentType: "image/png"
             }
         });
+        inputFile && postLecture({postJson, inputFile});
+        setTimeout(() => {
+            navigate(-1)
+        }, 1000);
     }
 
     return (
@@ -97,7 +101,7 @@ const LectureRegistration = () => {
                 <MainInfo>
                     <Thumbnail>
                         <FileInput id="file" onChange={Reading} type="file"/>
-                        <FileLabel htmlFor="file" url="">
+                        <FileLabel htmlFor="file" url={imgUrl as string}>
                             <Icon icon="add"/>
                             <Text font="Body2">강의 썸네일</Text>
                         </FileLabel>
@@ -130,10 +134,6 @@ const LectureRegistration = () => {
                         value.title && value.explanation && tag && makeJson()
                     }}>강의 등록</Button>
                 </RDiv>
-                <button onClick={() => {
-                    inputFile && postLecture({inputFile});
-                }}>강의 POST test버튼
-                </button>
             </Content>
         </>
     )
@@ -149,7 +149,9 @@ const FileLabel = styled.label<{ url: string }>`
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background-image: ${props => props.url ?? "none"};
+  background-image: url(${props => props.url ?? "none"});
+  border-radius: 8px;
+  background-size: cover;
 
   svg, p {
     display: ${props => props.url ? 'none' : 'block'};
@@ -204,6 +206,7 @@ const TagDiv = styled.div`
   width: 100%;
   height: fit-content;
   display: flex;
+  gap: 10px;
   flex-wrap: wrap;
 `
 const TagRDiv = styled.div`

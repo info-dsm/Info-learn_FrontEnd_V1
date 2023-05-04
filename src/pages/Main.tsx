@@ -13,7 +13,7 @@ import {useQuery} from "react-query";
 import axios from "axios";
 import * as _ from "./MainStyle";
 
-const AccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJURUFDSEVSIiwianRpIjoibmlnZXIiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNjgzMDAxNjk1LCJleHAiOjE2ODMwODgwOTV9.iVl9l0qj52fsF99v3tmTfc0I2dNkYlb3yYAivNMwiKM";
+const AccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJURUFDSEVSIiwianRpIjoibmlnZXQiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNjgzMjEyNDY3LCJleHAiOjE2ODMyOTg4Njd9.plhTTrnsOY2MPXitR3NDkh6aoP8ITHFT6aHcA0pyswc";
 
 const Main = () => {
     const {data: lecture} = useQuery(['getLectures'], getLectures);
