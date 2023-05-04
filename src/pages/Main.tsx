@@ -66,7 +66,7 @@ const Main = () => {
             <TextDiv>
                 <_.DefaultWidth>
                     <FlexDiv wrap="wrap">
-                        <Text gradient={true}>인포런.</Text>
+                        <Text gradient>인포런.</Text>
                         <Text>듣고싶은 강의를</Text>
                     </FlexDiv>
                     <Text>들을 수 있는 가장 좋은 방법.</Text>
@@ -82,17 +82,17 @@ const Main = () => {
                     ))}
                 </FlexDiv>
                 <FlexDiv margin="100px 0 20px" wrap="wrap">
-                    <Text gradient={true} font="Title2">최신 강의.</Text>
+                    <Text gradient font="Title2">최신 강의.</Text>
                     <Text font="Title2">따끈따끈한 강의 이야기.</Text>
                 </FlexDiv>
                 <PostDiv>
                     {lecture && lecture.map((data: lecturesProps) =>
-                        <Post isLecture={true} img={data.lectureThumbnailUrl} name={data.createdBy} date={data.createdAt} title={data.title} subTitle={data.explanation} tag={data.tagNameList}
+                        <Post isLecture img={data.lectureThumbnailUrl} name={data.createdBy} date={data.createdAt} title={data.title} subTitle={data.explanation} tag={data.tagNameList}
                               key={data.lectureId}/>
                     )}
                 </PostDiv>
                 <FlexDiv margin="100px 0 0" wrap="wrap">
-                    <Text gradient={true} font="Title2">최신 TIL.</Text>
+                    <Text gradient font="Title2">최신 TIL.</Text>
                     <Text font="Title2">새로나온 지식 이야기.</Text>
                 </FlexDiv>
                 <TagDiv>

@@ -27,15 +27,15 @@ const LectureAll = () => {
     return (
         <>
             <TextDiv>
-                <_.DefaultWidth flex={true}>
-                    <Text font="Title2" gradient={true}>최신 강의.</Text>
+                <_.DefaultWidth flex>
+                    <Text font="Title2" gradient>최신 강의.</Text>
                     <Text font="Title2" color={Colors["White"]}>따끈따끈한 강의 이야기.</Text>
                 </_.DefaultWidth>
             </TextDiv>
             <ContentDiv>
                 <TitleDiv>
-                    <Text font="Title1" gradient={true}>전체</Text>
-                    <Link to="/lecture/registration" style={{textDecoration:"none"}}><Button gray={true}>강의 등록하기</Button></Link>
+                    <Text font="Title1" gradient>전체</Text>
+                    <Link to="/lecture/registration" style={{textDecoration:"none"}}><Button gray>강의 등록하기</Button></Link>
                 </TitleDiv>
                 <InfinityScroll/>
             </ContentDiv>

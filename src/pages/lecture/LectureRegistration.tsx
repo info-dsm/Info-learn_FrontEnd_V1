@@ -7,6 +7,7 @@ import TextInput from "../../components/input/TextInput";
 import Input from "../../components/input/Input";
 import {Button} from "../../components/button/Button";
 import toast from "react-hot-toast";
+import {useNavigate} from "react-router-dom";
 
 type ValueType = 'title' | 'explanation' | 'tag';
 
@@ -19,6 +20,8 @@ const LectureRegistration = () => {
         tag: ''
     });
     const [tag, setTag] = useState<string[]>([]);
+
+    const navigate = useNavigate();
 
     const tagAdd = () => {
         if (tag.every((data) => data !== value.tag)) {
@@ -46,7 +49,7 @@ const LectureRegistration = () => {
     return (
         <Content>
             <TextDiv>
-                <Text font="Title1" gradient={true}>강의 등록</Text>
+                <Text font="Title1" gradient>강의 등록</Text>
                 <Text font="Body2">강의를 등록해 주세요</Text>
             </TextDiv>
             <MainInfo>
@@ -56,14 +59,14 @@ const LectureRegistration = () => {
                 </Thumbnail>
                 <InputDiv>
                     <TextInput change={change} value={value.title} max={100} name="title" placeholder="강의 제목을 입력해 주세요" Title="강의 제목"/>
-                    <TextInput change={change} value={value.explanation} max={100} name="explanation" placeholder="간단하고 명료한 강의 설명을 입력해 주세요" Title="강의 설명" textarea={true}/>
+                    <TextInput change={change} value={value.explanation} max={100} name="explanation" placeholder="간단하고 명료한 강의 설명을 입력해 주세요" Title="강의 설명" textarea/>
                 </InputDiv>
             </MainInfo>
             <TagRDiv>
                 <Text font="Body1">태그</Text>
                 <TagInputDiv>
                     <Input name="tag" placeholder="태그를 입력해 주세요" value={value.tag} change={change} width="100%"/>
-                    <Button width="12%" gray={true} onClick={() => tagAdd()}>태그 등록</Button>
+                    <Button width="12%" gray onClick={() => tagAdd()}>태그 등록</Button>
                 </TagInputDiv>
                 <TagDiv>
                     {tag.map((value, index) =>
@@ -76,12 +79,24 @@ const LectureRegistration = () => {
                     )}
                 </TagDiv>
             </TagRDiv>
+            <RDiv>
+                <Button gray onClick={()=>navigate(-1)}>취소</Button>
+                <Button blue>강의 등록</Button>
+            </RDiv>
         </Content>
     )
 }
 
 export default LectureRegistration
 
+const RDiv = styled.div`
+  width: 100%;
+  height: fit-content;
+  padding: 80px 0 40px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+`
 const TagInputDiv = styled.div`
   width: 100%;
   height: fit-content;
