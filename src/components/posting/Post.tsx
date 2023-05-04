@@ -5,7 +5,6 @@ import triangle from "../../assets/img/Triangle.png";
 import Icon from "../../assets/Icon";
 import * as _ from './style';
 import * as s from './sStyle';
-import toast from "react-hot-toast";
 
 interface postProps {
     img: string;
@@ -21,7 +20,7 @@ interface postProps {
 }
 
 export const Post = ({img, name, date, title, subTitle, tag, isLecture, isSearch}: postProps) => {
-    const newDate = date.slice(0, 10);
+    const newDate = date.slice(0, 10).replaceAll('-', '.');
     const [isHover, setIsHover] = useState<boolean>(false);
     return (
         <>
@@ -53,7 +52,7 @@ export const Post = ({img, name, date, title, subTitle, tag, isLecture, isSearch
                             {isLecture ? <_.PlayCircle>
                                 <_.Triangle src={triangle}/>
                             </_.PlayCircle> : null}
-                            <_.Img src={img}/>
+                            <_.Img url={img}/>
                         </_.UpDiv>
                         <_.InfoDiv>
                             <Text font="Body4">{name}</Text>
@@ -76,4 +75,3 @@ export const Post = ({img, name, date, title, subTitle, tag, isLecture, isSearch
         </>
     )
 }
-

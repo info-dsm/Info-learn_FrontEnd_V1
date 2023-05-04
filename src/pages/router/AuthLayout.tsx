@@ -7,8 +7,8 @@ import Header from "../../components/Header";
 const AuthLayout = () => {
     return (
         <>
-            <Header/>
             <Body>
+                <Header/>
                 <Outlet/>
             </Body>
         </>

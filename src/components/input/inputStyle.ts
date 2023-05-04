@@ -1,11 +1,11 @@
 import styled from "styled-components";
 import { Colors, colorsKeyOfType } from "../../styles/theme/color";
 
-export const MarginBox = styled.div<{ width?: number }>`
+export const MarginBox = styled.div<{ width?: string }>`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  width: ${({ width }) => width ?? 400}px;
+  width: ${({ width }) => width ?? "400px"};
 `
 
 export const SignContainer = styled(MarginBox)`
