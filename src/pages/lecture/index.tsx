@@ -1,29 +1,14 @@
-import React, {useState} from "react";
+import React from "react";
 import styled from "styled-components";
 import {Text} from "../../components/text";
 import * as _ from "../MainStyle";
 import HeadImg from "../../assets/img/BackgroundImg.jpg";
 import {Colors} from "../../styles/theme/color";
-import {useMutation} from "react-query";
-import {PostLecture} from "./api";
 import {Button} from "../../components/button/Button";
 import InfinityScroll from "./InfinityScroll";
 import {Link} from "react-router-dom";
 
 const LectureAll = () => {
-    const [inputFile, setFile] = useState<File>();
-    const {mutate: postLecture} = useMutation(['postLecture'], PostLecture);
-
-    const Reading = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const fileReader = new FileReader();
-
-        const selectedFile = (e.target.files as FileList)[0];
-        if (selectedFile !== null) {
-            fileReader.readAsDataURL(selectedFile);
-            setFile(selectedFile);
-        }
-    }
-
     return (
         <>
             <TextDiv>
@@ -39,11 +24,6 @@ const LectureAll = () => {
                 </TitleDiv>
                 <InfinityScroll/>
             </ContentDiv>
-            <input onChange={Reading} type="file"/>
-            <button onClick={() => {
-                inputFile && postLecture({inputFile});
-            }}>강의 POST test버튼
-            </button>
         </>
     )
 }
