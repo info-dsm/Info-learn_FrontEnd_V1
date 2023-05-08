@@ -103,13 +103,6 @@ export const Icon = styled.i<IconBoxProps>`
   font-size: ${(props) => props.size ?? 24}px;
   color: ${(props) => props.fill ? Colors[props.fill] : Colors.Black};
 `
-export const BeforeIcon = styled(Icon)<{ bool?: boolean }>`
-  position: absolute;
-  top: 12px;
-  left: -64px;
-  cursor: pointer;
-  animation-duration: 1.3s;
-`
 
 export const BottomBox = styled.div`
   display: flex;

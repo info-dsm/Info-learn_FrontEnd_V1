@@ -6,11 +6,13 @@ import LConponent from "./LComponent";
 import axios from 'axios';
 import * as _ from './style'
 import { useNavigate } from "react-router-dom";
+import Message from "../../../components/Message";
 
 type ValueType = 'id' | 'password' | 'email' | 'verified' | 'authentication' | 'nickname';
 
 const Signup = () => {
     const navigate = useNavigate();
+    const [coord, setCoord] = useState<[number, number, boolean] | undefined>();
     const [Index, setIndex] = useState(0);
     const [ImgFile, setImg] = useState<File>();
     const [ImgString, setImgString] = useState<string | ArrayBuffer | null>(null)
@@ -37,10 +39,6 @@ const Signup = () => {
     const postSignup = () => {
         if (Object.values(value).filter((v) => v === '').length || !ImgFile) return;
         const fileName = ImgFile.name.split('.');
-        fileName[0] = fileName[0].slice(0, 6);
-        if (fileName[0].length < 2) {
-            fileName[0] = fileName[0] + fileName[0];
-        }
         axios({
             method: 'POST',
             url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/auth/sign-up/student`,
@@ -92,7 +90,8 @@ const Signup = () => {
         setImg,
         ImgString,
         setImgString,
-        postSignup
+        postSignup,
+        post: setCoord
     }
 
     const preventClose = (e: BeforeUnloadEvent) => {
@@ -111,7 +110,7 @@ const Signup = () => {
     }, []);
 
     return (
-        <>
+        <>  
             <_.TopCircle />
             <_.BottomCircle />
             <_.BlurBox>
@@ -119,6 +118,13 @@ const Signup = () => {
                 <SConponent {...ComponentValue} />
                 <LConponent {...LComponentValue} />
             </_.BlurBox>
+        <Message
+            x={coord && coord[0]}
+            y={coord && coord[1]} 
+            bool={coord && coord[2]}
+        >
+            없어도 되는 정보입니다
+        </Message>
         </>
     )
 }

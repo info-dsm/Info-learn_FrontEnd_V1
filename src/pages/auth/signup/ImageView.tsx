@@ -5,9 +5,10 @@ interface ImageProps {
   setImg: React.Dispatch<React.SetStateAction<File | undefined>>;
   ImgString: string | ArrayBuffer | null;
   setImgString: React.Dispatch<React.SetStateAction<string | ArrayBuffer | null>>;
+  post: React.Dispatch<React.SetStateAction<[number, number, boolean] | undefined>>;
 }
 
-const ImageView = ({ setImg, ImgString, setImgString }: ImageProps) => {
+const ImageView = ({ setImg, ImgString, setImgString, post }: ImageProps) => {
   const [DropReady, setReady] = useState<boolean>(false);
 
   const Reading = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,6 +56,8 @@ const ImageView = ({ setImg, ImgString, setImgString }: ImageProps) => {
       onDragOver={(e) => e.preventDefault()}
       onDrop={DropImg}
       onDragEnter={(e) => Ready({ e, bool: true })}
+      onMouseMove={(e: React.MouseEvent<HTMLParagraphElement, MouseEvent>) => post && post([e.clientX, e.clientY, true])}
+      onMouseLeave={() => post && post((v) => {if(v) return [v[0], v[1], false]})}
       img={ImgString as string}
     >
       <_.ImageBlur />
