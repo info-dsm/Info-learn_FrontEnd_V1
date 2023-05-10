@@ -5,8 +5,10 @@ import triangle from "../../assets/img/Triangle.png";
 import Icon from "../../assets/Icon";
 import * as _ from './style';
 import * as s from './sStyle';
+import {useNavigate} from "react-router-dom";
 
 interface postProps {
+    lectureId: number;
     img: string;
     name: string;
     date: string;
@@ -19,14 +21,24 @@ interface postProps {
     isSearch?: boolean;
 }
 
-export const Post = ({img, name, date, title, subTitle, tag, isLecture, isSearch}: postProps) => {
+export const Post = ({img, name, date, title, subTitle, tag, isLecture, isSearch, lectureId}: postProps) => {
     const newDate = date.slice(0, 10).replaceAll('-', '.');
     const [isHover, setIsHover] = useState<boolean>(false);
+    const navigate = useNavigate();
+
+    const detailNavigate = () => {
+        const navTitle = title.replaceAll(" ", "_").trim();
+        if (isLecture) {
+            navigate(`/lecture/${name}/${navTitle}`, {state: lectureId});
+        } else {
+            navigate(`/til/${name}/${navTitle}`, {state: lectureId});
+        }
+    }
     return (
         <>
             {
                 isSearch ?
-                    <s.PostBody>
+                    <s.PostBody onClick={() => detailNavigate()}>
                         <s.UpDiv className="upDiv">
                             {isLecture ? <s.PlayCircle>
                                 <s.Triangle src={triangle}/>
@@ -47,7 +59,7 @@ export const Post = ({img, name, date, title, subTitle, tag, isLecture, isSearch
                         </s.InfoDiv>
                     </s.PostBody>
                     :
-                    <_.PostBody onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
+                    <_.PostBody onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)} onClick={() => detailNavigate()}>
                         <_.UpDiv className="upDiv">
                             {isLecture ? <_.PlayCircle>
                                 <_.Triangle src={triangle}/>

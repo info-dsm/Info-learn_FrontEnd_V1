@@ -4,9 +4,9 @@ import styled from "styled-components";
 export const UpDiv = styled.div`
   border-radius: 8px;
   width: 100%;
-  height: 138px;
   position: relative;
   transition: 0.2s;
+  aspect-ratio: 16 / 9;
 `
 export const TagDiv = styled.div`
   display: flex;
@@ -58,8 +58,8 @@ interface imgProps {
 }
 
 export const Img = styled.div<imgProps>`
-  width: 244px;
-  height: 138px;
+  width: 100%;
+  height: 100%;
   background-image: url(${props => props.url});
   background-color: ${Colors["Gray200"]};
   border-radius: 8px;
@@ -67,6 +67,7 @@ export const Img = styled.div<imgProps>`
   background-position: center center;
   background-repeat: no-repeat;
   transition: 0.3s;
+
   &:hover {
     background-size: 120%;
   }
