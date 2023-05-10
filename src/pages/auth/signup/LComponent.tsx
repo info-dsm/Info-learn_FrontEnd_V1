@@ -12,8 +12,8 @@ type ValueType = 'id' | 'password' | 'email' | 'verified' | 'authentication' | '
 interface ComponentsProps {
   value: { [key in ValueType]: string };
   change: (name: string, data: string) => void;
-  setIndex: React.Dispatch<React.SetStateAction<number>>;
-  Index: number;
+  setIndex: React.Dispatch<React.SetStateAction<[number, number]>>;
+  Index: [number, number];
   postSignup: () => void;
   setImg: React.Dispatch<React.SetStateAction<File | undefined>>;
   ImgString: string | ArrayBuffer | null;
@@ -25,11 +25,11 @@ const LConponent = ({ value, change, Index, setIndex, postSignup, post, ...Props
   const { verified, authentication, nickname } = value;
   
   return (
-    <_.SignBox bool={Index === 2} visible={!!(verified && authentication)}>
+    <_.SignBox bool={Index[0] === 2} reverse={Index[1] === 0 || (Index[0] - Index[1]) < 0}  visible={!(verified && authentication)}>
       <_.FlexDiv direction='column'>
         <_.BeforeIcon
           className="ri-arrow-left-s-line"
-          onClick={() => setIndex(1)}
+          onClick={() => setIndex([1, 2])}
         />
         <_.FlexDiv direction='column' gap={10}>
         <Text font="Title1">회원가입</Text>

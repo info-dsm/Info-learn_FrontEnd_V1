@@ -7,13 +7,26 @@ import axios from 'axios';
 import * as _ from './style'
 import { useNavigate } from "react-router-dom";
 import Message from "../../../components/Message";
+import { toast } from "react-hot-toast";
 
 type ValueType = 'id' | 'password' | 'email' | 'verified' | 'authentication' | 'nickname';
+
+interface DataType {
+    accountId: string;
+    password: string;
+    email: string;
+    authCode: string;
+    nickname?: string;
+    profileImage?: {
+        fileName: string;
+        contentType: string;
+    }
+}
 
 const Signup = () => {
     const navigate = useNavigate();
     const [coord, setCoord] = useState<[number, number, boolean] | undefined>();
-    const [Index, setIndex] = useState(0);
+    const [Index, setIndex] = useState<[number, number]>([0, 0]);
     const [ImgFile, setImg] = useState<File>();
     const [ImgString, setImgString] = useState<string | ArrayBuffer | null>(null)
     const [value, setValue] = useState<{
@@ -37,30 +50,35 @@ const Signup = () => {
     }
 
     const postSignup = () => {
-        if (Object.values(value).filter((v) => v === '').length || !ImgFile) return;
-        const fileName = ImgFile.name.split('.');
+        const Data: DataType = {
+            accountId: value.id,
+            password: value.password,
+            email: value.verified,
+            authCode: value.authentication
+        }
+        if(value.nickname) {
+            Data.nickname = value.nickname;
+        }
+        if(ImgFile) {
+            const fileName = ImgFile.name.split('.');
+            Data.profileImage = {
+                fileName: fileName.join('.'),
+                contentType: `image/${fileName[1]}`
+            };
+        }
+
         axios({
             method: 'POST',
             url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/auth/sign-up/student`,
-            data: {
-                accountId: value.id,
-                password: value.password,
-                email: value.verified,
-                authCode: value.authentication,
-                nickname: value.nickname,
-                profileImage: {
-                    fileName: fileName.join('.'),
-                    contentType: `image/${fileName[1]}`
-                }
-            }
+            data: Data
         })
             .then((res) => {
                 PutS3(res.data.url);
-                alert('회원가입에 성공했습니다!');
+                toast.success('회원가입에 성공했습니다!');
                 navigate('/');
             })
             .catch((err) => {
-                alert('네트워크를 확인해주세요!');
+                toast.error('네트워크를 확인해주세요!');
                 console.log(err);
             })
     }
@@ -98,6 +116,10 @@ const Signup = () => {
         e.preventDefault();
         e.returnValue = "";
     }
+
+    useEffect(() => {
+        console.log(Index);
+    }, [Index])
 
     useEffect(() => {
         (() => {

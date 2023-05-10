@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from "react";
+import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { Colors } from "../styles/theme/color";
 import { Text } from "./text";
@@ -9,12 +9,29 @@ interface MessageProps {
     bool?: boolean;
 }
 
-const Message = ({children, x, y, bool}:  PropsWithChildren<MessageProps>) => {
+const Message = ({ children, x, y, bool }: PropsWithChildren<MessageProps>) => {
+    const [Bool, setBool] = useState<boolean | undefined>();
+    const time = useRef<NodeJS.Timer | undefined>();
+    useEffect(() => {
+        setBool(true);
+        if(time.current) {
+            clearInterval(time.current);
+            time.current = undefined;
+        }
+        time.current = setInterval(() => {
+            if(!bool) setBool(false);
+            clearInterval(time.current);
+            time.current = undefined;
+        }, 500)
+
+    }, [bool])
+
     return (
         <Container style={{
             top: `${y ?? 0}px`,
             left: `${x ?? 0}px`,
-            opacity: `${bool ? 1 : 0}`
+            opacity: `${bool ? 1 : 0}`,
+            display: `${Bool ? 'flex' : 'none'}`
         }}>
             <Text font="Body3" color={Colors.White}>{children}</Text>
             <Triangle />

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "react-hot-toast";
 import * as _ from './style'
 
 interface ImageProps {
@@ -12,28 +13,27 @@ const ImageView = ({ setImg, ImgString, setImgString, post }: ImageProps) => {
   const [DropReady, setReady] = useState<boolean>(false);
 
   const Reading = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const fileReader = new FileReader();
-
     const selectedFile = (e.target.files as FileList)[0];
-    if (selectedFile !== null) {
-      fileReader.readAsDataURL(selectedFile);
-      setImg(selectedFile);
-    }
-
-    fileReader.onload = () => {
-      setImgString(fileReader.result);
-    };
+    upload(selectedFile);
   }
 
   const DropImg = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    const fileReader = new FileReader();
     const selectedFile = (e.dataTransfer.files as FileList)[0];
     setReady(false);
+    upload(selectedFile);
+  }
+
+  const upload = (selectedFile: File) => {
+    const fileReader = new FileReader();
 
     if (selectedFile !== null) {
-      fileReader.readAsDataURL(selectedFile);
-      setImg(selectedFile);
+      if(selectedFile.name.match(/^.*\.(jpg|jpeg|png|heic|webp)$/)) {
+        fileReader.readAsDataURL(selectedFile);
+        setImg(selectedFile);
+      } else {
+        toast.error('사용할 수 있는 파일이 아닙니다');
+      }
     }
 
     fileReader.onload = () => {

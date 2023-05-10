@@ -12,8 +12,8 @@ type ValueType = 'id' | 'password' | 'email' | 'verified' | 'authentication' | '
 interface ComponentsProps {
   value: { [key in ValueType]: string };
   change: (name: string, data: string) => void;
-  setIndex: React.Dispatch<React.SetStateAction<number>>;
-  Index: number;
+  setIndex: React.Dispatch<React.SetStateAction<[number, number]>>;
+  Index: [number, number];
 }
 
 const SConponent = ({ value, change, Index, setIndex }: ComponentsProps) => {
@@ -62,8 +62,6 @@ const SConponent = ({ value, change, Index, setIndex }: ComponentsProps) => {
   }
 
   const codeCheck = () => {
-    setIndex(2);
-    return;
     if (!EState || authentication.length < 6) return;
     else if (time <= 0) {
       setAState(false);
@@ -71,7 +69,7 @@ const SConponent = ({ value, change, Index, setIndex }: ComponentsProps) => {
     }
     else if (AState) {
       change('email', verified);
-      setIndex(2);
+      setIndex([2, 1]);
     }
     axios({
       method: 'GET',
@@ -89,7 +87,7 @@ const SConponent = ({ value, change, Index, setIndex }: ComponentsProps) => {
         clearInterval(Interval.current);
         Interval.current = undefined;
         change('email', verified);
-        setIndex(2);
+        setIndex([2, 1]);
       })
       .catch((err) => {
         console.log(err);
@@ -112,11 +110,11 @@ const SConponent = ({ value, change, Index, setIndex }: ComponentsProps) => {
   }
 
   return (
-    <_.SignBox bool={Index === 1} visible={!(id && password)}>
+    <_.SignBox bool={Index[0] === 1} reverse={(Index[0] - Index[1]) < 0} visible={!(id && password)}>
       <_.FlexDiv direction='column'>
         <_.BeforeIcon
           className="ri-arrow-left-s-line"
-          onClick={() => setIndex(0)}
+          onClick={() => setIndex([0, 1])}
         />
         <_.FlexDiv direction='column' gap={10}>
         <Text font="Title1">회원가입</Text>

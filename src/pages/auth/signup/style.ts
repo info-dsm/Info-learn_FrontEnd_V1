@@ -57,13 +57,14 @@ export const BlurBox = styled.div`
   justify-content: center;
 `
 
-export const SignBox = styled.div<{ bool: boolean, visible?: boolean }>`
+export const SignBox = styled.div<{ bool: boolean, visible?: boolean, reverse?: boolean}>`
   position: absolute;
   margin: 18.5vh 0 0 0;
   z-index: ${({bool}) => bool ? 99 : 10};
   animation-duration: 1s;
   animation-fill-mode: forwards;
-  animation-name: ${({ bool }) => bool ? slideInLeft : slideOutLeft};
+  animation-timing-function: ease-in-out;
+  animation-name: ${({ bool, reverse }) =>  bool ? slideIn(reverse) : slideOut(reverse)};
   visibility: ${({visible}) => visible ? 'hidden' : 'visible'};
 `
 
@@ -130,10 +131,10 @@ export const MoveText = styled.div`
   cursor: pointer;
 `
 
-export const slideInLeft = keyframes`
+const slideIn = (bool?: boolean) => keyframes`
   0% {
     opacity: 0;
-    transform: translateX(470px);
+    transform: translateX(${bool ? '-470px' : '470px'});
     pointer-events: none;
   }
   100% {
@@ -143,7 +144,7 @@ export const slideInLeft = keyframes`
   }
 `;
 
-export const slideOutLeft = keyframes`
+const slideOut = (bool?: boolean) => keyframes`
   0% {
     opacity: 1;
     transform: translateX(0);
@@ -151,7 +152,7 @@ export const slideOutLeft = keyframes`
   }
   100% {
     opacity: 0;
-    transform: translateX(-470px);
+    transform: translateX(${bool ? '470px' : '-470px'});
     pointer-events: none;
   }
 `;

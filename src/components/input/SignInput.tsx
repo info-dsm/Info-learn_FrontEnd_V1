@@ -17,9 +17,10 @@ interface InputProps {
     message?: string;
     readOnly?: boolean;
     post?: React.Dispatch<React.SetStateAction<[number, number, boolean] | undefined>>;
+    percent?: number;
 }
 
-const SignInput = ({ Title, name, placeholder, eyes, change, value, max, email, time, state, message, readOnly, post }: InputProps) => {
+const SignInput = ({ Title, name, placeholder, eyes, change, value, max, email, time, state, message, readOnly, post, percent }: InputProps) => {
     const [eye, setEye] = useState(eyes ?? false);
 
     return (
@@ -58,9 +59,7 @@ const SignInput = ({ Title, name, placeholder, eyes, change, value, max, email, 
                         maxLength={max}
                         readOnly={readOnly}
                     />
-
-                    {
-                        eyes !== undefined && (
+                    {eyes !== undefined && (
                             eye ?
                                 <_.Icon
                                     fill='Gray400'
@@ -73,9 +72,15 @@ const SignInput = ({ Title, name, placeholder, eyes, change, value, max, email, 
                                     className='ri-eye-off-line'
                                     onClick={() => setEye(true)}
                                 />
-                        )
-                    }
+                    )}
                 </_.InputOutBox>
+                {
+                    percent !== undefined &&
+                    <_.BetweenBox bool={true}>
+                        <_.Progress value={percent}/>
+                        <Text font="Body4" gradient={true}>{percent}%</Text>
+                    </_.BetweenBox>
+                }
                 {
                     state !== undefined && (
                         state ?
