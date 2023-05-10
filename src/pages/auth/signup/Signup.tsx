@@ -118,10 +118,6 @@ const Signup = () => {
     }
 
     useEffect(() => {
-        console.log(Index);
-    }, [Index])
-
-    useEffect(() => {
         (() => {
             window.addEventListener("beforeunload", preventClose);
         })();

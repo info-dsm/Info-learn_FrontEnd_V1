@@ -44,7 +44,14 @@ const Login = () => {
   }
 
   const postLogin = () => {
-    if (!(value.accountId && PState)) return;
+    if (!(value.accountId)) {
+      toast.error('아이디를 입력해주세요')
+      return
+    };
+    if(!PState) {
+      toast.error('비밀번호가 잘못됐습니다');
+      return;
+    }
     axios({
       method: 'POST',
       url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/auth/sign-in`,
@@ -57,7 +64,11 @@ const Login = () => {
         navigate('/')
       })
       .catch((err) => {
-        toast.error('네트워크나 아이디와 비번을 확인해주세요!');
+        if(err.request) {
+          toast.error('네트워크를 확인해주세요!');
+        } else {
+          toast.error('아이디와 비번을 확인해주세요!');
+        }
         console.log(err);
       })
   }
@@ -94,9 +105,7 @@ const Login = () => {
                 change={passwordCheck}
                 value={value.password}
                 eyes={true}
-                state={PState}
-                message={PState ? undefined : '비밀번호 형식에 맞지 않습니다'}
-              />
+                />
             </_.FlexDiv>
             <Button onClick={() => postLogin()} width="400px" height='47px'>
               로그인
