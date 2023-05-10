@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import styled, {keyframes} from "styled-components";
 import {Text} from "../../components/text";
 import Icon from "../../assets/Icon";
@@ -11,7 +11,8 @@ import {useNavigate} from "react-router-dom";
 import Modal from "../../components/Modal";
 import {korTypeToEng} from "../../K2E";
 import {PostLecture} from "./api";
-import {useMutation} from "react-query";
+import {useMutation, useQuery} from "react-query";
+import {getLectures} from "../Main";
 
 type ValueType = 'title' | 'explanation' | 'tag';
 
@@ -27,7 +28,17 @@ const LectureRegistration = () => {
     const [modal, setModal] = useState<boolean>(false);
     const [inputFile, setFile] = useState<File>();
     const [imgUrl, setImgUrl] = useState<string | ArrayBuffer | null>('');
-    const {mutate: postLecture} = useMutation(['postLecture'], PostLecture);
+    const {mutate: postLecture, data: resData, isLoading} = useMutation(['postLecture'], PostLecture);
+    const {data: pathData, refetch: rePath} = useQuery(['path'], () => getLectures(1));
+
+    useEffect(() => {
+        rePath;
+        if (!isLoading && resData !== undefined) {
+            const {title, createdBy} = pathData[0];
+            const navTitle = title.replaceAll(" ", "_").trim();
+            navigate(`/lecture/${createdBy}/${navTitle}`, {state: resData.lectureId});
+        }
+    }, [isLoading, resData]);
 
     const navigate = useNavigate();
 
@@ -79,9 +90,7 @@ const LectureRegistration = () => {
             }
         });
         inputFile && postLecture({postJson, inputFile});
-        setTimeout(() => {
-            navigate(-1)
-        }, 1000);
+        if (isLoading) console.log('lecture post loading....');
     }
 
     return (

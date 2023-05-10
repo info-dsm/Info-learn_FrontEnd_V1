@@ -5,7 +5,7 @@ import {AccessToken} from "../Main";
 export async function PostLecture({postJson, inputFile}: { postJson: string, inputFile: File }) {
     const upLoadStatus = toast.loading('강의를 등록중입니다!');
     console.log("filename = " + inputFile?.name);
-    await axios({
+    const postRes = await axios({
         method: 'POST',
         url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/lecture`,
         data: postJson,
@@ -15,11 +15,12 @@ export async function PostLecture({postJson, inputFile}: { postJson: string, inp
         }
     }).then(response => {
         PutS3({url: response.data.preSignedUrl.url, file: inputFile});
+        return response
     }).catch(error => {
         if (error.response === undefined) toast.error("인터넷 연결 상태를 확인해 주세요",{id: upLoadStatus});
         else toast.error(`${error.response?.data?.data}는` + error.response?.data?.message, {id: upLoadStatus});
     })
-    console.log('post 함수에 들어왔농!');
+    return postRes?.data
 
     async function PutS3({url, file}: { url: string, file?: File }) {
         await axios({

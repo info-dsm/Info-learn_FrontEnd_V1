@@ -10,6 +10,8 @@ import InfinityLayout from "./router/InfinityLayout";
 import LectureRegistration from "./lecture/LectureRegistration";
 import RegistrationLayout from "./router/RegistrationLayout";
 import Search from "./search";
+import DetailLecture from "./lecture/DetailLecture";
+import VideoRegistration from "./lecture/VideoRegistration";
 
 function App() {
     return (
@@ -21,12 +23,14 @@ function App() {
             <Route element={<StudentLayout/>}>
                 <Route path="/" element={<Main/>}/>
                 <Route path="/search" element={<Search/>}/>
+                <Route path="/lecture/:user/:id" element={<DetailLecture/>}/>
             </Route>
             <Route element={<InfinityLayout/>}>
                 <Route path="/lecture" element={<LectureAll/>}/>
             </Route>
             <Route element={<RegistrationLayout/>}>
                 <Route path="/lecture/registration" element={<LectureRegistration/>}/>
+                <Route path="/lecture/videoRegistration" element={<VideoRegistration/>}/>
             </Route>
         </Routes>
     );

@@ -196,12 +196,12 @@ const Search = () => {
                         value === '제목 기준' ?
                             data?.titleResults.map((value: postType) => {
                                 const { id, ...data } = value;
-                                return <Post {...data} key={id} />
+                                return <Post lectureId={id} {...data} key={id} />
                             })
                             :
                             data?.explanationResults.map((value: postType) => {
                                 const { id, ...data } = value;
-                                return <Post {...data} key={id} />
+                                return <Post lectureId={id} {...data} key={id} />
                             })
                     }
                 </_.FlexDiv>

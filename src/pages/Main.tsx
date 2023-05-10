@@ -13,22 +13,35 @@ import {useQuery} from "react-query";
 import axios from "axios";
 import * as _ from "./MainStyle";
 
-export const AccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJURUFDSEVSIiwianRpIjoibmlnZXQiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNjgzMzY1MjExLCJleHAiOjE2ODM0NTE2MTF9.WkKx6khiw6E6A8AWlEnUBt-w4fYpAT8L-YhsgRPiYbw";
+export const AccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJURUFDSEVSIiwianRpIjoibmlnZXIiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNjgzNjE3OTEyLCJleHAiOjE2ODM3MDQzMTJ9.out8gWTJKsCGzygbn4fwThmRYX1GHVcb8wzx63Adg0o";
+
+export async function getLectures(limit: number) {
+    console.log('get!! get!! 오오오오ㅗㅇ!');
+    const lecturesRes = await axios({
+        method: 'GET',
+        url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/lecture?limit=${limit}`,
+        headers: {
+            Authorization: `Bearer ${AccessToken}`,
+            'ngrok-skip-browser-warning': '69420'
+        }
+    })
+    return lecturesRes.data.lectures
+}
+
+export interface lecturesProps {
+    lectureId: number;
+    title: string;
+    explanation: string;
+    lectureThumbnailUrl: string;
+    tagNameList: {
+        name: string;
+    }[]
+    createdAt: string;
+    createdBy: string;
+}
 
 const Main = () => {
-    const {data: lecture} = useQuery(['getLectures'], getLectures);
-
-    async function getLectures() {
-        const lecturesRes = await axios({
-            method: 'GET',
-            url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/lecture?limit=4`,
-            headers: {
-                Authorization: `Bearer ${AccessToken}`,
-                'ngrok-skip-browser-warning': '69420'
-            }
-        })
-        return lecturesRes.data.lectures
-    }
+    const {data: lecture} = useQuery(['getLectures'], () => getLectures(4));
 
     const titleCategory = [
         {name: "백엔드", imageUrl: BackendImg},
@@ -48,18 +61,6 @@ const Main = () => {
         {imageUrl: HeadImg, writer: "현석조", date: "2023.03.01", title: "원준이와 함께 하고픈 일", subTitle: "원준이 맥북 해킹으로 먹고 싶농", tag: [{name: "Study"}]},
     ];
     const tag = ['HTML', 'CSS', 'Javascript', 'Typescript', 'React', 'Java', 'Kotlin', 'Go', 'Next', 'Nest', 'Spring', 'C', 'Dart'];
-
-    interface lecturesProps {
-        lectureId: number;
-        title: string;
-        explanation: string;
-        lectureThumbnailUrl: string;
-        tagNameList: {
-            name: string;
-        }[]
-        createdAt: string;
-        createdBy: string;
-    }
 
     return (
         <>
@@ -88,7 +89,7 @@ const Main = () => {
                 <PostDiv>
                     {lecture && lecture.map((data: lecturesProps) =>
                         <Post isLecture img={data.lectureThumbnailUrl} name={data.createdBy} date={data.createdAt} title={data.title} subTitle={data.explanation} tag={data.tagNameList}
-                              key={data.lectureId}/>
+                              lectureId={data.lectureId} key={data.lectureId}/>
                     )}
                 </PostDiv>
                 <FlexDiv margin="100px 0 0" wrap="wrap">
@@ -100,7 +101,7 @@ const Main = () => {
                 </TagDiv>
                 <PostDiv>
                     {newTil.map((data, index) =>
-                        <Post img={data.imageUrl} name={data.writer} date={data.date} title={data.title} subTitle={data.subTitle} tag={data.tag} key={index}/>
+                        <Post img={data.imageUrl} name={data.writer} date={data.date} title={data.title} subTitle={data.subTitle} tag={data.tag} lectureId={index} key={index}/>
                     )}
                 </PostDiv>
             </Content>
