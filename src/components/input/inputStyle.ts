@@ -73,13 +73,33 @@ export const RText = styled.div`
   color: ${Colors.Black};
 `
 
-export const BetweenBox = styled.div`
+export const BetweenBox = styled.div<{bool?: boolean}>`
   display: flex;
+  align-items: center;
   justify-content: space-between;
+  margin-top: ${({bool}) => bool ? '-5px' : '0'};
 `
 
 export const EmailGapBox = styled.div`
   display: flex;
   gap: 4px;
   cursor: pointer;
+`
+
+export const Progress = styled.progress.attrs({
+  max: 100
+})`
+  width: 360px;
+  height: 8px;
+  appearance: none;
+  &::-webkit-progress-bar {
+    border-radius: 8px;
+    background: ${Colors.Gray100};
+  }
+
+  &::-webkit-progress-value {
+    border-radius: 8px;
+    background: ${Colors.PrimaryGradient};
+    transition: 0.3s;
+  }
 `

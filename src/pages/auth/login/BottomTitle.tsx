@@ -13,7 +13,7 @@ const BottomTitle = ({ LText, RText }: BottomProps) => {
   return (
     <_.BottomBox>
       <_.ExText>{LText}</_.ExText>
-      <_.MoveText onClick={() => navigate('/login')}>
+      <_.MoveText onClick={() => navigate('/signup')}>
         <p>{RText}</p>
         <_.Icon size={16} fill='FPrimary500' className="ri-arrow-right-s-line"></_.Icon>
       </_.MoveText>

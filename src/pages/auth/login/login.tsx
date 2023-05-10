@@ -3,6 +3,9 @@ import SignInput from "../../../components/input/SignInput";
 import { Button } from "../../../components/button/Button";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
+import { Text } from "../../../components/text";
+import { Colors } from "../../../styles/theme/color";
+import { toast } from "react-hot-toast";
 import BottomTitle from "./BottomTitle";
 import axios from 'axios';
 import * as _ from './style';
@@ -48,12 +51,13 @@ const Login = () => {
       data: value
     })
       .then((res) => {
+        toast.success('로그인에 성공했습니다');
         setCookie('accessToken', res.data.accessToken);
         setCookie('refreshToken', res.data.refreshToken);
         navigate('/')
       })
       .catch((err) => {
-        alert('네트워크나 아이디와 비번을 확인해주세요!');
+        toast.error('네트워크나 아이디와 비번을 확인해주세요!');
         console.log(err);
       })
   }
@@ -70,10 +74,12 @@ const Login = () => {
       <_.BottomCircle />
       <_.BlurBox>
         <_.Containter>
-          <_.LoginBox>
-            <_.Title>로그인</_.Title>
-            <_.SubTitle>로그인을 하여 서비스를 이용해 보세요.</_.SubTitle>
-            <_.Flexbox>
+          <_.FlexDiv direction='column'>
+            <_.FlexDiv direction='column' gap={10}>
+              <Text font="Title1">로그인</Text>
+              <Text font="Body2" color={Colors.Gray400}>로그인을 하여 서비스를 이용해 보세요</Text>
+            </_.FlexDiv>
+            <_.FlexDiv direction='column' margin="80px 0 56px 0" gap={16}>
               <SignInput
                 Title='아이디'
                 name='accountId'
@@ -91,12 +97,12 @@ const Login = () => {
                 state={PState}
                 message={PState ? undefined : '비밀번호 형식에 맞지 않습니다'}
               />
-            </_.Flexbox>
+            </_.FlexDiv>
             <Button onClick={() => postLogin()} width="400px" height='47px'>
               로그인
             </Button>
             <BottomTitle LText='회원이 아니신가요?' RText='회원가입' />
-          </_.LoginBox>
+          </_.FlexDiv>
         </_.Containter>
       </_.BlurBox>
     </>
