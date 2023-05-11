@@ -7,12 +7,13 @@ import TextInput from "../../components/input/TextInput";
 import Input from "../../components/input/Input";
 import {Button} from "../../components/button/Button";
 import toast from "react-hot-toast";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import Modal from "../../components/Modal";
-import {korTypeToEng} from "../../K2E";
-import {PostLecture} from "./api";
+import {PostLecture, PutLecture} from "./api";
 import {useMutation, useQuery} from "react-query";
 import {getLectures} from "../Main";
+import {getLDetail} from "./DetailLecture";
+import {korTypeToEng} from "../../K2E";
 
 type ValueType = 'title' | 'explanation' | 'tag';
 
@@ -29,11 +30,35 @@ const LectureRegistration = () => {
     const [inputFile, setFile] = useState<File>();
     const [imgUrl, setImgUrl] = useState<string | ArrayBuffer | null>('');
     const {mutate: postLecture, data: resData, isLoading} = useMutation(['postLecture'], PostLecture);
+    const {mutate: putLecture} = useMutation(['putLecture'], PutLecture);
     const {data: pathData, refetch: rePath} = useQuery(['path'], () => getLectures(1));
+    const {data: editData} = useQuery(['Edit'], () => getLDetail(state));
+
+    useEffect(() => {
+        if (editData) {
+            setValue({
+                title: editData.title,
+                explanation: editData.explanation,
+                tag: ''
+            });
+            setTag(editData.tagNameList.map((value: { name: string }) => value.name));
+            setImgUrl(editData.lectureThumbnailUrl);
+            console.log(tag);
+        } else {
+            setValue({
+                title: '',
+                explanation: '',
+                tag: ''
+            });
+            setTag([]);
+            setImgUrl(null);
+            setFile(undefined);
+        }
+    }, [editData])
 
     useEffect(() => {
         rePath;
-        if (!isLoading && resData !== undefined) {
+        if (!isLoading && resData && pathData !== undefined) {
             const {title, createdBy} = pathData[0];
             const navTitle = title.replaceAll(" ", "_").trim();
             navigate(`/lecture/${createdBy}/${navTitle}`, {state: resData.lectureId});
@@ -41,6 +66,7 @@ const LectureRegistration = () => {
     }, [isLoading, resData]);
 
     const navigate = useNavigate();
+    const state = useLocation().state;
 
     const tagAdd = () => {
         if (tag.every((data) => data !== value.tag)) {
@@ -78,19 +104,34 @@ const LectureRegistration = () => {
     }
 
     const makeJson = () => {
-        const postJson = JSON.stringify({
-            title: value.title,
-            explanation: value.explanation,
-            searchTitle: korTypeToEng(value.title),
-            searchExplanation: korTypeToEng(value.explanation),
-            tagNameList: tag,
-            lectureThumbnail: {
+        if (editData) {
+            /*const titleJson = JSON.stringify({
+                title: value.title,
+                explanation: value.explanation
+            })
+            const inputJson = JSON.stringify({
                 fileName: inputFile?.name,
                 contentType: "image/png"
-            }
-        });
-        inputFile && postLecture({postJson, inputFile});
-        if (isLoading) console.log('lecture post loading....');
+            })
+            const tagList = tag;*/
+            const deleteList = editData.tagNameList.filter((value: { name: string }) => tag.includes(value.name) ? null : value.name);
+            console.log(deleteList);
+            // inputFile && putLecture({titleJson, inputJson, inputFile, lectureId: state, tagList})
+        } else {
+            const postJson = JSON.stringify({
+                title: value.title,
+                explanation: value.explanation,
+                searchTitle: korTypeToEng(value.title),
+                searchExplanation: korTypeToEng(value.explanation),
+                tagNameList: tag,
+                lectureThumbnail: {
+                    fileName: inputFile?.name,
+                    contentType: "image/png"
+                }
+            });
+            inputFile && postLecture({postJson, inputFile});
+            if (isLoading) console.log('lecture post loading....');
+        }
     }
 
     return (
@@ -141,7 +182,7 @@ const LectureRegistration = () => {
                     <Button gray onClick={() => setModal(true)}>취소</Button>
                     <Button blue onClick={() => {
                         value.title && value.explanation && tag && makeJson()
-                    }}>강의 등록</Button>
+                    }}>{editData ? "강의 수정" : "강의 등록"}</Button>
                 </RDiv>
             </Content>
         </>
@@ -161,6 +202,7 @@ const FileLabel = styled.label<{ url: string }>`
   background-image: url(${props => props.url ?? "none"});
   border-radius: 8px;
   background-size: cover;
+  background-position: center center;
 
   svg, p {
     display: ${props => props.url ? 'none' : 'block'};

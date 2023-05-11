@@ -45,6 +45,12 @@ export const TitleDiv = styled.div`
   flex-direction: column;
   gap: 4px;
   width: 100%;
+
+  p {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
 `
 export const InfoDiv = styled.div`
   display: flex;

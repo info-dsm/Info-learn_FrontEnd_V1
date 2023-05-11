@@ -1,19 +1,15 @@
-import React from "react";
+import React, {useEffect} from "react";
 import styled from "styled-components";
 import {Text} from "../../components/text";
-import {Link, useLocation} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import {AccessToken} from "../Main";
 import axios from "axios";
 import {useQuery} from "react-query";
 import {Colors} from "../../styles/theme/color";
 import {Button} from "../../components/button/Button";
 
-const DetailLecture = () => {
-    const {data: detail} = useQuery(['nigrongrong'], getLectures);
-    const state = useLocation().state;
-
-    async function getLectures() {
-        console.log('get!! get!!');
+export async function getLDetail(state: string) {
+    if (state) {
         const lecturesRes = await axios({
             method: 'GET',
             url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/lecture/${state}`,
@@ -24,7 +20,17 @@ const DetailLecture = () => {
         })
         return lecturesRes.data
     }
+}
 
+const DetailLecture = () => {
+    const {data: detail, remove} = useQuery(['nigrongrong'], () => getLDetail(state));
+    const state = useLocation().state;
+    const sNavigate = useNavigate();
+    useEffect(() => {
+        if (detail && detail.lectureId !== state) {
+            remove()
+        }
+    }, []);
     return (
         <>
             {detail ?
@@ -42,8 +48,8 @@ const DetailLecture = () => {
                         </TDiv>
                         {/*만약 선생님이라면 강의 상호작용 버튼 생성*/}
                         <EditDiv>
-                            <Link to="/lecture/registration" style={{textDecoration:"none"}}><Button gray>강의 수정</Button></Link>
-                            <Link to="/lecture/videoRegistration" style={{textDecoration:"none"}}><Button blue>강의 영상 등록</Button></Link>
+                            <Button gray onClick={() => sNavigate('/lecture/registration', {state: state})}>강의 수정</Button>
+                            <Link to="/lecture/videoRegistration" style={{textDecoration: "none"}}><Button blue>강의 영상 등록</Button></Link>
                         </EditDiv>
                     </LBody>
                 </> :
@@ -85,6 +91,10 @@ const LBody = styled.div`
   display: flex;
   flex-direction: column;
   gap: 120px;
+
+  @media only screen and (max-width: 1080px) {
+    width: 94%;
+  }
 `
 const TitleImg = styled.div<{ src: string }>`
   height: 460px;

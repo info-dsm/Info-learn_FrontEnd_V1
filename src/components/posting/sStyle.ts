@@ -47,6 +47,6 @@ export const PostBody = styled.div`
   &:hover .upDiv {
     transform: translateX(-10px);
   }
-  
+
   cursor: pointer;
 `
