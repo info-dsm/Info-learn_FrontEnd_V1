@@ -48,7 +48,15 @@ const DetailLecture = () => {
                         </TDiv>
                         {/*만약 선생님이라면 강의 상호작용 버튼 생성*/}
                         <EditDiv>
-                            <Button gray onClick={() => sNavigate('/lecture/registration', {state: state})}>강의 수정</Button>
+                            <Button gray onClick={() => sNavigate('/lecture/registration', {
+                                state: {
+                                    lectureId: detail.lectureId,
+                                    title: detail.title,
+                                    explanation: detail.explanation,
+                                    lectureThumbnailUrl: detail.lectureThumbnailUrl,
+                                    tagNameList: detail.tagNameList,
+                                }
+                            })}>강의 수정</Button>
                             <Link to="/lecture/videoRegistration" style={{textDecoration: "none"}}><Button blue>강의 영상 등록</Button></Link>
                         </EditDiv>
                     </LBody>

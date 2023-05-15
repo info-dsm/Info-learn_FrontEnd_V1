@@ -40,7 +40,7 @@ export async function PutLecture({titleJson, inputJson, inputFile, lectureId, ta
         console.log('title success');
     })
 
-    tagList.map(async (tag, index) =>
+    tagList[0] !== undefined && tagList.map(async (tag, index) =>
         await axios({
             method: 'PUT',
             url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/lecture/${lectureId}/tag`,

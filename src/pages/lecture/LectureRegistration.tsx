@@ -12,7 +12,6 @@ import Modal from "../../components/Modal";
 import {DeleteLecture, PostLecture, PutLecture} from "./api";
 import {useMutation, useQuery} from "react-query";
 import {getLectures} from "../Main";
-import {getLDetail} from "./DetailLecture";
 import {korTypeToEng} from "../../K2E";
 
 type ValueType = 'title' | 'explanation' | 'tag';
@@ -35,17 +34,16 @@ const LectureRegistration = () => {
     const {mutate: putLecture} = useMutation(['putLecture'], PutLecture);
     const {mutate: deleteLecture} = useMutation(['deleteLecture'], DeleteLecture);
     const {data: pathData, refetch: rePath} = useQuery(['path'], () => getLectures(1));
-    const {data: editData} = useQuery(['Edit'], () => getLDetail(state));
 
     useEffect(() => {
-        if (editData) {
+        if (state) {
             setValue({
-                title: editData.title,
-                explanation: editData.explanation,
+                title: state.title,
+                explanation: state.explanation,
                 tag: ''
             });
-            setTag(editData.tagNameList.map((value: { name: string }) => value.name));
-            setImgUrl(editData.lectureThumbnailUrl);
+            setTag(state.tagNameList.map((value: { name: string }) => value.name));
+            setImgUrl(state.lectureThumbnailUrl);
             setIsRegi('수정');
         } else {
             setValue({
@@ -58,9 +56,11 @@ const LectureRegistration = () => {
             setFile(undefined);
             setIsRegi('등록');
         }
-    }, [editData])
+    }, [])
+
 
     useEffect(() => {
+        console.log(resData);
         rePath;
         if (!isLoading && resData && pathData[0] !== undefined) {
             console.log('enter navigate code!');
@@ -109,7 +109,7 @@ const LectureRegistration = () => {
     }
 
     const makeJson = () => {
-        if (editData) {
+        if (state) {
             console.log('edit clicked!')
             const titleJson = JSON.stringify({
                 titleRequest: {
@@ -126,9 +126,10 @@ const LectureRegistration = () => {
                 contentType: inputFile?.type,
                 fileSize: inputFile?.size
             })
-            const tagList = tag;
-            const deleteList: string[] = editData.tagNameList.filter((value: { name: string }) => !tag.includes(value.name)).map((value: { name: string }) => value.name);
-            putLecture({titleJson, inputJson, inputFile, lectureId: state, tagList, deleteList});
+            const stayList = state.tagNameList.filter((value: { name: string }) => tag.includes(value.name)).map((value: { name: string }) => value.name);
+            const tagList = tag.filter((value: string) => !stayList.includes(value)).map((value: string) => value);
+            const deleteList: string[] = state.tagNameList.filter((value: { name: string }) => !tag.includes(value.name)).map((value: { name: string }) => value.name);
+            putLecture({titleJson, inputJson, inputFile, lectureId: state.lectureId, tagList, deleteList});
             setTimeout(() => navigate(-1), 1000);
         } else {
             const postJson = JSON.stringify({
@@ -201,8 +202,8 @@ const LectureRegistration = () => {
                         )}
                     </TagDiv>
                 </TagRDiv>
-                <RDiv flex={editData ? "space-between" : "flex-end"}>
-                    {editData && <Button red onClick={() => setModal({...modal, delete: true})}>강의 삭제</Button>}
+                <RDiv flex={state ? "space-between" : "flex-end"}>
+                    {state && <Button red onClick={() => setModal({...modal, delete: true})}>강의 삭제</Button>}
                     <div style={{display: "flex", gap: "10px"}}>
                         <Button gray onClick={() => setModal({...modal, cancel: true})}>취소</Button>
                         <Button blue onClick={() => {
