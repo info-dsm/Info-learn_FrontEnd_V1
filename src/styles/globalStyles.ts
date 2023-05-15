@@ -12,6 +12,7 @@ const GlobalStyle = createGlobalStyle`
     user-select: none;
     ::-webkit-scrollbar {
       width: 6px;
+      height: 0;
     }
     ::-webkit-scrollbar-thumb {
       background: ${Colors["SPrimary500"]};

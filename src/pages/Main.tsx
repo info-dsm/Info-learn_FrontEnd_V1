@@ -13,10 +13,9 @@ import {useQuery} from "react-query";
 import axios from "axios";
 import * as _ from "./MainStyle";
 
-export const AccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJURUFDSEVSIiwianRpIjoibmlnZXIiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNjgzNjE3OTEyLCJleHAiOjE2ODM3MDQzMTJ9.out8gWTJKsCGzygbn4fwThmRYX1GHVcb8wzx63Adg0o";
+export const AccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJURUFDSEVSIiwianRpIjoibmlnZXIiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNjg0MTM3NTU1LCJleHAiOjE2ODQyMjM5NTV9.PFiJZRp65HYno-Ur7yjazahR4knFCyoshweFjnQ6qsM";
 
 export async function getLectures(limit: number) {
-    console.log('get!! get!! 오오오오ㅗㅇ!');
     const lecturesRes = await axios({
         method: 'GET',
         url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/lecture?limit=${limit}`,
@@ -74,7 +73,7 @@ const Main = () => {
                 </_.DefaultWidth>
             </TextDiv>
             <Content>
-                <FlexDiv margin="80px 0 0" gap={60} width="100%">
+                <FlexDiv margin="80px 0 0" gap={60} width="100%" className="category">
                     {titleCategory.map((category) => (
                         <FlexDiv key={category.name} direction="column" align="center" gap={20} style={{cursor: 'pointer'}}>
                             <Image src={category.imageUrl}/>
@@ -199,5 +198,9 @@ const Content = styled.div`
   width: 1000px;
   @media only screen and (max-width: 1080px) {
     width: 94%;
+  }
+
+  .category {
+    overflow-x: scroll;
   }
 `

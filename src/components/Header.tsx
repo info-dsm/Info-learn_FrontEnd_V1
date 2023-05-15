@@ -97,7 +97,11 @@ const DropInput = ({padding, height, opacity, isInput}: InputType) => {
         searchInput.current?.focus();
     }
     useEffect(() => {
-        setTimeout(inputClear, 200);
+        if (isInput) {
+            setTimeout(inputClear, 200);
+        } else {
+            searchInput.current?.blur();
+        }
     }, [isInput]);
 
     return (

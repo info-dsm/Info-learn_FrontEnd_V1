@@ -7,14 +7,15 @@ import TextInput from "../../components/input/TextInput";
 import Input from "../../components/input/Input";
 import {Button} from "../../components/button/Button";
 import toast from "react-hot-toast";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import Modal from "../../components/Modal";
-import {korTypeToEng} from "../../K2E";
-import {PostLecture} from "./api";
+import {DeleteLecture, PostLecture, PutLecture} from "./api";
 import {useMutation, useQuery} from "react-query";
 import {getLectures} from "../Main";
+import {korTypeToEng} from "../../K2E";
 
 type ValueType = 'title' | 'explanation' | 'tag';
+type modalType = 'cancel' | 'delete';
 
 const LectureRegistration = () => {
     const [value, setValue] = useState<{
@@ -25,22 +26,52 @@ const LectureRegistration = () => {
         tag: ''
     });
     const [tag, setTag] = useState<string[]>([]);
-    const [modal, setModal] = useState<boolean>(false);
+    const [modal, setModal] = useState<{ [key in modalType]: boolean }>({cancel: false, delete: false});
     const [inputFile, setFile] = useState<File>();
     const [imgUrl, setImgUrl] = useState<string | ArrayBuffer | null>('');
+    const [isRegi, setIsRegi] = useState<string>('등록');
     const {mutate: postLecture, data: resData, isLoading} = useMutation(['postLecture'], PostLecture);
+    const {mutate: putLecture} = useMutation(['putLecture'], PutLecture);
+    const {mutate: deleteLecture} = useMutation(['deleteLecture'], DeleteLecture);
     const {data: pathData, refetch: rePath} = useQuery(['path'], () => getLectures(1));
 
     useEffect(() => {
+        if (state) {
+            setValue({
+                title: state.title,
+                explanation: state.explanation,
+                tag: ''
+            });
+            setTag(state.tagNameList.map((value: { name: string }) => value.name));
+            setImgUrl(state.lectureThumbnailUrl);
+            setIsRegi('수정');
+        } else {
+            setValue({
+                title: '',
+                explanation: '',
+                tag: ''
+            });
+            setTag([]);
+            setImgUrl(null);
+            setFile(undefined);
+            setIsRegi('등록');
+        }
+    }, [])
+
+
+    useEffect(() => {
+        console.log(resData);
         rePath;
-        if (!isLoading && resData !== undefined) {
+        if (!isLoading && resData && pathData[0] !== undefined) {
+            console.log('enter navigate code!');
             const {title, createdBy} = pathData[0];
             const navTitle = title.replaceAll(" ", "_").trim();
             navigate(`/lecture/${createdBy}/${navTitle}`, {state: resData.lectureId});
         }
-    }, [isLoading, resData]);
+    }, [isLoading, resData, pathData]);
 
     const navigate = useNavigate();
+    const state = useLocation().state;
 
     const tagAdd = () => {
         if (tag.every((data) => data !== value.tag)) {
@@ -78,34 +109,68 @@ const LectureRegistration = () => {
     }
 
     const makeJson = () => {
-        const postJson = JSON.stringify({
-            title: value.title,
-            explanation: value.explanation,
-            searchTitle: korTypeToEng(value.title),
-            searchExplanation: korTypeToEng(value.explanation),
-            tagNameList: tag,
-            lectureThumbnail: {
+        if (state) {
+            console.log('edit clicked!')
+            const titleJson = JSON.stringify({
+                titleRequest: {
+                    title: value.title,
+                    searchTitle: korTypeToEng(value.title)
+                },
+                explanationRequest: {
+                    explanation: value.explanation,
+                    searchExplanation: korTypeToEng(value.explanation)
+                }
+            })
+            const inputJson = JSON.stringify({
                 fileName: inputFile?.name,
-                contentType: "image/png"
-            }
-        });
-        inputFile && postLecture({postJson, inputFile});
-        if (isLoading) console.log('lecture post loading....');
+                contentType: inputFile?.type,
+                fileSize: inputFile?.size
+            })
+            const stayList = state.tagNameList.filter((value: { name: string }) => tag.includes(value.name)).map((value: { name: string }) => value.name);
+            const tagList = tag.filter((value: string) => !stayList.includes(value)).map((value: string) => value);
+            const deleteList: string[] = state.tagNameList.filter((value: { name: string }) => !tag.includes(value.name)).map((value: { name: string }) => value.name);
+            putLecture({titleJson, inputJson, inputFile, lectureId: state.lectureId, tagList, deleteList});
+            setTimeout(() => navigate(-1), 1000);
+        } else {
+            const postJson = JSON.stringify({
+                title: value.title,
+                explanation: value.explanation,
+                searchTitle: korTypeToEng(value.title),
+                searchExplanation: korTypeToEng(value.explanation),
+                tagNameList: tag,
+                lectureThumbnail: {
+                    fileName: inputFile?.name,
+                    contentType: inputFile?.type,
+                    fileSize: inputFile?.size
+                }
+            });
+            inputFile && postLecture({postJson, inputFile});
+            if (isLoading) console.log('lecture post loading....');
+        }
     }
 
     return (
         <>
-            {modal && <Modal
-                title="강의 등록을 그만둘까요?"
+            {modal.cancel && <Modal
+                title={`강의 ${isRegi}을 그만둘까요?`}
                 explanation="내용을 다시 작성해야 할 수도 있어요"
                 right="그만두기"
-                onLeft={() => setModal(false)}
+                onLeft={() => setModal({...modal, cancel: false})}
                 onRight={() => navigate(-1)}
-            />}
+            />}{modal.delete && <Modal
+            title="강의를 정말 삭제하실건가요?"
+            explanation="강의를 삭제하면 되돌릴 수 없어요."
+            right="삭제하기"
+            onLeft={() => setModal({...modal, delete: false})}
+            onRight={() => {
+                deleteLecture(state);
+                setTimeout(() => navigate('/'), 1000);
+            }}
+        />}
             <Content>
                 <TextDiv>
-                    <Text font="Title1" gradient>강의 등록</Text>
-                    <Text font="Body2">강의를 등록해 주세요</Text>
+                    <Text font="Title1" gradient>강의 {isRegi}</Text>
+                    <Text font="Body2">강의를 {isRegi}해주세요</Text>
                 </TextDiv>
                 <MainInfo>
                     <Thumbnail>
@@ -116,8 +181,8 @@ const LectureRegistration = () => {
                         </FileLabel>
                     </Thumbnail>
                     <InputDiv>
-                        <TextInput change={change} value={value.title} max={100} name="title" placeholder="강의 제목을 입력해 주세요" Title="강의 제목"/>
-                        <TextInput change={change} value={value.explanation} max={100} name="explanation" placeholder="간단하고 명료한 강의 설명을 입력해 주세요" Title="강의 설명" textarea/>
+                        <TextInput width={"100%"} change={change} value={value.title} max={100} name="title" placeholder="강의 제목을 입력해 주세요" Title="강의 제목"/>
+                        <TextInput width={"100%"} change={change} value={value.explanation} max={100} name="explanation" placeholder="간단하고 명료한 강의 설명을 입력해 주세요" Title="강의 설명" textarea/>
                     </InputDiv>
                 </MainInfo>
                 <TagRDiv>
@@ -137,11 +202,14 @@ const LectureRegistration = () => {
                         )}
                     </TagDiv>
                 </TagRDiv>
-                <RDiv>
-                    <Button gray onClick={() => setModal(true)}>취소</Button>
-                    <Button blue onClick={() => {
-                        value.title && value.explanation && tag && makeJson()
-                    }}>강의 등록</Button>
+                <RDiv flex={state ? "space-between" : "flex-end"}>
+                    {state && <Button red onClick={() => setModal({...modal, delete: true})}>강의 삭제</Button>}
+                    <div style={{display: "flex", gap: "10px"}}>
+                        <Button gray onClick={() => setModal({...modal, cancel: true})}>취소</Button>
+                        <Button blue onClick={() => {
+                            value.title && value.explanation && tag && makeJson()
+                        }}>강의 {isRegi}</Button>
+                    </div>
                 </RDiv>
             </Content>
         </>
@@ -161,6 +229,7 @@ const FileLabel = styled.label<{ url: string }>`
   background-image: url(${props => props.url ?? "none"});
   border-radius: 8px;
   background-size: cover;
+  background-position: center center;
 
   svg, p {
     display: ${props => props.url ? 'none' : 'block'};
@@ -169,13 +238,12 @@ const FileLabel = styled.label<{ url: string }>`
 const FileInput = styled.input`
   display: none;
 `
-const RDiv = styled.div`
+const RDiv = styled.div<{ flex: string }>`
   width: 100%;
   height: fit-content;
   padding: 80px 0 40px;
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
+  justify-content: ${props => props.flex};
 `
 const TagInputDiv = styled.div`
   width: 100%;
