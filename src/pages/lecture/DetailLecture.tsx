@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import styled from "styled-components";
 import {Text} from "../../components/text";
-import {Link, useLocation, useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {AccessToken} from "../Main";
 import axios from "axios";
 import {useQuery} from "react-query";
@@ -42,7 +42,7 @@ const DetailLecture = () => {
                             <Text font="Body3">{detail.explanation}</Text>
                             <TagDiv>
                                 {detail.tagNameList.map((dat: { name: string }, index: number) =>
-                                    <Text font="Body2" color={Colors["FPrimary500"]} key={index}>#{dat.name}</Text>
+                                    <Text color={Colors["FPrimary500"]} key={index}>#{dat.name}</Text>
                                 )}
                             </TagDiv>
                         </TDiv>
@@ -54,10 +54,14 @@ const DetailLecture = () => {
                                     title: detail.title,
                                     explanation: detail.explanation,
                                     lectureThumbnailUrl: detail.lectureThumbnailUrl,
-                                    tagNameList: detail.tagNameList,
+                                    tagNameList: detail.tagNameList
                                 }
                             })}>강의 수정</Button>
-                            <Link to="/lecture/videoRegistration" style={{textDecoration: "none"}}><Button blue>강의 영상 등록</Button></Link>
+                            <Button blue onClick={() => sNavigate('/lecture/videoRegistration', {
+                                state: {
+                                    chapters: detail.chapters
+                                }
+                            })}>강의 영상 등록</Button>
                         </EditDiv>
                     </LBody>
                 </> :
