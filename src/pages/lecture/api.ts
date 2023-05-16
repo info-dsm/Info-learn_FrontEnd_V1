@@ -22,8 +22,8 @@ interface putProps {
     inputJson: string | undefined;
     inputFile: File | undefined;
     lectureId: string;
-    tagList: string[];
-    deleteList: string[];
+    tagList: { tagId: string }[];
+    deleteList: { tagId: string }[];
 }
 
 export async function PutLecture({titleJson, inputJson, inputFile, lectureId, tagList, deleteList}: putProps) {
@@ -40,21 +40,15 @@ export async function PutLecture({titleJson, inputJson, inputFile, lectureId, ta
         console.log('title success');
     })
 
-    tagList[0] !== undefined && tagList.map(async (tag, index) =>
-        await axios({
-            method: 'PUT',
-            url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/lecture/${lectureId}/tag`,
-            params: {
-                tag: tag
-            },
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${AccessToken}`
-            }
-        }).then(() => {
-            console.log(index + 'tag success');
-        })
-    );
+    tagList[0] !== undefined && await axios({
+        method: 'PUT',
+        url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/lecture/${lectureId}/tag`,
+        data: tagList,
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${AccessToken}`
+        }
+    })
 
     inputJson && inputFile && await axios({
         method: 'PUT',
@@ -83,21 +77,15 @@ export async function PutLecture({titleJson, inputJson, inputFile, lectureId, ta
         })
     }
 
-    if (deleteList[0] !== undefined) {
-        deleteList.map(async (value) =>
-            await axios({
-                method: 'DELETE',
-                url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/lecture/${lectureId}/tag`,
-                params: {
-                    tag: value
-                },
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${AccessToken}`
-                }
-            })
-        )
-    }
+    deleteList[0] !== undefined && await axios({
+        method: 'DELETE',
+        url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/lecture/${lectureId}/tag`,
+        data: deleteList,
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${AccessToken}`
+        }
+    })
 
     toast.success('강의가 수정되었습니다!', {
         id: editStatus,

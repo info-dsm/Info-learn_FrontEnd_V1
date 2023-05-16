@@ -7,11 +7,11 @@ import AuthLayout from "./router/AuthLayout";
 import StudentLayout from "./router/StudentLayout";
 import LectureAll from "./lecture";
 import InfinityLayout from "./router/InfinityLayout";
-import LectureRegistration from "./lecture/LectureRegistration";
+import LectureRegistration from "./lecture/LectureManage/LectureRegistration";
 import RegistrationLayout from "./router/RegistrationLayout";
 import Search from "./search";
 import DetailLecture from "./lecture/DetailLecture";
-import VideoRegistration from "./lecture/VideoRegistration";
+import VideoRegistration from "./lecture/LectureManage/VideoRegistration";
 
 function App() {
     return (

@@ -23,8 +23,8 @@ export const InputOutBox = styled.div`
   align-items: center;
 `
 
-export const InputMain = styled.input`
-  width: calc(100% - 48px);
+export const InputMain = styled.input<{width?: string}>`
+  width: ${props=> props.width ?? "calc(100% - 48px)"};
   font-weight: 400;
   font-size: 16px;
   color: ${Colors.Black};
