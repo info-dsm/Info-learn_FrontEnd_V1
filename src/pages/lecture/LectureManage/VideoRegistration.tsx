@@ -17,6 +17,11 @@ import {toast} from "react-hot-toast";
 type ValueType = 'title' | 'chapter';
 type modalType = 'cancel' | 'delete';
 
+export interface arrProps {
+    sequence: number;
+    title: string;
+}
+
 const VideoRegistration = () => {
     const [value, setValue] = useState<{
         [key in ValueType]: string
@@ -27,15 +32,15 @@ const VideoRegistration = () => {
     const [inputFile, setFile] = useState<File>();
     const [videoUrl, setVideoUrl] = useState<string | ArrayBuffer | null>('');
     const [chapterFocus, setChapterFocus] = useState<string>('강의 챕터 선택');
-    const [chapterArray, setChapterArray] = useState<string[]>([]);
+    const [chapterArray, setChapterArray] = useState<arrProps[]>([]);
     const [isRegi, setIsRegi] = useState<string>('등록');
     const [modal, setModal] = useState<{ [key in modalType]: boolean }>({cancel: false, delete: false});
     const state = useLocation().state;
     const navigate = useNavigate();
 
     useEffect(() => {
-        state.chapters.map((value: { title: string }) => {
-            setChapterArray(current => [...current, value.title]);
+        state.chapters.map((value: { title: string, sequence: number }) => {
+            setChapterArray(current => [...current, {title: value.title, sequence: value.sequence}]);
             console.log(value.title);
         });
     }, []);
@@ -69,7 +74,7 @@ const VideoRegistration = () => {
         sequencePost().then(() => {
             toast.success(value.chapter + ' 챕터가 등록되었습니다!');
             setValue({...value, chapter: ''});
-            setChapterArray([...chapterArray, value.chapter]);
+            setChapterArray([...chapterArray, {title: value.chapter, sequence: chapterArray.length + 1}]);
         });
     }
 
@@ -122,7 +127,9 @@ const VideoRegistration = () => {
                             <BigDropDown change={setChapterFocus} value={chapterFocus} arr={chapterArray} width="100%" noneMsg="챕터가"/>
                         </_.DropCoverDiv>
                         <_.AddCDiv>
-                            <Input width="100%" value={value.chapter} name="chapter" change={change} placeholder="추가 할 강의 챕터를 입력해주세요" keyDown={(e) => e.key === 'Enter' && chapterAdd()}/>
+                            <Input width="100%" value={value.chapter} name="chapter" change={change} placeholder="추가 할 강의 챕터를 입력해주세요" keyDown={(e) =>
+                                e.key === 'Enter' && !e.nativeEvent.isComposing && chapterAdd()
+                            }/>
                             <Button blue onClick={() => chapterAdd()}>챕터 추가</Button>
                         </_.AddCDiv>
                     </_.InputDiv>

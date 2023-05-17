@@ -23,14 +23,17 @@ export async function getLDetail(state: string) {
 }
 
 const DetailLecture = () => {
-    const {data: detail, remove} = useQuery(['nigrongrong'], () => getLDetail(state));
+    const {data: detail, remove, refetch} = useQuery(['nigrongrong'], () => getLDetail(state));
     const state = useLocation().state;
     const sNavigate = useNavigate();
+
     useEffect(() => {
         if (detail && detail.lectureId !== state) {
             remove()
+            refetch()
         }
     }, []);
+
     return (
         <>
             {detail ?

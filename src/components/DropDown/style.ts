@@ -96,6 +96,12 @@ export const BigContents = styled(Contents)<{ width?: string }>`
   left: 0;
   background: ${Colors.Gray100};
   box-shadow: ${Colors.Gray400} 0 10px 100px;
+  display: flex;
+  justify-content: center;
+
+  p {
+    cursor: default;
+  }
 
   &::-webkit-scrollbar-track {
     background: ${Colors.Gray100};

@@ -185,8 +185,10 @@ const LectureRegistration = () => {
                 <_.TagRDiv>
                     <Text font="Body1">태그</Text>
                     <_.TagInputDiv>
-                        <Input name="tag" placeholder="태그를 입력해주세요" value={value.tag} change={change} width="100%" keyDown={(e) => e.key === 'Enter' && tagAdd()}/>
-                        <Button width="12%" gray onClick={() => tagAdd()}>태그 등록</Button>
+                        <Input name="tag" placeholder="태그를 입력해주세요" value={value.tag} change={change} width="100%" keyDown={(e) =>
+                            e.key === 'Enter' && !e.nativeEvent.isComposing && tagAdd()
+                        }/>
+                        <Button gray onClick={() => tagAdd()}>태그 등록</Button>
                     </_.TagInputDiv>
                     <_.TagDiv>
                         {tag.map((value, index) =>

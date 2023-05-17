@@ -3,9 +3,10 @@ import Icon from "../../assets/Icon";
 import {Text} from "../text";
 import * as _ from './style';
 import {Colors, colorsKeyOfType} from "../../styles/theme/color";
+import {arrProps} from "../../pages/lecture/LectureManage/VideoRegistration";
 
 interface DropProps {
-    arr: string[];
+    arr: arrProps[];
     value: string;
     change: React.Dispatch<React.SetStateAction<string>>;
     color?: colorsKeyOfType;
@@ -15,6 +16,7 @@ interface DropProps {
 
 const BigDropDown = ({arr, value, change, color, width, noneMsg}: DropProps) => {
     const [state, setState] = useState<boolean | undefined>();
+    const newArr = arr.sort((a: arrProps, b: arrProps) => a.sequence - b.sequence);
 
     const setData = (v: string) => {
         if (v !== value) {
@@ -29,11 +31,11 @@ const BigDropDown = ({arr, value, change, color, width, noneMsg}: DropProps) => 
                 <Text font="Body2">{value}</Text>
                 <Icon icon={state ? "up" : "down"}/>
                 <_.BigContents width={width} bool={state}>
-                    {arr[0] ? arr.map((v, index) =>
-                        <_.InContent key={index} onClick={() => setData(v)}>
-                            <Text font="Body2">{v}</Text>
+                    {arr[0] ? newArr.map((v, index) =>
+                        <_.InContent key={index} onClick={() => setData(`섹션 ${v.sequence}. ${v.title}`)}>
+                            <Text font="Body2">{`섹션 ${v.sequence}. ${v.title}`}</Text>
                         </_.InContent>
-                    ): <Text color={Colors["Gray400"]}>아직 {noneMsg} 없습니다.</Text>}
+                    ) : <Text color={Colors["Gray400"]}>아직 {noneMsg} 없습니다.</Text>}
                 </_.BigContents>
             </_.BigContainer>
         </>
