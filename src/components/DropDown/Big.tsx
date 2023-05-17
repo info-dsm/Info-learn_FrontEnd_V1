@@ -30,7 +30,9 @@ const BigDropDown = ({arr, value, change, color, width, noneMsg}: DropProps) => 
                 <Icon icon={state ? "up" : "down"}/>
                 <_.BigContents width={width} bool={state}>
                     {arr[0] ? arr.map((v, index) =>
-                        <Text key={index} font="Body2" onClick={() => setData(v)}>{v}</Text>
+                        <_.InContent key={index} onClick={() => setData(v)}>
+                            <Text font="Body2">{v}</Text>
+                        </_.InContent>
                     ): <Text color={Colors["Gray400"]}>아직 {noneMsg} 없습니다.</Text>}
                 </_.BigContents>
             </_.BigContainer>

@@ -13,7 +13,7 @@ import {useQuery} from "react-query";
 import axios from "axios";
 import * as _ from "./MainStyle";
 
-export const AccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJURUFDSEVSIiwianRpIjoibmlnZXIiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNjg0MjEwNjkzLCJleHAiOjE2ODQyOTcwOTN9.XuiWc7rwRUSnqBjwsC_w82rVeB5TSgzlYZV_tP2Is-Q";
+export const AccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJURUFDSEVSIiwianRpIjoibmlnZXIiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNjg0Mjk3NzI2LCJleHAiOjE2ODQzODQxMjZ9.1ff_aWbRc221sozEt9q--4Ss3LSTnKC2HU7jB89usvI";
 
 export async function getLectures(limit: number) {
     const lecturesRes = await axios({

@@ -21,29 +21,27 @@ const queryClient = new QueryClient({
     }
 });
 root.render(
-    <React.StrictMode>
-        <QueryClientProvider client={queryClient}>
-            <ReactQueryDevtools initialIsOpen={true}/>
-            <BrowserRouter>
-                <ScrollToTop/>
-                <Toaster
-                    position="top-center"
-                    reverseOrder={true}
-                    gutter={8}
-                    toastOptions={{
-                        className: '',
-                        duration: 5000,
-                        style: {
-                            background: Colors["White"],
-                            color: Colors["Black"],
-                        },
-                    }}
-                />
-                <App/>
-                <GlobalStyle/>
-            </BrowserRouter>
-        </QueryClientProvider>
-    </React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+        <ReactQueryDevtools initialIsOpen={true}/>
+        <BrowserRouter>
+            <ScrollToTop/>
+            <Toaster
+                position="top-center"
+                reverseOrder={true}
+                gutter={8}
+                toastOptions={{
+                    className: '',
+                    duration: 5000,
+                    style: {
+                        background: Colors["White"],
+                        color: Colors["Black"],
+                    },
+                }}
+            />
+            <App/>
+            <GlobalStyle/>
+        </BrowserRouter>
+    </QueryClientProvider>
 );
 
 reportWebVitals();

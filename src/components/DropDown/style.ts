@@ -1,6 +1,17 @@
 import styled, {keyframes} from "styled-components";
 import {Colors, colorsKeyOfType} from "../../styles/theme/color";
 
+export const InContent = styled.div`
+  width: 100%;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  &:hover{
+    background-color: ${Colors.Gray200};
+  }
+`
+
 export const Container = styled.div<{ color?: colorsKeyOfType }>`
   width: 120px;
   height: 29px;
@@ -60,7 +71,7 @@ export const Contents = styled.div<{ bool?: boolean }>`
   }
 
   &::-webkit-scrollbar {
-    width: 10px;
+    width: 0;
   }
 
   &::-webkit-scrollbar-thumb {
@@ -78,9 +89,9 @@ export const BigContents = styled(Contents)<{ width?: string }>`
   width: ${props => props.width ?? "426px"};
   min-height: 52px;
   max-height: 260px;
-  padding: 14px 20px;
+  padding: 8px;
   border-radius: 8px;
-  gap: 20px;
+  gap: 0;
   top: 62px;
   left: 0;
   background: ${Colors.Gray100};

@@ -54,11 +54,13 @@ const DetailLecture = () => {
                                     title: detail.title,
                                     explanation: detail.explanation,
                                     lectureThumbnailUrl: detail.lectureThumbnailUrl,
-                                    tagNameList: detail.tagNameList
+                                    tagNameList: detail.tagNameList,
+                                    chapters: detail.chapters
                                 }
                             })}>강의 수정</Button>
                             <Button blue onClick={() => sNavigate('/lecture/videoRegistration', {
                                 state: {
+                                    lectureId: detail.lectureId,
                                     chapters: detail.chapters
                                 }
                             })}>강의 영상 등록</Button>

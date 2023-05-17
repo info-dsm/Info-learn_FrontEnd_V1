@@ -20,7 +20,7 @@ export const Reading = (e: React.ChangeEvent<HTMLInputElement>, setFile: React.D
     const fileReader = new FileReader();
 
     const selectedFile = (e.target.files as FileList)[0];
-    if (selectedFile !== null) {
+    if (selectedFile !== undefined) {
         fileReader.readAsDataURL(selectedFile);
         setFile(selectedFile);
     }
@@ -124,8 +124,8 @@ const LectureRegistration = () => {
                 fileSize: inputFile?.size
             })
             const stayList = state.tagNameList.filter((value: { name: string }) => tag.includes(value.name)).map((value: { name: string }) => value.name);
-            const tagList = tag.filter((value: string) => !stayList.includes(value)).map((value: string) => ({"tagId":value}));
-            const deleteList = state.tagNameList.filter((value: { name: string }) => !tag.includes(value.name)).map((value: { name: string }) => ({"tagId":value.name}));
+            const tagList = tag.filter((value: string) => !stayList.includes(value)).map((value: string) => ({"tagId": value}));
+            const deleteList = state.tagNameList.filter((value: { name: string }) => !tag.includes(value.name)).map((value: { name: string }) => ({"tagId": value.name}));
             putLecture({titleJson, inputJson, inputFile, lectureId: state.lectureId, tagList, deleteList});
             setTimeout(() => navigate(-1), 1000);
         } else {
@@ -199,15 +199,18 @@ const LectureRegistration = () => {
                         )}
                     </_.TagDiv>
                 </_.TagRDiv>
-                <_.RDiv flex={state ? "space-between" : "flex-end"}>
-                    {state && <Button red onClick={() => setModal({...modal, delete: true})}>강의 삭제</Button>}
-                    <div style={{display: "flex", gap: "10px"}}>
-                        <Button gray onClick={() => setModal({...modal, cancel: true})}>취소</Button>
-                        <Button blue onClick={() => {
-                            value.title && value.explanation && tag && makeJson()
-                        }}>강의 {isRegi}</Button>
-                    </div>
-                </_.RDiv>
+                <_.Sequence></_.Sequence>
+                <_.RBack>
+                    <_.RDiv flex={state ? "space-between" : "flex-end"}>
+                        {state && <Button red onClick={() => setModal({...modal, delete: true})}>강의 삭제</Button>}
+                        <div style={{display: "flex", gap: "10px"}}>
+                            <Button gray onClick={() => setModal({...modal, cancel: true})}>취소</Button>
+                            <Button blue onClick={() => {
+                                value.title && value.explanation && tag && makeJson()
+                            }}>강의 {isRegi}</Button>
+                        </div>
+                    </_.RDiv>
+                </_.RBack>
             </_.Content>
         </>
     )
