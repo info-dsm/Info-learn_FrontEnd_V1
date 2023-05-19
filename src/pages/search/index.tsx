@@ -127,7 +127,7 @@ const Search = () => {
     };
 
     useEffect(() => {
-        if (query.q === undefined || query.q === '' || !cookies.accessToken) {
+        if (query.q === undefined || query.q === '' || !!cookies.accessToken) {
             navigate(-1);
         }
         if (!state) {
