@@ -12,7 +12,7 @@ interface DropProps {
 }
 
 const DropDown = ({ arr, value, change, color }: DropProps) => {
-    const [state, setState] = useState<boolean | undefined>();
+    const [state, setState] = useState<boolean | undefined>(undefined);
 
     const setData = (v: string) => {
         if(v !== value) {
@@ -26,13 +26,15 @@ const DropDown = ({ arr, value, change, color }: DropProps) => {
             <_.Container color={color} onClick={() => setState(!state)}>
                 <Text font="Body3">{value}</Text>
                 <Icon icon={state ? "up" : "down"} size={16}/>
-                <_.Contents bool={state}>
+                {state && <_.Contents bool={state}>
                     {
                         arr.map((v, index) =>
-                            <Text key={index} font="Body3" onClick={() => setData(v)}>{v}</Text>
+                            <_.InContent key={index} onClick={() => setData(v)}>
+                                <Text font="Body3">{v}</Text>
+                            </_.InContent>
                         )
                     }
-                </_.Contents>
+                </_.Contents>}
             </_.Container>
         </>
     )

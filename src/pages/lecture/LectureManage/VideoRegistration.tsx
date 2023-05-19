@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import * as _ from "./LectureManageStyle";
 import {Text} from "../../../components/text";
 import Icon from "../../../assets/Icon";
@@ -35,8 +35,10 @@ const VideoRegistration = () => {
     const [chapterArray, setChapterArray] = useState<arrProps[]>([]);
     const [isRegi, setIsRegi] = useState<string>('등록');
     const [modal, setModal] = useState<{ [key in modalType]: boolean }>({cancel: false, delete: false});
+    const [duration, setDuration] = useState<number | undefined>();
     const state = useLocation().state;
     const navigate = useNavigate();
+    const videoRef = useRef<HTMLVideoElement | null>(null);
 
     useEffect(() => {
         state.chapters.map((value: { title: string, sequence: number }) => {
@@ -44,6 +46,10 @@ const VideoRegistration = () => {
             console.log(value.title);
         });
     }, []);
+
+    useEffect(() => {
+        setDuration(videoRef.current?.duration);
+    }, [inputFile])
 
     const change = (name: string, data: string): void => {
         setValue(value => {
@@ -79,7 +85,21 @@ const VideoRegistration = () => {
     }
 
     const makeJson = () => {
-        console.log('asdf');
+        if (chapterFocus === '강의 챕터 선택') {
+            toast.error('챕터를 선택해주세요!');
+            return
+        }
+        const sequences = chapterArray.filter((v) => chapterFocus.slice(5,).trim() === v.title)
+        const videoJson = JSON.stringify({
+            title: value.title,
+            playTime: duration,
+            sequence: sequences,
+            videoUrl: {
+                fileName: inputFile?.name,
+                contentType: inputFile?.type,
+                fileSize: inputFile?.size
+            }
+        })
     }
 
     return (
@@ -113,7 +133,9 @@ const VideoRegistration = () => {
                                 <Icon icon="add"/>
                                 <Text>강의 영상</Text>
                             </>}
-                            {videoUrl && <_.Video controls src={videoUrl as string}/>}
+                            {videoUrl && <_.Video controls ref={videoRef}>
+                                <source type="video/mp4" src={videoUrl as string}/>
+                            </_.Video>}
                         </_.FileLabel>
                         {videoUrl && <_.RemoveDiv onClick={() => {
                             setVideoUrl('');
