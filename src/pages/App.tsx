@@ -12,6 +12,7 @@ import RegistrationLayout from "./router/RegistrationLayout";
 import Search from "./search";
 import DetailLecture from "./lecture/DetailLecture";
 import VideoRegistration from "./lecture/LectureManage/VideoRegistration";
+import DetailVideo from "./lecture/DetailVideo";
 
 function App() {
     return (
@@ -23,7 +24,7 @@ function App() {
             <Route element={<StudentLayout/>}>
                 <Route path="/" element={<Main/>}/>
                 <Route path="/search" element={<Search/>}/>
-                <Route path="/lecture/:user/:id" element={<DetailLecture/>}/>
+                <Route path="/lecture/detail" element={<DetailLecture/>}/>
             </Route>
             <Route element={<InfinityLayout/>}>
                 <Route path="/lecture" element={<LectureAll/>}/>

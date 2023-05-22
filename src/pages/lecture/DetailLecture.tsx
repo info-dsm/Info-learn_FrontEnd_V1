@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import {Text} from "../../components/text";
-import {useLocation, useNavigate} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import {AccessToken} from "../Main";
 import axios from "axios";
 import {useQuery} from "react-query";
@@ -37,7 +37,7 @@ const DetailLecture = () => {
     const sNavigate = useNavigate();
 
     useEffect(() => {
-        if (detail && detail.lectureId !== state) {
+        if (detail && detail.lectureId !== state.get('lectureId')) {
             remove()
             refetch()
         }

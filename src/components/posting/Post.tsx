@@ -27,7 +27,6 @@ export const Post = ({img, name, date, title, subTitle, tag, isLecture, isSearch
     const navigate = useNavigate();
 
     const detailNavigate = () => {
-        const navTitle = title.replaceAll(" ", "_").trim();
         if (isLecture) {
             navigate({
                 pathname: "/lecture/detail",

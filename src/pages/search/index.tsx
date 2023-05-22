@@ -191,7 +191,7 @@ const Search = () => {
                     </_.FlexDiv>
                     <DropDown arr={arr} value={value} change={setValue} />
                 </_.FlexDiv>
-                <_.FlexDiv direction='column' gap={40} margin='40px 0 1600px 0'>
+                <_.FlexDiv direction='column' gap={40} margin='40px 0 160px 0'>
                     {
                         value === '제목 기준' ?
                             data?.titleResults.map((value: postType) => {

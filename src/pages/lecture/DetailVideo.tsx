@@ -1,11 +1,17 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
+import Chapter from "../../components/Chapter/Chapter";
+import axios from "axios";
+import {AccessToken} from "../Main";
+import {getLDetail} from "./DetailLecture";
+import {useQuery} from "react-query";
+import {useSearchParams} from "react-router-dom";
 
-/*async function getVDetail(state: string) {
-    if (state) {
+async function getVDetail(id: number) {
+    if (id) {
         const VideoRes = await axios({
             method: 'GET',
-            url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/video/${state}`,
+            url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/video/${id}`,
             headers: {
                 Authorization: `Bearer ${AccessToken}`,
                 'ngrok-skip-browser-warning': '69420'
@@ -13,7 +19,38 @@ import styled from "styled-components";
         })
         return VideoRes.data
     }
-}*/
+}
+
+async function putVideoComplete(id: number) {
+    if (id) {
+        const putStatusRes = await axios({
+            method: 'PUT',
+            url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/video/${id}/complete`,
+            headers: {
+                Authorization: `Bearer ${AccessToken}`
+            }
+        })
+        return putStatusRes.data
+    }
+}
+
+interface VideoType {
+    videoId: number;
+    title: string;
+    hour: number;
+    minute: number;
+    second: number;
+    sequence: number;
+    status: string | null;
+}
+
+interface chapterProps {
+    chapterId: number;
+    title: string;
+    sequence: number;
+    videos?: VideoType[];
+    watching?: number;
+}
 
 const DetailVideo = () => {
     const [chapter, setChapter] = useState<chapterProps[]>();
@@ -52,11 +89,24 @@ const DetailVideo = () => {
 
     return (
         <Container>
-            <VideoBox>
-                <Video/>
+            <VideoBox className="vd">
+                <CDiv>
+                    <Video
+                    onContextMenu={(e) => e.preventDefault()}
+                    controlsList="nodownload"
+                    src={videoData?.videoUrl as string}
+                    onEnded={() => videoData.status !== 'COMPLETE' && putVideoComplete(Number(state.get('videoId') ?? 0)).then(() => refetch())}></Video>
+                    <CustomVDiv>
+                        <TimeBar></TimeBar>
+                    </CustomVDiv>
+                </CDiv>
             </VideoBox>
-            <ListBox>
-
+            <ListBox className="lt">
+                {
+                    chapter?.map((v: chapterProps) =>
+                        <Chapter key={v.chapterId} {...v} watching={Number(state.get('videoId') ?? 0)}/>
+                    )
+                }
             </ListBox>
         </Container>
     )
@@ -112,18 +162,21 @@ const Container = styled.div`
 `
 
 const VideoBox = styled.div`
-  width: 59.8%;
+  width: 77%;
+  height: 100%;
   display: flex;
   justify-content: center;
   padding: 40px;
 `
 
 const ListBox = styled.div`
-  width: 40.2%;
+  width: 23%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   padding: 40px 20px;
   gap: 40px;
+  overflow-y: scroll;
 `
 
 const Video = styled.video.attrs({
@@ -133,9 +186,3 @@ const Video = styled.video.attrs({
   width: 100%;
   height: 100%;
 `
-
-/*
-const TitleGap = styled.div`
-  display: flex;
-  gap: 10px;
-`*/
