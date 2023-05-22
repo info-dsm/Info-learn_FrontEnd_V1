@@ -69,6 +69,8 @@ export const Post = ({img, name, date, title, subTitle, tag, isLecture, isSearch
                             {isLecture ? <_.PlayCircle>
                                 <_.Triangle src={triangle}/>
                             </_.PlayCircle> : null}
+                            <_.BackDiv url={img}></_.BackDiv>
+                            <_.BackDrop></_.BackDrop>
                             <_.Img url={img}/>
                         </_.UpDiv>
                         <_.InfoDiv>

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import styled from "styled-components";
 import Chapter from "../../components/Chapter/Chapter";
 import axios from "axios";
@@ -6,6 +6,9 @@ import {AccessToken} from "../Main";
 import {getLDetail} from "./DetailLecture";
 import {useQuery} from "react-query";
 import {useSearchParams} from "react-router-dom";
+import {Colors} from "../../styles/theme/color";
+import Icon from "../../assets/Icon";
+import {Text} from "../../components/text";
 
 async function getVDetail(id: number) {
     if (id) {
@@ -52,16 +55,37 @@ interface chapterProps {
     watching?: number;
 }
 
+interface vType {
+    currentTime: number;
+    isPaused: boolean;
+    isFull: boolean;
+    currentSound: number;
+    isPnp: boolean;
+    speed: number;
+    maxTime: number;
+}
+
 const DetailVideo = () => {
+    const [v, setV] = useState<vType>({
+        currentTime: 0,
+        currentSound: 100,
+        maxTime: 0,
+        speed: 1,
+        isPaused: true,
+        isFull: false,
+        isPnp: false
+    })
     const [chapter, setChapter] = useState<chapterProps[]>();
     const {data: detail, remove, refetch} = useQuery(['nigrongrongrong'], () => getLDetail(state.get('lectureId') ?? ''));
     const {data: videoData, remove: removeVideo, refetch: reFetchVideo} = useQuery(['nigrongrongrongrong'], () => getVDetail(Number(state.get('videoId') ?? 0)));
     const [state] = useSearchParams();
-    // const videoRef = useRef<HTMLVideoElement | null>(null);
+    const videoRef = useRef<HTMLVideoElement | null>(null);
 
     useEffect(() => {
         if (videoData?.videoUrl) {
-            console.log('video불러오고 ref됨')
+            change("isPaused", true);
+            change("maxTime", videoData.hour * 3600 + videoData.minute * 60 + videoData.second);
+            console.log(videoRef.current?.currentTime)
         }
     }, [videoData])
 
@@ -87,17 +111,52 @@ const DetailVideo = () => {
         }
     }, [detail, state]);
 
+    const change = (name: string, data: number | boolean): void => {
+        setV(value => {
+            return {
+                ...value,
+                [name]: data
+            }
+        });
+    }
+
     return (
         <Container>
             <VideoBox className="vd">
                 <CDiv>
                     <Video
-                    onContextMenu={(e) => e.preventDefault()}
-                    controlsList="nodownload"
-                    src={videoData?.videoUrl as string}
-                    onEnded={() => videoData.status !== 'COMPLETE' && putVideoComplete(Number(state.get('videoId') ?? 0)).then(() => refetch())}></Video>
+                        onContextMenu={(e) => e.preventDefault()}
+                        src={videoData?.videoUrl as string}
+                        onEnded={() => videoData.status !== 'COMPLETE' && putVideoComplete(Number(state.get('videoId') ?? 0)).then(() => refetch())}
+                        ref={videoRef}
+                        onTimeUpdate={(e) => change("currentTime", e.currentTarget.currentTime)}
+                    />
                     <CustomVDiv>
-                        <TimeBar></TimeBar>
+                        <TimeBar
+                            type="range"
+                            value={v.currentTime}
+                            onChange={(e) => change("currentTime", Number(e.target.value))}
+                            max={10000}
+                        />
+                        <IDiv>
+                            <PDiv>
+                                <IBtn><Icon icon="back" color="White"/></IBtn>
+                                <IBtn onClick={() => {
+                                    v.isPaused ? videoRef.current?.play() : videoRef.current?.pause();
+                                    change("isPaused", !v.isPaused);
+                                }}>
+                                    {v.isPaused ? <Icon icon="start" color="White"/> : <Icon icon="pause" color="White"/>}
+                                </IBtn>
+                                <IBtn><Icon icon="front" color="White"/></IBtn>
+                                <IBtn><Icon icon="lv" color="White"/></IBtn>
+                                {videoData && <Text color="White">{v.currentTime} / {videoData.hour !== 0 && videoData + ":"}{videoData.minute}:{videoData.second}</Text>}
+                            </PDiv>
+                            <PDiv>
+                                <IBtn><Icon icon="pnp" color="White"/></IBtn>
+                                <IBtn><Icon icon="setting2" color="White"/></IBtn>
+                                <IBtn><Icon icon="full" color="White"/></IBtn>
+                            </PDiv>
+                        </IDiv>
                     </CustomVDiv>
                 </CDiv>
             </VideoBox>
@@ -114,8 +173,67 @@ const DetailVideo = () => {
 
 export default DetailVideo;
 
-const TimeBar = styled.div`
+const IBtn = styled.div`
+  width: 24px !important;
+  height: 24px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+const PDiv = styled.div`
+  width: fit-content !important;
+  height: fit-content;
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  justify-content: start;
+`
+const IDiv = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 20px 12px;
+`
+const TimeBar = styled.input`
+  input[type=range] {
+    -webkit-appearance: none;
+    overflow: hidden;
+    width: 100%;
+    height: 6px;
+    cursor: pointer;
+    border-radius: 0;
+  }
 
+  &[type=range]:focus {
+    outline: none;
+  }
+
+  &[type=range]::-webkit-slider-runnable-track {
+    -webkit-appearance: none;
+  }
+
+  &[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    background: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+    height: 16px;
+    width: 16px;
+    box-shadow: 1px 1px 10px ${Colors["Black"]};
+    border-radius: 100%;
+  }
+`
+const CustomVDiv = styled.div`
+  width: 100%;
+  height: 120px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 100%);
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 `
 const CDiv = styled.div`
   border-radius: 8px;
@@ -124,13 +242,6 @@ const CDiv = styled.div`
   height: fit-content;
   aspect-ratio: 16 / 9;
   position: relative;
-`
-const CustomVDiv = styled.div`
-  width: 100%;
-  height: 60px;
-  background-color: silver;
-  position: absolute;
-  bottom: 0;
 `
 const Container = styled.div`
   display: flex;
@@ -179,9 +290,7 @@ const ListBox = styled.div`
   overflow-y: scroll;
 `
 
-const Video = styled.video.attrs({
-    controls: true
-})`
+const Video = styled.video`
   background-color: black;
   width: 100%;
   height: 100%;

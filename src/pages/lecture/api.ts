@@ -2,6 +2,17 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import {AccessToken} from "../Main";
 
+export async function DeleteVideo(videoId: number) {
+    const deleteVideoRes = await axios({
+        method: 'DELETE',
+        url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/video/${videoId}`,
+        headers: {
+            Authorization: `Bearer ${AccessToken}`
+        }
+    });
+    return deleteVideoRes.data;
+}
+
 export async function DeleteLecture(lectureId: string) {
     const deleteStatus = toast.loading('강의를 삭제중입니다!');
     await axios({

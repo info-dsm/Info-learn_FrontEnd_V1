@@ -15,7 +15,7 @@ const GlobalStyle = createGlobalStyle`
       height: 0;
     }
     ::-webkit-scrollbar-thumb {
-      background: ${Colors["SPrimary500"]};
+      background: ${Colors["Gray400"]};
       border-radius: 6px;
     }
     ::-webkit-scrollbar-track {
