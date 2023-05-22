@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import * as _ from "./LectureManageStyle";
 import {Text} from "../../../components/text";
 import Icon from "../../../assets/Icon";
@@ -35,15 +35,22 @@ const VideoRegistration = () => {
     const [chapterArray, setChapterArray] = useState<arrProps[]>([]);
     const [isRegi, setIsRegi] = useState<string>('등록');
     const [modal, setModal] = useState<{ [key in modalType]: boolean }>({cancel: false, delete: false});
+    const [duration, setDuration] = useState<number | undefined>();
     const state = useLocation().state;
     const navigate = useNavigate();
+    const videoRef = useRef<HTMLVideoElement | null>(null);
 
     useEffect(() => {
-        state.chapters.map((value: { title: string, sequence: number }) => {
+        !chapterArray[0] && state.chapters && state.chapters.map((value: { title: string, sequence: number }) => {
             setChapterArray(current => [...current, {title: value.title, sequence: value.sequence}]);
-            console.log(value.title);
         });
     }, []);
+
+    useEffect(() => {
+        setTimeout(()=>setDuration(videoRef.current?.duration),100)
+    }, [videoUrl]);
+
+    console.log(duration)
 
     const change = (name: string, data: string): void => {
         setValue(value => {
@@ -79,7 +86,63 @@ const VideoRegistration = () => {
     }
 
     const makeJson = () => {
-        console.log('asdf');
+        if (chapterFocus === '강의 챕터 선택') {
+            toast.error('챕터를 선택해주세요!');
+            return
+        } else if (!value.title) {
+            toast.error('영상 제목을 입력해주세요!');
+            return
+        } else if (!videoUrl) {
+            toast.error('영상을 올려주세요!');
+            return
+        }
+        const sequences = chapterArray.filter((v) => chapterFocus.slice(5,).trim() === v.title)
+        console.log(sequences);
+        const videoJson = JSON.stringify({
+            title: value.title,
+            playTime: duration,
+            sequence: state.chapters[sequences[0].sequence - 1].videos.length + 1,
+            videoUrl: {
+                fileName: inputFile?.name,
+                contentType: inputFile?.type,
+                fileSize: inputFile?.size
+            }
+        });
+        const videoPost = async () => {
+            const s3Put = async ({url}: { url: string }) => {
+                await axios({
+                    method: 'PUT',
+                    url: url,
+                    data: inputFile,
+                    headers: {
+                        "Content-Type": inputFile?.type,
+                        "Content-Disposition": "inline"
+                    }
+                }).then(() => {
+                    console.log('s3 put 성공');
+                }).catch((error) => {
+                    console.log(error);
+                })
+            }
+            await axios({
+                method: 'POST',
+                url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/video/${sequences[0].sequence}`,
+                data: videoJson,
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${AccessToken}`
+                }
+            }).then((response) => {
+                return s3Put({url: response.data.url})
+            }).catch((error) => {
+                console.log(error);
+            })
+        }
+        videoPost().then(() => {
+            toast.success('영상이 등록되었습니다!');
+        }).catch((error) => {
+            toast.error(error);
+        })
     }
 
     return (
@@ -113,7 +176,7 @@ const VideoRegistration = () => {
                                 <Icon icon="add"/>
                                 <Text>강의 영상</Text>
                             </>}
-                            {videoUrl && <_.Video controls src={videoUrl as string}/>}
+                            {videoUrl && <_.Video controls ref={videoRef} src={videoUrl as string}/>}
                         </_.FileLabel>
                         {videoUrl && <_.RemoveDiv onClick={() => {
                             setVideoUrl('');
@@ -130,7 +193,7 @@ const VideoRegistration = () => {
                             <Input width="100%" value={value.chapter} name="chapter" change={change} placeholder="추가 할 강의 챕터를 입력해주세요" keyDown={(e) =>
                                 e.key === 'Enter' && !e.nativeEvent.isComposing && chapterAdd()
                             }/>
-                            <Button blue onClick={() => chapterAdd()}>챕터 추가</Button>
+                            <Button blue onClick={() => value.chapter && chapterAdd()}>챕터 추가</Button>
                         </_.AddCDiv>
                     </_.InputDiv>
                 </_.MainInfo>
@@ -139,9 +202,7 @@ const VideoRegistration = () => {
                         {state.title && <Button red onClick={() => setModal({...modal, delete: true})}>강의 삭제</Button>}
                         <div style={{display: "flex", gap: "10px"}}>
                             <Button gray onClick={() => setModal({...modal, cancel: true})}>취소</Button>
-                            <Button blue onClick={() => {
-                                value.title && makeJson()
-                            }}>강의 {isRegi}</Button>
+                            <Button blue onClick={() => makeJson()}>강의 {isRegi}</Button>
                         </div>
                     </_.RDiv>
                 </_.RBack>

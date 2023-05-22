@@ -31,7 +31,7 @@ root.render(
                 gutter={8}
                 toastOptions={{
                     className: '',
-                    duration: 5000,
+                    duration: 1000,
                     style: {
                         background: Colors["White"],
                         color: Colors["Black"],

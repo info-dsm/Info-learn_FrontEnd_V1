@@ -15,13 +15,47 @@ const AppearTag = keyframes`
     transform: scale(1.0);
   }
 `
+export const IcoBtn = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  overflow: hidden;
+`
+export const IDiv = styled.div`
+  display: flex;
+  gap: 10px;
+`
+export const VCell = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 16px 32px;
+  justify-content: space-between;
+`
+export const VLChild = styled.div`
+  width: 100%;
+  overflow-y: hidden;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  background-color: ${Colors["White"]};
+`
+export const VideoList = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  border-radius: 8px;
+  background-color: ${Colors["Gray200"]};
+`
 export const Sequence = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 80px 0;
+  padding: 40px 0;
   gap: 20px;
-  background-color: red;
 `
 export const RemoveDiv = styled.div`
   position: absolute;

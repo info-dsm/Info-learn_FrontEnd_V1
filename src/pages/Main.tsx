@@ -2,18 +2,18 @@ import React from "react";
 import styled from "styled-components";
 import {Text} from "../components/text";
 import {Colors} from "../styles/theme/color";
-import BackendImg from "../assets/img/Java.png";
-import FrontendImg from "../assets/img/Frontend.png";
-import iOSImg from "../assets/img/iOS.png";
-import AndroidImg from "../assets/img/Android.png";
-import SecurityImg from "../assets/img/Security.png";
+import BackendImg from "../assets/img/Back.svg";
+import FrontendImg from "../assets/img/Front.svg";
+import iOSImg from "../assets/img/iOS.svg";
+import AndroidImg from "../assets/img/Android.svg";
+import SecurityImg from "../assets/img/Secure.svg";
 import HeadImg from "../assets/img/BackgroundImg.jpg";
 import {Post} from "../components/posting/Post";
 import {useQuery} from "react-query";
 import axios from "axios";
 import * as _ from "./MainStyle";
 
-export const AccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJURUFDSEVSIiwianRpIjoibmlnZXIiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNjg0MzIwNjkwLCJleHAiOjE2ODQ0MDcwOTB9.sxc492OpwUzGDW7A6bgddtKet0T_LbGvtmABpGSfA6w";
+export const AccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJURUFDSEVSIiwianRpIjoibmlnZXIiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNjg0NjU0NTIxLCJleHAiOjE2ODQ3NDA5MjF9.gZSTRRYQtXKehdjR6yDkW8iexq9KG8YiFXtSxXhnEsA";
 
 export async function getLectures(limit: number) {
     const lecturesRes = await axios({

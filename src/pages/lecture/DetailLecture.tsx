@@ -1,12 +1,20 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import {Text} from "../../components/text";
-import {useLocation, useNavigate} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import {AccessToken} from "../Main";
 import axios from "axios";
 import {useQuery} from "react-query";
 import {Colors} from "../../styles/theme/color";
 import {Button} from "../../components/button/Button";
+import Chapter from "../../components/Chapter/Chapter";
+
+interface chapterProps {
+    chapterId: number;
+    title: string;
+    sequence: number;
+    videos: { videoId: number, title: string, hour: number, minute: number, second: number, sequence: number, status: string | null }[];
+}
 
 export async function getLDetail(state: string) {
     if (state) {
@@ -23,22 +31,28 @@ export async function getLDetail(state: string) {
 }
 
 const DetailLecture = () => {
-    const {data: detail, remove, refetch} = useQuery(['nigrongrong'], () => getLDetail(state));
-    const state = useLocation().state;
+    const [chapter, setChapter] = useState<chapterProps[]>();
+    const {data: detail, remove, refetch} = useQuery(['nigrongrong'], () => getLDetail(state.get('lectureId') ?? ''));
+    const [state] = useSearchParams();
     const sNavigate = useNavigate();
 
     useEffect(() => {
-        if (detail && detail.lectureId !== state) {
+        if (detail && detail.lectureId !== state.get('lectureId')) {
             remove()
             refetch()
         }
-    }, []);
+        if (detail && detail.chapters) {
+            const cChapter = detail.chapters;
+            cChapter.sort((a: chapterProps, b: chapterProps) => a.sequence - b.sequence);
+            setChapter(cChapter);
+        }
+    }, [detail]);
 
     return (
         <>
             {detail ?
                 <>
-                    <TitleImg src={detail.lectureThumbnailUrl}></TitleImg>
+                    <TitleImg src={detail.lectureThumbnailUrl}/>
                     <LBody>
                         <TDiv>
                             <Text font="Title1">{detail.title}</Text>
@@ -58,16 +72,19 @@ const DetailLecture = () => {
                                     explanation: detail.explanation,
                                     lectureThumbnailUrl: detail.lectureThumbnailUrl,
                                     tagNameList: detail.tagNameList,
-                                    chapters: detail.chapters
+                                    chapters: chapter
                                 }
                             })}>강의 수정</Button>
                             <Button blue onClick={() => sNavigate('/lecture/videoRegistration', {
                                 state: {
                                     lectureId: detail.lectureId,
-                                    chapters: detail.chapters
+                                    chapters: chapter
                                 }
                             })}>강의 영상 등록</Button>
                         </EditDiv>
+                        {chapter && chapter.map((v: chapterProps, index) =>
+                            <Chapter key={index} chapterId={v.chapterId} sequence={v.sequence} title={v.title} videos={v.videos}/>
+                        )}
                     </LBody>
                 </> :
                 <>

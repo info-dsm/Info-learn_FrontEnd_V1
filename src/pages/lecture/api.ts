@@ -40,7 +40,17 @@ export async function PutLecture({titleJson, inputJson, inputFile, lectureId, ta
         console.log('title success');
     })
 
-    tagList[0] !== undefined && await axios({
+    deleteList[0] !== undefined && await axios({
+        method: 'DELETE',
+        url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/lecture/${lectureId}/tag`,
+        data: deleteList,
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${AccessToken}`
+        }
+    })
+
+    tagList[0] !== undefined && setTimeout(async () => await axios({
         method: 'PUT',
         url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/lecture/${lectureId}/tag`,
         data: tagList,
@@ -48,7 +58,7 @@ export async function PutLecture({titleJson, inputJson, inputFile, lectureId, ta
             "Content-Type": "application/json",
             Authorization: `Bearer ${AccessToken}`
         }
-    })
+    }), 20);
 
     inputJson && inputFile && await axios({
         method: 'PUT',
@@ -76,16 +86,6 @@ export async function PutLecture({titleJson, inputJson, inputFile, lectureId, ta
             console.log('Thumbnail success');
         })
     }
-
-    deleteList[0] !== undefined && await axios({
-        method: 'DELETE',
-        url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/lecture/${lectureId}/tag`,
-        data: deleteList,
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${AccessToken}`
-        }
-    })
 
     toast.success('강의가 수정되었습니다!', {
         id: editStatus,

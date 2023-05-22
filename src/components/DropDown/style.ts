@@ -20,6 +20,7 @@ export const Container = styled.div<{ color?: colorsKeyOfType }>`
   justify-content: space-between;
   background: ${props => props.color ?? Colors.White};
   border-radius: 4px;
+  position: relative;
 `
 
 export const BigContainer = styled.div<{ color?: colorsKeyOfType, width?: string }>`
@@ -52,15 +53,17 @@ export const Background = styled.div`
 `
 
 export const Contents = styled.div<{ bool?: boolean }>`
-  display: ${({bool}) => bool ? 'flex' : 'none'};
+  display: flex;
   width: 120px;
   max-height: 145px;
   position: absolute;
   background: ${Colors.White};
   flex-direction: column;
-  padding: 6px 12px;
+  padding: 8px;
+  top: 40px;
+  left: 0;
   border-radius: 4px;
-  gap: 12px;
+  gap: 0;
   animation-duration: 0.1s;
   animation-fill-mode: forwards;
   animation-name: ${({bool}) => bool !== undefined ? bool ? slideInDown : slideOutUp : undefined};
