@@ -27,6 +27,7 @@ function App() {
             </Route>
             <Route element={<InfinityLayout/>}>
                 <Route path="/lecture" element={<LectureAll/>}/>
+                <Route path="/video/about" element={<DetailVideo/>}/>
             </Route>
             <Route element={<RegistrationLayout/>}>
                 <Route path="/lecture/registration" element={<LectureRegistration/>}/>

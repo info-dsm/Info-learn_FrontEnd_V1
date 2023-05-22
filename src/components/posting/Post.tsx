@@ -29,9 +29,15 @@ export const Post = ({img, name, date, title, subTitle, tag, isLecture, isSearch
     const detailNavigate = () => {
         const navTitle = title.replaceAll(" ", "_").trim();
         if (isLecture) {
-            navigate(`/lecture/${name}/${navTitle}`, {state: lectureId});
+            navigate({
+                pathname: "/lecture/detail",
+                search: `?lectureId=${lectureId}`,
+            });
         } else {
-            navigate(`/til/${name}/${navTitle}`, {state: lectureId});
+            navigate({
+                pathname: "/til",
+                search: `?lectureId=${lectureId}`,
+            });
         }
     }
     return (

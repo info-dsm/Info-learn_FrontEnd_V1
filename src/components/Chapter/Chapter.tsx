@@ -3,16 +3,31 @@ import * as _ from './style';
 import {Text} from "../text";
 import Icon from "../../assets/Icon";
 
-interface LectureProps {
+interface VideoType {
+    videoId: number;
     title: string;
     time: number;
     state?: boolean;
 }
 
-const Lecture = ({title, time, state}: LectureProps) => {
-    const Hour = ('00' + Math.floor(time / 3600)).slice(-2);
-    const Minute = ('00' + Math.floor(time / 60)).slice(-2);
-    const Second = ('00' + Math.floor(time % 60)).slice(-2);
+interface chapterProps {
+    chapterId: number;
+    title: string;
+    sequence: number;
+    videos?: VideoType[];
+    watching?: number;
+}
+
+const Chapter = ({chapterId, title, sequence, videos, watching}: chapterProps) => {
+    const sNavigate = useNavigate();
+    const [state] = useSearchParams();
+    const time = videos?.reduce((accumulator, currentValue) => accumulator + (currentValue.hour * 60) + currentValue.minute, 0);
+    const Hour = Math.floor((time ?? 0) / 60);
+    const Minute = Math.floor((time ?? 0) % 60);
+
+    console.log(chapterId)
+
+    videos?.sort((a, b) => a.sequence - b.sequence);
 
     return (
         <_.Container bool={state}>
@@ -26,4 +41,4 @@ const Lecture = ({title, time, state}: LectureProps) => {
     )
 }
 
-export default Lecture;
+export default Chapter;

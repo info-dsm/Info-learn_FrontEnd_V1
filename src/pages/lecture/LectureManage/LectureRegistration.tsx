@@ -16,6 +16,12 @@ import * as _ from "./LectureManageStyle";
 type ValueType = 'title' | 'explanation' | 'tag';
 type modalType = 'cancel' | 'delete';
 
+interface chapterProps {
+    title: string,
+    sequence: number,
+    videos: { videoId: number, title: string, playTime: number, sequence: number }[]
+}
+
 export const Reading = (e: React.ChangeEvent<HTMLInputElement>, setFile: React.Dispatch<React.SetStateAction<File | undefined>>, setImgUrl: React.Dispatch<React.SetStateAction<string | ArrayBuffer | null>>) => {
     const fileReader = new FileReader();
 
@@ -70,7 +76,6 @@ const LectureRegistration = () => {
         }
     }, [])
 
-
     useEffect(() => {
         if (!isLoading && resData !== undefined) {
             console.log('enter navigate code!');
@@ -83,14 +88,20 @@ const LectureRegistration = () => {
     const state = useLocation().state;
 
     const tagAdd = () => {
-        if (tag.every((data) => data !== value.tag)) {
-            if (value.tag.trim() !== '') {
+        const checkTag = value.tag.replaceAll(' ', '').trim();
+        if (checkTag === '') return
+        if (tag.every((data) => data !== checkTag)) {
+            if (tag.length >= 10) {
+                toast.error('태그는 최대 10개까지만 추가할 수 있습니다!');
+                change('tag', '');
+                return
+            } else {
                 setTag([
                     ...tag,
-                    value.tag.replaceAll(' ', '')
+                    checkTag
                 ]);
                 toast.success(`'${value.tag.replaceAll(' ', '')}'태그가 등록되었습니다!`);
-            } else return
+            }
         } else toast.error('중복된 태그입니다!');
         change('tag', '');
     }
@@ -201,7 +212,33 @@ const LectureRegistration = () => {
                         )}
                     </_.TagDiv>
                 </_.TagRDiv>
-                <_.Sequence></_.Sequence>
+                {state && state.chapters && state.chapters.map((value: chapterProps, index: number) =>
+                    <_.Sequence key={index}>
+                        <Text font="Body1">섹션 {value.sequence}. {value.title}</Text>
+                        <_.VideoList>
+                            <_.VLChild>
+                                {value.videos[0] ? value.videos.map((v, index) =>
+                                    <_.VCell key={index}>{v.title}
+                                        <_.IDiv>
+                                            <_.IcoBtn>
+                                                <Icon icon="pencil" size={16} clicked={() => navigate('/lecture/videoRegistration', {
+                                                    state: {
+                                                        lectureId: state.lectureId,
+                                                        chapters: state.chapters,
+                                                        editChapter: value.title,
+                                                        editVideo: v
+                                                    }
+                                                })}/>
+                                            </_.IcoBtn>
+                                            <Icon icon="trash" size={16}/>
+                                        </_.IDiv>
+                                    </_.VCell>
+                                ) : <_.VCell>아직 강의 영상이 없어요</_.VCell>}
+                            </_.VLChild>
+                        </_.VideoList>
+                        <Button gray>강의 영상 등록</Button>
+                    </_.Sequence>
+                )}
                 <_.RBack>
                     <_.RDiv flex={state ? "space-between" : "flex-end"}>
                         {state && <Button red onClick={() => setModal({...modal, delete: true})}>강의 삭제</Button>}
