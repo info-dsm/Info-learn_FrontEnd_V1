@@ -6,8 +6,6 @@ import Header from "../../components/Header";
 import {Colors} from "../../styles/theme/color";
 
 const InfinityLayout = () => {
-
-
     return (
         <>
             <Global/>

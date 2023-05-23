@@ -22,9 +22,9 @@ const GlobalStyle = createGlobalStyle`
       background: none;
     }
   }
-  body {
-    background-color: ${Colors["White"]};
-  }
+  // body {
+  //   background-color: ${Colors["White"]};
+  // }
 `
 
 export default GlobalStyle;
