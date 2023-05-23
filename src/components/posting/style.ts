@@ -7,7 +7,7 @@ export const UpDiv = styled.div`
   position: relative;
   transition: 0.2s;
   aspect-ratio: 16 / 9;
-  overflow: hidden;
+  //overflow: hidden;
 `
 export const TagDiv = styled.div`
   display: flex;
@@ -91,6 +91,7 @@ export const Img = styled.div<imgProps>`
   background-position: center center;
   background-repeat: no-repeat;
   transition: 0.3s;
+  border-radius: 8px;
   position: absolute;
   z-index: 2;
   top: 0;
