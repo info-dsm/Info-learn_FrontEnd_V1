@@ -1,6 +1,6 @@
 import axios from "axios";
 import toast from "react-hot-toast";
-import {AccessToken} from "../Main";
+import {AccessToken, lecturesProps} from "../Main";
 
 export async function DeleteVideo(videoId: number) {
     const deleteVideoRes = await axios({
@@ -139,4 +139,41 @@ export async function PostLecture({postJson, inputFile}: { postJson: string, inp
             });
         })
     }
+}
+
+export type Tag = {
+    name: string,
+    usageCount: number
+}
+
+export async function GetTags(usageCount?: number) {
+    const getRes = await axios({
+        method: 'GET',
+        url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/lecture/tag`,
+        headers: {
+            'ngrok-skip-browser-warning': '69420',
+            Authorization: `Bearer ${AccessToken}`
+        },
+        params: {
+            limit: 10,
+            usageCount: usageCount
+        }
+    });
+    return getRes?.data
+}
+
+export async function getLectures(time?: string) {
+    const lecturesRes = await axios<{ lectures: lecturesProps[] }>({
+        method: 'GET',
+        url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/lecture`,
+        headers: {
+            Authorization: `Bearer ${AccessToken}`,
+            'ngrok-skip-browser-warning': '69420'
+        },
+        params: {
+            limit: 16,
+            time: time
+        }
+    })
+    return lecturesRes.data.lectures
 }
