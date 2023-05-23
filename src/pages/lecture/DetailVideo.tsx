@@ -80,6 +80,7 @@ const DetailVideo = () => {
     const {data: videoData, remove: removeVideo, refetch: reFetchVideo} = useQuery(['nigrongrongrongrong'], () => getVDetail(Number(state.get('videoId') ?? 0)));
     const [state] = useSearchParams();
     const videoRef = useRef<HTMLVideoElement | null>(null);
+    const [isDrag, setIsDrag] = useState<boolean>(false);
 
     useEffect(() => {
         if (videoData?.videoUrl) {
@@ -88,6 +89,12 @@ const DetailVideo = () => {
             console.log(videoRef.current?.currentTime)
         }
     }, [videoData])
+
+    useEffect(() => {
+        if (videoRef.current?.currentTime) {
+            videoRef.current.currentTime = v.currentTime;
+        }
+    }, [v.currentTime]);
 
     useEffect(() => {
         if (detail) {
@@ -130,13 +137,15 @@ const DetailVideo = () => {
                         onEnded={() => videoData.status !== 'COMPLETE' && putVideoComplete(Number(state.get('videoId') ?? 0)).then(() => refetch())}
                         ref={videoRef}
                         onTimeUpdate={(e) => change("currentTime", e.currentTarget.currentTime)}
-                    />
+                    />]
                     <CustomVDiv>
                         <TimeBar
                             type="range"
-                            value={v.currentTime}
-                            onChange={(e) => change("currentTime", Number(e.target.value))}
+                            value={v.currentTime * 10000 / v.maxTime}
+                            onChange={(e) => change("currentTime", Number(e.target.value) * v.maxTime / 10000)}
                             max={10000}
+                            onMouseDown={() => setIsDrag(true)}
+                            onMouseUp={() => setIsDrag(false)}
                         />
                         <IDiv>
                             <PDiv>
@@ -149,7 +158,11 @@ const DetailVideo = () => {
                                 </IBtn>
                                 <IBtn><Icon icon="front" color="White"/></IBtn>
                                 <IBtn><Icon icon="lv" color="White"/></IBtn>
-                                {videoData && <Text color="White">{v.currentTime} / {videoData.hour !== 0 && videoData + ":"}{videoData.minute}:{videoData.second}</Text>}
+                                {videoData && <Text color="White">
+                                    {Math.floor(v.currentTime / 3600) !== 0 && Math.floor(v.currentTime / 60) + ":"}
+                                    {Math.floor(v.currentTime / 60) + ":" + Math.floor(v.currentTime % 60)
+                                    } / {videoData.hour !== 0 && videoData + ":"}{videoData.minute}:{videoData.second}
+                                </Text>}
                             </PDiv>
                             <PDiv>
                                 <IBtn><Icon icon="pnp" color="White"/></IBtn>
