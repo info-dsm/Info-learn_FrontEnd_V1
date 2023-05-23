@@ -72,7 +72,6 @@ const TagDiv = styled.div`
   display: flex;
   gap: 10px;
   overflow-x: scroll;
-  margin-bottom: 40px;
 `
 const TitleDiv = styled.div`
   display: flex;

@@ -76,11 +76,11 @@ const DetailVideo = () => {
         isPnp: false
     })
     const [chapter, setChapter] = useState<chapterProps[]>();
+    const [show, setShow] = useState<boolean>(false);
     const {data: detail, remove, refetch} = useQuery(['nigrongrongrong'], () => getLDetail(state.get('lectureId') ?? ''));
     const {data: videoData, remove: removeVideo, refetch: reFetchVideo} = useQuery(['nigrongrongrongrong'], () => getVDetail(Number(state.get('videoId') ?? 0)));
     const [state] = useSearchParams();
     const videoRef = useRef<HTMLVideoElement | null>(null);
-    const [isDrag, setIsDrag] = useState<boolean>(false);
 
     useEffect(() => {
         if (videoData?.videoUrl) {
@@ -89,12 +89,6 @@ const DetailVideo = () => {
             console.log(videoRef.current?.currentTime)
         }
     }, [videoData])
-
-    useEffect(() => {
-        if (videoRef.current?.currentTime) {
-            videoRef.current.currentTime = v.currentTime;
-        }
-    }, [v.currentTime]);
 
     useEffect(() => {
         if (detail) {
@@ -130,22 +124,28 @@ const DetailVideo = () => {
     return (
         <Container>
             <VideoBox className="vd">
-                <CDiv>
+                <CDiv
+                    onMouseMove={() => setShow(true)}
+                    onMouseLeave={() => setShow(false)}
+                >
                     <Video
                         onContextMenu={(e) => e.preventDefault()}
                         src={videoData?.videoUrl as string}
                         onEnded={() => videoData.status !== 'COMPLETE' && putVideoComplete(Number(state.get('videoId') ?? 0)).then(() => refetch())}
                         ref={videoRef}
                         onTimeUpdate={(e) => change("currentTime", e.currentTarget.currentTime)}
+                        onClick={() => {
+                            v.isPaused ? videoRef.current?.play() : videoRef.current?.pause();
+                            change("isPaused", !v.isPaused);
+                        }}
                     />]
-                    <CustomVDiv>
+                    {show && <CustomVDiv>
                         <TimeBar
                             type="range"
                             value={v.currentTime * 10000 / v.maxTime}
                             onChange={(e) => change("currentTime", Number(e.target.value) * v.maxTime / 10000)}
                             max={10000}
-                            onMouseDown={() => setIsDrag(true)}
-                            onMouseUp={() => setIsDrag(false)}
+                            onClick={()=>{if(videoRef.current?.currentTime) videoRef.current.currentTime = v.currentTime}}
                         />
                         <IDiv>
                             <PDiv>
@@ -170,7 +170,7 @@ const DetailVideo = () => {
                                 <IBtn><Icon icon="full" color="White"/></IBtn>
                             </PDiv>
                         </IDiv>
-                    </CustomVDiv>
+                    </CustomVDiv>}
                 </CDiv>
             </VideoBox>
             <ListBox className="lt">

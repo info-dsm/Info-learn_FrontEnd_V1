@@ -50,8 +50,6 @@ const VideoRegistration = () => {
         setTimeout(()=>setDuration(videoRef.current?.duration),100)
     }, [videoUrl]);
 
-    console.log(duration)
-
     const change = (name: string, data: string): void => {
         setValue(value => {
             return {
