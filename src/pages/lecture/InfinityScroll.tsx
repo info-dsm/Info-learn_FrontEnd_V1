@@ -20,7 +20,7 @@ const InfinityScroll = (props: {tags: string[]}) => {
 
     const bottomRef = useIntersect(async (entry, observer) => {
         observer.unobserve(entry.target);
-        if (hasNextPage && !isFetching) fetchNextPage();
+        if (hasNextPage && !isFetching) await fetchNextPage();
     });
 
     const filtering = (data?: lecturesProps[]) => {

@@ -146,8 +146,8 @@ export type Tag = {
     usageCount: number
 }
 
-export async function GetTags(usageCount?: number) {
-    const getRes = await axios({
+export async function GetTags(limit: number, usageCount?: number) {
+    const getRes = await axios<{ tags: { name: string }[] }>({
         method: 'GET',
         url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/lecture/tag`,
         headers: {
@@ -155,7 +155,7 @@ export async function GetTags(usageCount?: number) {
             Authorization: `Bearer ${AccessToken}`
         },
         params: {
-            limit: 10,
+            limit: limit,
             usageCount: usageCount
         }
     });

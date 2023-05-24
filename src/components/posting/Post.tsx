@@ -23,7 +23,7 @@ interface postProps {
 
 export const Post = ({img, name, date, title, subTitle, tag, isLecture, isSearch, lectureId}: postProps) => {
     const newDate = date.slice(0, 10).replaceAll('-', '.');
-    const [isHover, setIsHover] = useState<boolean>(false);
+    // const [isHover, setIsHover] = useState<boolean>(false);
     const navigate = useNavigate();
 
     const detailNavigate = () => {
@@ -64,7 +64,9 @@ export const Post = ({img, name, date, title, subTitle, tag, isLecture, isSearch
                         </s.InfoDiv>
                     </s.PostBody>
                     :
-                    <_.PostBody onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)} onClick={() => detailNavigate()}>
+                    <_.PostBody
+                        // onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}
+                        onClick={() => detailNavigate()}>
                         <_.UpDiv className="upDiv">
                             {isLecture ? <_.PlayCircle>
                                 <_.Triangle src={triangle}/>
@@ -86,7 +88,7 @@ export const Post = ({img, name, date, title, subTitle, tag, isLecture, isSearch
                             <_.TagDiv>
                                 {tag.map((data, index) => <Text key={index} color={Colors["FPrimary500"]} font="Body4">#{data.name}</Text>)}
                             </_.TagDiv>
-                            {isHover && <Icon icon="heart-fill" color="Gray300" size={16}/>}
+                            {/*{isHover && <Icon icon="heart-fill" color="Gray300" size={16}/>}*/}
                             <div style={{height: "16px", width: "0"}}></div>
                         </_.BottomDiv>
                     </_.PostBody>
