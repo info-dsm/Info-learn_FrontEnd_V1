@@ -25,9 +25,9 @@ interface chapterProps {
 const Chapter = ({title, sequence, videos, watching}: chapterProps) => {
     const sNavigate = useNavigate();
     const [state] = useSearchParams();
-    const time = videos?.reduce((accumulator, currentValue) => accumulator + (currentValue.hour * 60) + currentValue.minute, 0);
-    const Hour = Math.floor((time ?? 0) / 60);
-    const Minute = Math.floor((time ?? 0) % 60);
+    const time = videos?.reduce((accumulator, currentValue) => accumulator + currentValue.hour * 3600 + currentValue.minute * 60 + currentValue.second, 0);
+    const Hour = Math.floor((time ?? 0) / 3600);
+    const Minute = Math.round((time ?? 0) / 60) % 60;
 
     videos?.sort((a, b) => a.sequence - b.sequence);
 

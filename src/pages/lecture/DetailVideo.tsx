@@ -56,37 +56,41 @@ interface chapterProps {
 }
 
 interface vType {
-    currentTime: number;
-    isPaused: boolean;
-    isFull: boolean;
+    // currentTime: number;
     currentSound: number;
-    isPnp: boolean;
     speed: number;
     maxTime: number;
+    isFull: boolean;
+    isPnp: boolean;
+    isClick: boolean;
 }
 
 const DetailVideo = () => {
     const [v, setV] = useState<vType>({
-        currentTime: 0,
+        // currentTime: 0,
         currentSound: 100,
         maxTime: 0,
         speed: 1,
-        isPaused: true,
         isFull: false,
-        isPnp: false
+        isPnp: false,
+        isClick: false
     })
     const [chapter, setChapter] = useState<chapterProps[]>();
     const [show, setShow] = useState<boolean>(false);
-    const {data: detail, remove, refetch} = useQuery(['nigrongrongrong'], () => getLDetail(state.get('lectureId') ?? ''));
-    const {data: videoData, remove: removeVideo, refetch: reFetchVideo} = useQuery(['nigrongrongrongrong'], () => getVDetail(Number(state.get('videoId') ?? 0)));
+    const {data: detail, remove, refetch} = useQuery(['getLDetail'], () => getLDetail(state.get('lectureId') ?? ''));
+    const {
+        data: videoData,
+        remove: removeVideo,
+        refetch: reFetchVideo
+    } = useQuery(['getVDetail'], () => getVDetail(Number(state.get('videoId') ?? 0)));
     const [state] = useSearchParams();
     const videoRef = useRef<HTMLVideoElement | null>(null);
+    const fullRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         if (videoData?.videoUrl) {
             change("isPaused", true);
             change("maxTime", videoData.hour * 3600 + videoData.minute * 60 + videoData.second);
-            console.log(videoRef.current?.currentTime)
         }
     }, [videoData])
 
@@ -121,10 +125,22 @@ const DetailVideo = () => {
         });
     }
 
+    const zero = (data: number) => data < 10 ? `0${Math.floor(data)}` : `${Math.floor(data)}`;
+    const time = (data: number, hour: number) => hour ? `${(data / 3600).toFixed()}:${zero(data / 60)}:${zero(data % 60)}` : `${zero(data / 60)}:${zero(data % 60)}`;
+    const time2 = (hour: number, minute: number, second: number) => hour ? `${hour}:${zero(minute)}:${zero(second)}` : `${zero(minute)}:${zero(second)}`;
+    const isPlaying = () => videoRef && videoRef.current && videoRef.current.currentTime > 0 && !videoRef.current?.paused && !videoRef.current?.ended
+    const getPlayTime = () => videoRef.current ? videoRef.current?.currentTime : 0;
+    const full = () => {
+        if(v.isFull) fullRef.current?.requestFullscreen();
+        else document.exitFullscreen();
+        change("isFull", !v.isFull);
+    }
+
     return (
         <Container>
             <VideoBox className="vd">
                 <CDiv
+                    ref={fullRef}
                     onMouseMove={() => setShow(true)}
                     onMouseLeave={() => setShow(false)}
                 >
@@ -133,41 +149,54 @@ const DetailVideo = () => {
                         src={videoData?.videoUrl as string}
                         onEnded={() => videoData.status !== 'COMPLETE' && putVideoComplete(Number(state.get('videoId') ?? 0)).then(() => refetch())}
                         ref={videoRef}
-                        onTimeUpdate={(e) => change("currentTime", e.currentTarget.currentTime)}
-                        onClick={() => {
-                            v.isPaused ? videoRef.current?.play() : videoRef.current?.pause();
-                            change("isPaused", !v.isPaused);
+                        onTimeUpdate={(e) => {
+                            if (videoRef?.current?.readyState === 4)
+                                change("currentTime", e.currentTarget.currentTime);
                         }}
-                    />]
+                        onClick={() => isPlaying() ? videoRef.current?.pause() : videoRef.current?.play()}
+                    />
                     {show && <CustomVDiv>
                         <TimeBar
                             type="range"
-                            value={v.currentTime * 10000 / v.maxTime}
-                            onChange={(e) => change("currentTime", Number(e.target.value) * v.maxTime / 10000)}
-                            max={10000}
-                            onClick={()=>{if(videoRef.current?.currentTime) videoRef.current.currentTime = v.currentTime}}
+                            value={v.isClick ? undefined : getPlayTime()}
+                            onChange={(e) => {
+                                if(videoRef.current) videoRef.current.currentTime = +e.target.value
+                                // change("currentTime", +e.target.value)
+                            }}
+                            min={0}
+                            max={v.maxTime}
+                            step={'any'}
+                            // onMouseMove={update}
+                            onMouseDown={() => {
+                                change("isClick", true);
+                                if (isPlaying()) videoRef.current?.pause();
+                                console.log("down");
+                            }}
+                            onMouseUp={() => {
+                                change("isClick", false);
+                                if (!isPlaying()) videoRef.current?.play();
+                                console.log("up");
+                            }}
                         />
                         <IDiv>
                             <PDiv>
                                 <IBtn><Icon icon="back" color="White"/></IBtn>
                                 <IBtn onClick={() => {
-                                    v.isPaused ? videoRef.current?.play() : videoRef.current?.pause();
-                                    change("isPaused", !v.isPaused);
+                                    isPlaying() ? videoRef.current?.pause() : videoRef.current?.play();
                                 }}>
-                                    {v.isPaused ? <Icon icon="start" color="White"/> : <Icon icon="pause" color="White"/>}
+                                    {isPlaying() ? <Icon icon="pause" color="White"/> :
+                                        <Icon icon="start" color="White"/>}
                                 </IBtn>
                                 <IBtn><Icon icon="front" color="White"/></IBtn>
                                 <IBtn><Icon icon="lv" color="White"/></IBtn>
                                 {videoData && <Text color="White">
-                                    {Math.floor(v.currentTime / 3600) !== 0 && Math.floor(v.currentTime / 60) + ":"}
-                                    {Math.floor(v.currentTime / 60) + ":" + Math.floor(v.currentTime % 60)
-                                    } / {videoData.hour !== 0 && videoData + ":"}{videoData.minute}:{videoData.second}
+                                    {time(getPlayTime(), videoData.hour)} / {time2(videoData.hour, videoData.minute, videoData.second)}
                                 </Text>}
                             </PDiv>
                             <PDiv>
                                 <IBtn><Icon icon="pnp" color="White"/></IBtn>
                                 <IBtn><Icon icon="setting2" color="White"/></IBtn>
-                                <IBtn><Icon icon="full" color="White"/></IBtn>
+                                <IBtn onClick={full}><Icon icon="full" color="White"/></IBtn>
                             </PDiv>
                         </IDiv>
                     </CustomVDiv>}

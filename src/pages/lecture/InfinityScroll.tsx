@@ -8,7 +8,7 @@ import {SkeletonPost} from "../../components/posting/SkeletonPost";
 import {lecturesProps} from "../Main";
 
 const InfinityScroll = (props: {tags: string[]}) => {
-    const {data: dataList, hasNextPage, isFetching, fetchNextPage} = useInfiniteQuery(
+    const {data: dataList, hasNextPage, isLoading, isFetching, fetchNextPage} = useInfiniteQuery(
         ["lectures"],
         ({pageParam = null}) => getLectures(pageParam),
         {
@@ -43,7 +43,7 @@ const InfinityScroll = (props: {tags: string[]}) => {
                           title={data.title} subTitle={data.explanation} tag={data.tagNameList}
                           lectureId={data.lectureId} key={data.lectureId}/>
                 )}
-                {!dataList && hasNextPage || isFetching ? <PostDiv ref={bottomRef}>
+                {!dataList && hasNextPage || isLoading || isFetching ? <PostDiv ref={bottomRef}>
                     <SkeletonPost/>
                     <SkeletonPost/>
                     <SkeletonPost/>
