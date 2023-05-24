@@ -1,8 +1,8 @@
 import React, {useEffect, useRef, useState} from "react";
-import * as _ from "./LectureManageStyle";
+import * as _ from "../LectureManage/LectureManageStyle";
 import {Text} from "../../../components/text";
 import Icon from "../../../assets/Icon";
-import {Reading} from "./LectureRegistration";
+import {Reading} from "../LectureManage/LectureRegistration";
 import TextInput from "../../../components/input/TextInput";
 import {useLocation, useNavigate} from "react-router-dom";
 import BigDropDown from "../../../components/DropDown/Big";
@@ -13,6 +13,7 @@ import Modal from "../../../components/Modal";
 import axios from "axios";
 import {AccessToken} from "../../Main";
 import {toast} from "react-hot-toast";
+import {useQuery} from "react-query";
 
 type ValueType = 'title' | 'chapter';
 type modalType = 'cancel' | 'delete';
@@ -20,6 +21,26 @@ type modalType = 'cancel' | 'delete';
 export interface arrProps {
     sequence: number;
     title: string;
+}
+
+interface chapterProps {
+    chapterId: number;
+    title: string;
+    sequence: number;
+}
+
+export async function getChapter(lectureId: string) {
+    if (lectureId) {
+        const lecturesRes = await axios({
+            method: 'GET',
+            url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/chapter/${lectureId}`,
+            headers: {
+                Authorization: `Bearer ${AccessToken}`,
+                'ngrok-skip-browser-warning': '69420'
+            }
+        })
+        return lecturesRes.data
+    }
 }
 
 const VideoRegistration = () => {
@@ -39,15 +60,18 @@ const VideoRegistration = () => {
     const state = useLocation().state;
     const navigate = useNavigate();
     const videoRef = useRef<HTMLVideoElement | null>(null);
+    const {data: chapter, refetch: chapterRefetch} = useQuery(['chapterGet'], () => getChapter(state.lectureId));
 
     useEffect(() => {
-        !chapterArray[0] && state.chapters && state.chapters.map((value: { title: string, sequence: number }) => {
-            setChapterArray(current => [...current, {title: value.title, sequence: value.sequence}]);
-        });
-    }, []);
+        if (chapter && chapter.chapters) {
+            const cChapter = chapter.chapters;
+            cChapter.sort((a: chapterProps, b: chapterProps) => a.sequence - b.sequence);
+            setChapterArray(cChapter);
+        }
+    }, [chapter]);
 
     useEffect(() => {
-        setTimeout(()=>setDuration(videoRef.current?.duration),100)
+        setTimeout(() => setDuration(videoRef.current?.duration), 100)
     }, [videoUrl]);
 
     const change = (name: string, data: string): void => {
@@ -79,7 +103,7 @@ const VideoRegistration = () => {
         sequencePost().then(() => {
             toast.success(value.chapter + ' 챕터가 등록되었습니다!');
             setValue({...value, chapter: ''});
-            setChapterArray([...chapterArray, {title: value.chapter, sequence: chapterArray.length + 1}]);
+            chapterRefetch();
         });
     }
 

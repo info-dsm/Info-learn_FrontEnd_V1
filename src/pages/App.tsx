@@ -10,9 +10,9 @@ import InfinityLayout from "./router/InfinityLayout";
 import LectureRegistration from "./lecture/LectureManage/LectureRegistration";
 import RegistrationLayout from "./router/RegistrationLayout";
 import Search from "./search";
-import DetailLecture from "./lecture/DetailLecture";
-import VideoRegistration from "./lecture/LectureManage/VideoRegistration";
-import DetailVideo from "./lecture/DetailVideo";
+import DetailLecture from "./lecture/LectureManage/DetailLecture";
+import VideoRegistration from "./lecture/VideoManage/VideoRegistration";
+import DetailVideo from "./lecture/VideoManage/DetailVideo";
 
 function App() {
     return (

@@ -1,20 +1,15 @@
 import React, {useEffect, useState} from "react";
 import styled from "styled-components";
-import {Text} from "../../components/text";
+import {Text} from "../../../components/text";
 import {useNavigate, useSearchParams} from "react-router-dom";
-import {AccessToken} from "../Main";
+import {AccessToken} from "../../Main";
 import axios from "axios";
 import {useQuery} from "react-query";
-import {Colors} from "../../styles/theme/color";
-import {Button} from "../../components/button/Button";
-import Chapter from "../../components/Chapter/Chapter";
-
-interface chapterProps {
-    chapterId: number;
-    title: string;
-    sequence: number;
-    videos: { videoId: number, title: string, hour: number, minute: number, second: number, sequence: number, status: string | null }[];
-}
+import {Colors} from "../../../styles/theme/color";
+import {Button} from "../../../components/button/Button";
+import Chapter, {chapterProps} from "../../../components/Chapter/Chapter";
+import * as _ from '../../../components/Chapter/style';
+import useChapterTimes from "../hooks/useChapterTimes";
 
 export async function getLDetail(state: string) {
     if (state) {
@@ -35,16 +30,12 @@ const DetailLecture = () => {
     const {data: detail, remove, refetch} = useQuery(['nigrongrong'], () => getLDetail(state.get('lectureId') ?? ''));
     const [state] = useSearchParams();
     const sNavigate = useNavigate();
+    const {lNum, lTime, cNum, cTime, cAll} = useChapterTimes(detail, setChapter);
 
     useEffect(() => {
         if (detail && detail.lectureId !== state.get('lectureId')) {
             remove()
             refetch()
-        }
-        if (detail && detail.chapters) {
-            const cChapter = detail.chapters;
-            cChapter.sort((a: chapterProps, b: chapterProps) => a.sequence - b.sequence);
-            setChapter(cChapter);
         }
     }, [detail]);
 
@@ -82,8 +73,30 @@ const DetailLecture = () => {
                                 }
                             })}>강의 영상 등록</Button>
                         </EditDiv>
+                        <_.Container>
+                            <_.TitleGap>
+                                <Text font="Body1">커리큘럼</Text>
+                                <Text font="Body4" color={Colors["Gray500"]}>
+                                    {lNum}강 • {lTime[0] !== 0 && `${lTime[0]}시간`} {lTime[1]}분
+                                </Text>
+                            </_.TitleGap>
+                            <_.ChapterContainer>
+                                <_.InContainer>
+                                    {chapter && chapter.map((v, i) =>
+                                        <_.VideoContainer key={i}>
+                                            <_.TitleGap>
+                                                <Text font="Body3">{`섹션 ${i + 1}. ${v.title}`}</Text>
+                                            </_.TitleGap>
+                                            <Text font="Body4" color={Colors["Gray500"]}>
+                                                {`${cNum[i]}강 • ${cTime[i][0] !== 0 ? (cTime[i][0] + "시간") : ""} ${cTime[i][1]}분`}
+                                            </Text>
+                                        </_.VideoContainer>
+                                    )}
+                                </_.InContainer>
+                            </_.ChapterContainer>
+                        </_.Container>
                         {chapter && chapter.map((v: chapterProps, index) =>
-                            <Chapter key={index} chapterId={v.chapterId} sequence={v.sequence} title={v.title} videos={v.videos}/>
+                            <Chapter key={index} chapterId={v.chapterId} sequence={v.sequence} title={v.title} videos={v.videos} cTime={cAll[index]}/>
                         )}
                     </LBody>
                 </> :

@@ -79,7 +79,7 @@ const LectureRegistration = () => {
     useEffect(() => {
         if (!isLoading && resData !== undefined) {
             console.log('enter navigate code!');
-            navigate(`/lecture/detail`, {state: resData.lectureId});
+            navigate(`/lecture/detail?lectureId=${resData.lectureId}`);
         }
     }, [isLoading, resData]);
 
