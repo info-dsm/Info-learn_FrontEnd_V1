@@ -1,14 +1,15 @@
 import React, {useEffect, useRef, useState} from "react";
 import styled from "styled-components";
-import Chapter from "../../components/Chapter/Chapter";
+import Chapter, {chapterProps} from "../../../components/Chapter/Chapter";
 import axios from "axios";
-import {AccessToken} from "../Main";
-import {getLDetail} from "./DetailLecture";
+import {AccessToken} from "../../Main";
+import {getLDetail} from "../LectureManage/DetailLecture";
 import {useQuery} from "react-query";
 import {useSearchParams} from "react-router-dom";
-import {Colors} from "../../styles/theme/color";
-import Icon from "../../assets/Icon";
-import {Text} from "../../components/text";
+import {Colors} from "../../../styles/theme/color";
+import Icon from "../../../assets/Icon";
+import {Text} from "../../../components/text";
+import useChapterTimes from "../hooks/useChapterTimes";
 
 async function getVDetail(id: number) {
     if (id) {
@@ -35,24 +36,6 @@ async function putVideoComplete(id: number) {
         })
         return putStatusRes.data
     }
-}
-
-interface VideoType {
-    videoId: number;
-    title: string;
-    hour: number;
-    minute: number;
-    second: number;
-    sequence: number;
-    status: string | null;
-}
-
-interface chapterProps {
-    chapterId: number;
-    title: string;
-    sequence: number;
-    videos?: VideoType[];
-    watching?: number;
 }
 
 interface vType {
@@ -86,6 +69,7 @@ const DetailVideo = () => {
     const [state] = useSearchParams();
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const fullRef = useRef<HTMLDivElement | null>(null);
+    const {cAll} = useChapterTimes(detail, setChapter);
 
     useEffect(() => {
         if (videoData?.videoUrl) {
@@ -204,8 +188,8 @@ const DetailVideo = () => {
             </VideoBox>
             <ListBox className="lt">
                 {
-                    chapter?.map((v: chapterProps) =>
-                        <Chapter key={v.chapterId} {...v} watching={Number(state.get('videoId') ?? 0)}/>
+                    chapter?.map((v: chapterProps, i) =>
+                        <Chapter key={v.chapterId} {...v} watching={Number(state.get('videoId') ?? 0)} cTime={cAll[i]}/>
                     )
                 }
             </ListBox>
