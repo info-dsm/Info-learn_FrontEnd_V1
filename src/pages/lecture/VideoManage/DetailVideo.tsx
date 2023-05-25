@@ -48,7 +48,6 @@ interface vType {
     isFull: boolean;
     isPnp: boolean;
     isClick: boolean;
-    isMute: boolean;
     resume: number;
 }
 
@@ -59,7 +58,6 @@ const DetailVideo = () => {
         // speed: 1,
         maxTime: 0,
         lastVolume: 1,
-        isMute: false,
         isFull: false,
         isPnp: false,
         isClick: false,
@@ -133,15 +131,22 @@ const DetailVideo = () => {
         else fullRef.current?.requestFullscreen();
         change("isFull", !v.isFull);
     }
-    const isMuted = () => v.isMute || videoRef.current && (videoRef.current?.muted || !videoRef.current?.volume);
+    const isMuted = () => !getVolume();
     const mute = () => {
-        if(!isPlaying() || v.isMute) {
-            changeVideo(video => video.muted = !v.isMute);
-            change("isMute", !v.isMute);
-        } else changeVideo(video => video.muted = !video.muted);
-        if(isPlaying()) (document.getElementById('volume') as HTMLInputElement).value = `${getVolume()}`
+        changeVideo(video => {
+            if (video.volume) {
+                change("lastVolume", video.volume);
+                video.volume = +!video.volume;
+            } else {
+                change("lastVolume", 0);
+                video.volume = v.lastVolume;
+            }
+        });
+        const volume = document.getElementById('volume') as HTMLInputElement;
+        volume.value = `${getVolume()}`
+        volume.style.background = `linear-gradient(to right, white ${getVolume() * 100}%, gray ${getVolume() * 100}%)`
     }
-    const getVolume = () => !v.isClick && v.isMute || isMuted() ? 0 : videoRef.current?.volume ?? 1;
+    const getVolume = () => videoRef.current?.volume ?? 1;
 
     document.onkeydown = (event) => {
         console.log(event.key);
@@ -164,7 +169,6 @@ const DetailVideo = () => {
                     }}
                 >
                     <Video
-                        muted={v.isMute}
                         onContextMenu={(e) => e.preventDefault()}
                         src={videoData?.videoUrl as string}
                         onEnded={() => videoData.status !== 'COMPLETE' && putVideoComplete(Number(state.get('videoId') ?? 0)).then(() => refetch())}
@@ -179,7 +183,7 @@ const DetailVideo = () => {
                     {v.resume > Date.now() ? <ShowIcon>
                         <Icon size={40} icon={!isPlaying() ? "yt-play" : "yt-pause"} color={"White"}/>
                     </ShowIcon> : undefined}
-                    {show && <CustomVDiv>
+                    {(!isPlaying() || show) && <CustomVDiv>
                         <TimeBar
                             type="range"
                             value={v.isClick ? undefined : getPlayTime()}
@@ -217,17 +221,17 @@ const DetailVideo = () => {
                                         id={'volume'}
                                         data={getVolume() * 100}
                                         type={"range"}
-                                        value={isPlaying() ? undefined : isMuted() ? 0 : 1}
+                                        // value={isPlaying() ? undefined : isMuted() ? 0 : 1}
                                         defaultValue={videoRef.current?.volume}
                                         min={0}
                                         max={1}
                                         step={'any'}
-                                        // onMouseDown={() => {
-                                        //     change("isClick", true);
-                                        // }}
-                                        // onMouseUp={() => {
-                                        //     change("isClick", false);
-                                        // }}
+                                        onMouseDown={e => {
+                                            change("lastVolume", +e.currentTarget.value);
+                                        }}
+                                        onMouseUp={e => {
+                                            change("lastVolume", +e.currentTarget.value);
+                                        }}
                                         onChange={(e) => {
                                             changeVideo(video => video.volume = +e.target.value);
                                             e.target.style.background = `linear-gradient(to right, white ${getVolume() * 100}%, gray ${getVolume() * 100}%)`
@@ -248,11 +252,9 @@ const DetailVideo = () => {
                 </CDiv>
             </VideoBox>
             <ListBox className="lt">
-                {
-                    chapter?.map((v: chapterProps, i) =>
-                        <Chapter key={v.chapterId} {...v} watching={Number(state.get('videoId') ?? 0)} cTime={cAll[i]}/>
-                    )
-                }
+                {chapter?.map((v: chapterProps, i) =>
+                    <Chapter key={v.chapterId} {...v} watching={Number(state.get('videoId') ?? 0)} cTime={cAll[i]}/>
+                )}
             </ListBox>
         </Container>
     )
