@@ -9,9 +9,10 @@ import InfinityScroll from "./InfinityScroll";
 import {Link} from "react-router-dom";
 import {useQuery} from "react-query";
 import {GetTags} from "./api";
+import {SkeletonTag} from "../../components/posting/SkeletonTag";
 
 const LectureAll = () => {
-    const {data: tags} = useQuery(['getTag'], () => GetTags(20));
+    const {data: tags, isLoading} = useQuery(['getTag'], () => GetTags(20));
     const slider = useRef<HTMLDivElement>(null);
     const [selected, setSelected] = useState<string[]>([]);
     const [startPos, setStartPos] = useState<{ start: number, scroll: number }>();
@@ -79,6 +80,18 @@ const LectureAll = () => {
                                       font="Body3">{value.name}</Text>
                             </Tag>
                         )}
+                        {isLoading ? <>
+                            <SkeletonTag/>
+                            <SkeletonTag/>
+                            <SkeletonTag/>
+                            <SkeletonTag/>
+                            <SkeletonTag/>
+                            <SkeletonTag/>
+                            <SkeletonTag/>
+                            <SkeletonTag/>
+                            <SkeletonTag/>
+                            <SkeletonTag/>
+                        </> : undefined}
                     </ScrollDiv>
                 </TagDiv>
                 <InfinityScroll tags={selected}/>
