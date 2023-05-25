@@ -39,9 +39,6 @@ async function putVideoComplete(id: number) {
 }
 
 interface vType {
-    // currentTime: number;
-    // currentSound: number;
-    // speed: number;
     maxTime: number;
     lastVolume: number;
     // mute: false,
@@ -49,19 +46,20 @@ interface vType {
     isPnp: boolean;
     isClick: boolean;
     resume: number;
+    shown: boolean;
 }
+
+export let movementTime = 0;
 
 const DetailVideo = () => {
     const [v, setV] = useState<vType>({
-        // currentTime: 0,
-        // currentSound: 100,
-        // speed: 1,
         maxTime: 0,
         lastVolume: 1,
         isFull: false,
         isPnp: false,
         isClick: false,
-        resume: 0
+        resume: 0,
+        shown: false,
     })
     const [chapter, setChapter] = useState<chapterProps[]>();
     const [show, setShow] = useState<boolean>(false);
@@ -147,6 +145,20 @@ const DetailVideo = () => {
         volume.style.background = `linear-gradient(to right, white ${getVolume() * 100}%, gray ${getVolume() * 100}%)`
     }
     const getVolume = () => videoRef.current?.volume ?? 1;
+    const movement = () => {
+        movementTime = Date.now() + 3000;
+        setTimeout(() => movementTime <= Date.now() ? hideVideo() : undefined, 3000);
+    }
+    const hideVideo = () => {
+        if(!isPlaying()) return;
+        change('shown', true);
+        setTimeout(() => setShow(false), 500);
+    }
+    const showVideo = () => {
+        if(!isPlaying()) return;
+        change('shown', false);
+        setShow(true);
+    }
 
     document.onkeydown = (event) => {
         console.log(event.key);
@@ -162,9 +174,12 @@ const DetailVideo = () => {
             <VideoBox className="vd">
                 <CDiv
                     ref={fullRef}
-                    onMouseMove={() => setShow(true)}
+                    onMouseMove={() => {
+                        showVideo();
+                        movement();
+                    }}
                     onMouseLeave={() => {
-                        setShow(false);
+                        hideVideo();
                         setVolumeHover(false);
                     }}
                 >
@@ -183,7 +198,7 @@ const DetailVideo = () => {
                     {v.resume > Date.now() ? <ShowIcon>
                         <Icon size={40} icon={!isPlaying() ? "yt-play" : "yt-pause"} color={"White"}/>
                     </ShowIcon> : undefined}
-                    {(!isPlaying() || show) && <CustomVDiv>
+                    {(!isPlaying() || show) && <CustomVDiv fade={v.shown}>
                         <TimeBar
                             type="range"
                             value={v.isClick ? undefined : getPlayTime()}
@@ -191,7 +206,6 @@ const DetailVideo = () => {
                             min={0}
                             max={v.maxTime}
                             step={'any'}
-                            // onMouseMove={update}
                             onMouseDown={() => {
                                 change("isClick", true);
                                 if (isPlaying()) videoRef.current?.pause();
@@ -226,12 +240,8 @@ const DetailVideo = () => {
                                         min={0}
                                         max={1}
                                         step={'any'}
-                                        onMouseDown={e => {
-                                            change("lastVolume", +e.currentTarget.value);
-                                        }}
-                                        onMouseUp={e => {
-                                            change("lastVolume", +e.currentTarget.value);
-                                        }}
+                                        onMouseDown={e => change("lastVolume", +e.currentTarget.value)}
+                                        onMouseUp={e => change("lastVolume", +e.currentTarget.value)}
                                         onChange={(e) => {
                                             changeVideo(video => video.volume = +e.target.value);
                                             e.target.style.background = `linear-gradient(to right, white ${getVolume() * 100}%, gray ${getVolume() * 100}%)`
@@ -262,6 +272,25 @@ const DetailVideo = () => {
 
 export default DetailVideo;
 
+const FadeOut = keyframes`
+  0% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+`
+const FadeIn = keyframes`
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+`
 const IconShow = keyframes`
   0% {
     transform: translate(-50%, -50%) scale(1);
@@ -406,7 +435,7 @@ const TimeBar = styled.input`
     border-radius: 100%;
   }
 `
-const CustomVDiv = styled.div`
+const CustomVDiv = styled.div<{fade: boolean}>`
   width: 100%;
   height: 120px;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 100%);
@@ -415,6 +444,7 @@ const CustomVDiv = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  animation: ${props => props.fade ? FadeOut : FadeIn} 625ms;
 `
 const CDiv = styled.div`
   border-radius: 8px;
