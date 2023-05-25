@@ -69,7 +69,9 @@ export type iconName =
     | "back"
     | "front"
     | "speed"
-    | "setting2";
+    | "setting2"
+    | "yt-pause"
+    | "yt-play";
 
 type icon = {
     path: string;
@@ -360,5 +362,13 @@ export const IconSet: Record<iconName, icon> = {
     up: {
         path: "m12 11.828-4.95 4.95-1.414-1.414L12 9l6.364 6.364-1.414 1.414-4.95-4.95Z",
         viewBox: "0 0 24 24"
+    },
+    "yt-pause": {
+        path: "M 12,26 16,26 16,10 12,10 z M 21,26 25,26 25,10 21,10 z",
+        viewBox: "0 0 36 36"
+    },
+    "yt-play": {
+        path: "M 12,26 18.5,22 18.5,14 12,10 z M 18.5,22 25,18 25,18 18.5,14 z",
+        viewBox: "0 0 36 36"
     }
 }

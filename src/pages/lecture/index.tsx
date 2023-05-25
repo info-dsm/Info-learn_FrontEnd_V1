@@ -10,6 +10,7 @@ import {Link} from "react-router-dom";
 import {useQuery} from "react-query";
 import {GetTags} from "./api";
 import {SkeletonTag} from "../../components/posting/SkeletonTag";
+import CustomSlider from "../../components/input/CustomSlider";
 
 const LectureAll = () => {
     const {data: tags, isLoading} = useQuery(['getTag'], () => GetTags(20));
@@ -95,7 +96,10 @@ const LectureAll = () => {
                     </ScrollDiv>
                 </TagDiv>
                 <InfinityScroll tags={selected}/>
+
+                <CustomSlider/>
             </ContentDiv>
+
         </>
     )
 }
