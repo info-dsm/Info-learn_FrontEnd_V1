@@ -1,6 +1,17 @@
 import axios from "axios";
 import toast from "react-hot-toast";
-import {AccessToken} from "../Main";
+import {AccessToken, lecturesProps} from "../Main";
+
+export async function DeleteVideo(videoId: number) {
+    const deleteVideoRes = await axios({
+        method: 'DELETE',
+        url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/video/${videoId}`,
+        headers: {
+            Authorization: `Bearer ${AccessToken}`
+        }
+    });
+    return deleteVideoRes.data;
+}
 
 export async function DeleteLecture(lectureId: string) {
     const deleteStatus = toast.loading('강의를 삭제중입니다!');
@@ -128,4 +139,41 @@ export async function PostLecture({postJson, inputFile}: { postJson: string, inp
             });
         })
     }
+}
+
+export type Tag = {
+    name: string,
+    usageCount: number
+}
+
+export async function GetTags(limit: number, usageCount?: number) {
+    const getRes = await axios<{ tags: { name: string }[] }>({
+        method: 'GET',
+        url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/lecture/tag`,
+        headers: {
+            'ngrok-skip-browser-warning': '69420',
+            Authorization: `Bearer ${AccessToken}`
+        },
+        params: {
+            limit: limit,
+            usageCount: usageCount
+        }
+    });
+    return getRes?.data
+}
+
+export async function getLectures(time?: string) {
+    const lecturesRes = await axios<{ lectures: lecturesProps[] }>({
+        method: 'GET',
+        url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/lecture`,
+        headers: {
+            Authorization: `Bearer ${AccessToken}`,
+            'ngrok-skip-browser-warning': '69420'
+        },
+        params: {
+            limit: 16,
+            time: time
+        }
+    })
+    return lecturesRes.data.lectures
 }

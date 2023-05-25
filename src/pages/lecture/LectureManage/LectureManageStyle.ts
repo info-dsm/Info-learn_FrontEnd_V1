@@ -17,10 +17,17 @@ const AppearTag = keyframes`
 `
 export const IcoBtn = styled.div`
   display: flex;
+  width: 24px;
+  height: 24px;
   justify-content: center;
   align-items: center;
-  border-radius: 4px;
+  border-radius: 8px;
   overflow: hidden;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${Colors["Gray100"]};
+  }
 `
 export const IDiv = styled.div`
   display: flex;
@@ -114,7 +121,7 @@ export const RBack = styled.div`
   position: fixed;
   bottom: 0;
   left: 0;
-  background-color: rgba(255,255,255,0.1);
+  background-color: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
 `
 export const RDiv = styled.div<{ flex: string }>`
@@ -123,7 +130,7 @@ export const RDiv = styled.div<{ flex: string }>`
   padding: 40px 0 40px;
   display: flex;
   justify-content: ${props => props.flex};
-  
+
   @media only screen and (max-width: 1080px) {
     width: 94%;
   }

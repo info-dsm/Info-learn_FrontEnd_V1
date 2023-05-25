@@ -7,6 +7,7 @@ export const UpDiv = styled.div`
   position: relative;
   transition: 0.2s;
   aspect-ratio: 16 / 9;
+  //overflow: hidden;
 `
 export const TagDiv = styled.div`
   display: flex;
@@ -37,6 +38,7 @@ export const PlayCircle = styled.div`
   outline: ${Colors["Gray100"]} 4px solid;
   background-color: ${Colors["FPrimary500"]};
   position: absolute;
+  z-index: 3;
   bottom: -12px;
   right: 20px;
 `
@@ -63,16 +65,37 @@ interface imgProps {
     url: string;
 }
 
+export const BackDrop = styled.div`
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.01);
+  z-index: 1;
+  backdrop-filter: blur(10px);
+`
+export const BackDiv = styled.div<imgProps>`
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-image: url(${props => props.url});
+  background-position: center center;
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  left: 0;
+`
 export const Img = styled.div<imgProps>`
   width: 100%;
   height: 100%;
   background-image: url(${props => props.url});
-  background-color: ${Colors["Gray200"]};
-  border-radius: 8px;
-  background-size: 106%;
+  background-size: 100%;
   background-position: center center;
   background-repeat: no-repeat;
   transition: 0.3s;
+  border-radius: 8px;
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
 
   &:hover {
     background-size: 120%;

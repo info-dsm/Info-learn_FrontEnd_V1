@@ -12,8 +12,9 @@ import {Post} from "../components/posting/Post";
 import {useQuery} from "react-query";
 import axios from "axios";
 import * as _ from "./MainStyle";
+import {SkeletonPost} from "../components/posting/SkeletonPost";
 
-export const AccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJURUFDSEVSIiwianRpIjoibmlnZXIiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNjg0NjU0NTIxLCJleHAiOjE2ODQ3NDA5MjF9.gZSTRRYQtXKehdjR6yDkW8iexq9KG8YiFXtSxXhnEsA";
+export const AccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJURUFDSEVSIiwianRpIjoiTXVTdW5nTXVTdW5nIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTY4NDkzMzc2OCwiZXhwIjoxNjg1MDIwMTY4fQ.z2Cs0tpCNhxCgGRbmxyTM-fI5qG7PkA18Oc81s-TnIs";
 
 export async function getLectures(limit: number) {
     const lecturesRes = await axios({
@@ -40,7 +41,7 @@ export interface lecturesProps {
 }
 
 const Main = () => {
-    const {data: lecture} = useQuery(['getLectures'], () => getLectures(4));
+    const {data: lecture, isLoading} = useQuery(['getLectures'], () => getLectures(4));
 
     const titleCategory = [
         {name: "백엔드", imageUrl: BackendImg},
@@ -67,6 +68,7 @@ const Main = () => {
                 <_.DefaultWidth>
                     <FlexDiv wrap="wrap">
                         <Text gradient>인포런.</Text>
+                        &nbsp;&nbsp;
                         <Text>듣고싶은 강의를</Text>
                     </FlexDiv>
                     <Text>들을 수 있는 가장 좋은 방법.</Text>
@@ -83,6 +85,7 @@ const Main = () => {
                 </FlexDiv>
                 <FlexDiv margin="100px 0 20px" wrap="wrap">
                     <Text gradient font="Title2">최신 강의.</Text>
+                    &nbsp;&nbsp;
                     <Text font="Title2">따끈따끈한 강의 이야기.</Text>
                 </FlexDiv>
                 <PostDiv>
@@ -90,9 +93,16 @@ const Main = () => {
                         <Post isLecture img={data.lectureThumbnailUrl} name={data.createdBy} date={data.createdAt} title={data.title} subTitle={data.explanation} tag={data.tagNameList}
                               lectureId={data.lectureId} key={data.lectureId}/>
                     )}
+                    {!lecture || isLoading ? <PostDiv>
+                        <SkeletonPost/>
+                        <SkeletonPost/>
+                        <SkeletonPost/>
+                        <SkeletonPost/>
+                    </PostDiv> : undefined}
                 </PostDiv>
                 <FlexDiv margin="100px 0 0" wrap="wrap">
                     <Text gradient font="Title2">최신 TIL.</Text>
+                    &nbsp;&nbsp;
                     <Text font="Title2">새로나온 지식 이야기.</Text>
                 </FlexDiv>
                 <TagDiv>

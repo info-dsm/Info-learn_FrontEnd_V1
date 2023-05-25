@@ -8,7 +8,7 @@ import {Button} from "../../../components/button/Button";
 import toast from "react-hot-toast";
 import {useLocation, useNavigate} from "react-router-dom";
 import Modal from "../../../components/Modal";
-import {DeleteLecture, PostLecture, PutLecture} from "../api";
+import {DeleteLecture, DeleteVideo, PostLecture, PutLecture} from "../api";
 import {useMutation} from "react-query";
 import {korTypeToEng} from "../../../K2E";
 import * as _ from "./LectureManageStyle";
@@ -79,8 +79,7 @@ const LectureRegistration = () => {
     useEffect(() => {
         if (!isLoading && resData !== undefined) {
             console.log('enter navigate code!');
-            const navTitle = value.title.replaceAll(" ", "_").trim();
-            navigate(`/lecture/niger/${navTitle}`, {state: resData.lectureId});
+            navigate(`/lecture/detail?lectureId=${resData.lectureId}`);
         }
     }, [isLoading, resData]);
 
@@ -230,7 +229,9 @@ const LectureRegistration = () => {
                                                     }
                                                 })}/>
                                             </_.IcoBtn>
-                                            <Icon icon="trash" size={16}/>
+                                            <_.IcoBtn>
+                                                <Icon icon="trash" size={16} clicked={()=>DeleteVideo(v.videoId)}/>
+                                            </_.IcoBtn>
                                         </_.IDiv>
                                     </_.VCell>
                                 ) : <_.VCell>아직 강의 영상이 없어요</_.VCell>}
