@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import styled from "styled-components";
+import styled, {keyframes} from "styled-components";
 import {Text} from "../../../components/text";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {AccessToken} from "../../Main";
@@ -27,10 +27,12 @@ export async function getLDetail(state: string) {
 
 const DetailLecture = () => {
     const [chapter, setChapter] = useState<chapterProps[]>();
+    const [progress, setProgress] = useState<number>(100);
     const {data: detail, remove, refetch} = useQuery(['nigrongrong'], () => getLDetail(state.get('lectureId') ?? ''));
     const [state] = useSearchParams();
     const sNavigate = useNavigate();
     const {lNum, lTime, cNum, cTime, cAll} = useChapterTimes(detail, setChapter);
+    console.log(lNum);
 
     useEffect(() => {
         if (detail && detail.lectureId !== state.get('lectureId')) {
@@ -38,6 +40,19 @@ const DetailLecture = () => {
             refetch()
         }
     }, [detail]);
+
+    useEffect(() => {
+        if (detail && detail.chapters && lNum) {
+            console.log('progress set!')
+            let watched = 0;
+            detail.chapters.map((v: chapterProps) => {
+                v.videos?.map((v) => {
+                    if (v.status === "COMPLETE") watched++;
+                })
+            })
+            setProgress(100 - (watched / lNum * 100));
+        }
+    }, [lNum]);
 
     return (
         <>
@@ -95,6 +110,13 @@ const DetailLecture = () => {
                                 </_.InContainer>
                             </_.ChapterContainer>
                         </_.Container>
+                        <_.Container>
+                            <_.TitleGap>
+                                <Text font="Body1">수강 진행도</Text>
+                                <Text font="Body1" gradient>{100 - progress}%</Text>
+                            </_.TitleGap>
+                            <OutP><PBar><HideBar width={progress}></HideBar></PBar></OutP>
+                        </_.Container>
                         {chapter && chapter.map((v: chapterProps, index) =>
                             <Chapter key={index} chapterId={v.chapterId} sequence={v.sequence} title={v.title} videos={v.videos} cTime={cAll[index]}/>
                         )}
@@ -115,6 +137,39 @@ const DetailLecture = () => {
 
 export default DetailLecture
 
+const barAnim = (width: number) => keyframes`
+  0% {
+    width: 100%;
+  }
+  100% {
+    width: ${width}%;
+  }
+`
+const HideBar = styled.div<{ width: number }>`
+  width: ${props => props.width}%;
+  height: 100%;
+  background-color: ${Colors["White"]};
+  transition: 1s;
+  animation: ease 1s ${props => barAnim(props.width)};
+`
+const PBar = styled.div`
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  background: ${Colors["PrimaryGradient"]};
+  display: flex;
+  justify-content: flex-end;
+`
+const OutP = styled.div`
+  width: 100%;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+  background-color: ${Colors["White"]};
+  padding: 4px;
+`
 const EditDiv = styled.div`
   display: flex;
   gap: 10px;

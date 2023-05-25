@@ -53,7 +53,6 @@ const VideoRegistration = () => {
     const [inputFile, setFile] = useState<File>();
     const [videoUrl, setVideoUrl] = useState<string | ArrayBuffer | null>('');
     const [chapterFocus, setChapterFocus] = useState<string>('강의 챕터 선택');
-    const [chapterArray, setChapterArray] = useState<arrProps[]>([]);
     const [isRegi, setIsRegi] = useState<string>('등록');
     const [modal, setModal] = useState<{ [key in modalType]: boolean }>({cancel: false, delete: false});
     const [duration, setDuration] = useState<number | undefined>();
@@ -61,14 +60,6 @@ const VideoRegistration = () => {
     const navigate = useNavigate();
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const {data: chapter, refetch: chapterRefetch} = useQuery(['chapterGet'], () => getChapter(state.lectureId));
-
-    useEffect(() => {
-        if (chapter && chapter.chapters) {
-            const cChapter = chapter.chapters;
-            cChapter.sort((a: chapterProps, b: chapterProps) => a.sequence - b.sequence);
-            setChapterArray(cChapter);
-        }
-    }, [chapter]);
 
     useEffect(() => {
         setTimeout(() => setDuration(videoRef.current?.duration), 100)
@@ -87,7 +78,7 @@ const VideoRegistration = () => {
         const sequenceJson = JSON.stringify({
             lectureId: state.lectureId,
             title: value.chapter,
-            sequence: chapterArray.length + 1
+            sequence: chapter.chapters.length + 1
         });
         const sequencePost = async () => {
             await axios({
@@ -118,7 +109,7 @@ const VideoRegistration = () => {
             toast.error('영상을 올려주세요!');
             return
         }
-        const sequences = chapterArray.filter((v) => chapterFocus.slice(5,).trim() === v.title)
+        const sequences = chapter.chapters.filter((v: chapterProps) => chapterFocus.slice(5,).trim() === v.title)
         console.log(sequences);
         const videoJson = JSON.stringify({
             title: value.title,
@@ -148,7 +139,7 @@ const VideoRegistration = () => {
             }
             await axios({
                 method: 'POST',
-                url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/video/${sequences[0].sequence}`,
+                url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/video/${sequences[0].chapterId}`,
                 data: videoJson,
                 headers: {
                     "Content-Type": "application/json",
@@ -209,7 +200,7 @@ const VideoRegistration = () => {
                         <TextInput width="100%" change={change} value={value.title} max={100} name="title" placeholder="강의 영상 제목을 입력해 주세요" Title="영상 제목"/>
                         <_.DropCoverDiv>
                             <Text>챕터</Text>
-                            <BigDropDown change={setChapterFocus} value={chapterFocus} arr={chapterArray} width="100%" noneMsg="챕터가"/>
+                            <BigDropDown change={setChapterFocus} value={chapterFocus} arr={chapter && chapter.chapters} width="100%" noneMsg="챕터가"/>
                         </_.DropCoverDiv>
                         <_.AddCDiv>
                             <Input width="100%" value={value.chapter} name="chapter" change={change} placeholder="추가 할 강의 챕터를 입력해주세요" keyDown={(e) =>

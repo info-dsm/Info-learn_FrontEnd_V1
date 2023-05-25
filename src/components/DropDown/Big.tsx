@@ -16,7 +16,6 @@ interface DropProps {
 
 const BigDropDown = ({arr, value, change, color, width, noneMsg}: DropProps) => {
     const [state, setState] = useState<boolean | undefined>(undefined);
-    const newArr = arr.sort((a: arrProps, b: arrProps) => a.sequence - b.sequence);
 
     const setData = (v: string) => {
         if (v !== value) {
@@ -31,7 +30,7 @@ const BigDropDown = ({arr, value, change, color, width, noneMsg}: DropProps) => 
                 <Text font="Body2">{value}</Text>
                 <Icon icon={state ? "up" : "down"}/>
                 {state && <_.BigContents width={width} bool={state}>
-                    {arr[0] ? newArr.map((v, index) =>
+                    {arr[0] ? arr.map((v, index) =>
                         <_.InContent key={index} onClick={() => setData(`섹션 ${v.sequence}. ${v.title}`)}>
                             <Text font="Body2">{`섹션 ${v.sequence}. ${v.title}`}</Text>
                         </_.InContent>
