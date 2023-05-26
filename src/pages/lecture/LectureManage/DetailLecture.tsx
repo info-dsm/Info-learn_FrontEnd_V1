@@ -35,6 +35,7 @@ const DetailLecture = () => {
     console.log(lNum);
 
     useEffect(() => {
+        console.log('change');
         if (detail && detail.lectureId !== state.get('lectureId')) {
             remove()
             refetch()
@@ -98,14 +99,16 @@ const DetailLecture = () => {
                             <_.ChapterContainer>
                                 <_.InContainer>
                                     {chapter && chapter.map((v, i) =>
-                                        <_.VideoContainer key={i}>
-                                            <_.TitleGap>
-                                                <Text font="Body3">{`섹션 ${i + 1}. ${v.title}`}</Text>
-                                            </_.TitleGap>
-                                            <Text font="Body4" color={Colors["Gray500"]}>
-                                                {`${cNum[i]}강 • ${cTime[i][0] !== 0 ? (cTime[i][0] + "시간") : ""} ${cTime[i][1]}분`}
-                                            </Text>
-                                        </_.VideoContainer>
+                                        <a key={i} href={"#" + v.title}>
+                                            <_.VideoContainer>
+                                                <_.TitleGap>
+                                                    <Text font="Body3">{`섹션 ${i + 1}. ${v.title}`}</Text>
+                                                </_.TitleGap>
+                                                <Text font="Body4" color={Colors["Gray500"]}>
+                                                    {`${cNum[i]}강 • ${cTime[i][0] !== 0 ? (cTime[i][0] + "시간") : ""} ${cTime[i][1]}분`}
+                                                </Text>
+                                            </_.VideoContainer>
+                                        </a>
                                     )}
                                 </_.InContainer>
                             </_.ChapterContainer>

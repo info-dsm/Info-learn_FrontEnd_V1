@@ -10,18 +10,27 @@ const GlobalStyle = createGlobalStyle`
     font-size: 14px;
     font-weight: 400;
     user-select: none;
+    scroll-behavior: smooth;
+
     ::-webkit-scrollbar {
       width: 6px;
       height: 0;
     }
+
     ::-webkit-scrollbar-thumb {
       background: ${Colors["Gray400"]};
       border-radius: 6px;
     }
+
     ::-webkit-scrollbar-track {
       background: none;
     }
   }
+
+  a {
+    text-decoration: none;
+  }
+
   // body {
   //   background-color: ${Colors["White"]};
   // }
