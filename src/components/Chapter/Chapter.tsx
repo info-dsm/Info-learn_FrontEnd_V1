@@ -31,7 +31,7 @@ const Chapter = ({title, sequence, videos, watching, cTime}: chapterProps) => {
     videos?.sort((a, b) => a.sequence - b.sequence);
 
     return (
-        <_.Container>
+        <_.Container id={title}>
             <_.TitleGap>
                 <Text font='Body1'>섹션 {sequence}. {title}</Text>
                 <Text font='Body4' color={Colors["Gray500"]}>{videos?.length}강 • {Hour !== 0 && `${Hour}시간`} {Minute}분</Text>
