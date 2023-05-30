@@ -60,10 +60,9 @@ const Signup = () => {
             Data.nickname = value.nickname;
         }
         if(ImgFile) {
-            const fileName = ImgFile.name.split('.');
             Data.profileImage = {
-                fileName: fileName.join('.'),
-                contentType: `image/${fileName[1]}`
+                fileName: ImgFile.name,
+                contentType: ImgFile.type
             };
         }
 
@@ -73,7 +72,7 @@ const Signup = () => {
             data: Data
         })
             .then((res) => {
-                PutS3(res.data.url);
+                PutS3({url: res.data.url, file: ImgFile});
                 toast.success('회원가입에 성공했습니다!');
                 navigate('/');
             })
@@ -83,17 +82,17 @@ const Signup = () => {
             })
     }
 
-    const PutS3 = (url: string) => {
-        axios({
+    async function PutS3({url, file}: { url: string, file?: File }) {
+        await axios({
             method: 'PUT',
             url: url,
+            data: file,
             headers: {
-                "Content-Type": `${ImgFile?.name.split('.')[1]}`
-            },
-            data: ImgFile
+                Accept: file?.type,
+                "Content-Type": file?.type,
+        
+            }
         })
-            .then(response => console.log(response))
-            .catch(error => console.error(error));
     }
 
     const ComponentValue = {

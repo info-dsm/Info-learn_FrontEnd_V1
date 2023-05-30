@@ -17,10 +17,10 @@ import DetailVideo from "./lecture/VideoManage/DetailVideo";
 function App() {
     return (
         <Routes>
-            <Route element={<AuthLayout/>}>
+            {/* <Route element={<AuthLayout/>}>
                 <Route path="/login" element={<Login/>}/>
                 <Route path="/signup" element={<Signup/>}/>
-            </Route>
+            </Route> */}
             <Route element={<StudentLayout/>}>
                 <Route path="/" element={<Main/>}/>
                 <Route path="/search" element={<Search/>}/>
