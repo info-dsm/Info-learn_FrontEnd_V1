@@ -70,6 +70,8 @@ export type iconName =
     | "front"
     | "speed"
     | "setting2"
+    | "spd-up"
+    | "spd-down"
     | "yt-pause"
     | "yt-play";
 
@@ -362,6 +364,14 @@ export const IconSet: Record<iconName, icon> = {
     up: {
         path: "m12 11.828-4.95 4.95-1.414-1.414L12 9l6.364 6.364-1.414 1.414-4.95-4.95Z",
         viewBox: "0 0 24 24"
+    },
+    "spd-up": {
+        path: "M 10,24 18.5,18 10,12 V 24 z M 19,12 V 24 L 27.5,18 19,12 z",
+        viewBox: "0 0 36 36"
+    },
+    "spd-down": {
+        path: "M 17,24 V 12 l -8.5,6 8.5,6 z m .5,-6 8.5,6 V 12 l -8.5,6 z",
+        viewBox: "0 0 36 36"
     },
     "yt-pause": {
         path: "M 12,26 16,26 16,10 12,10 z M 21,26 25,26 25,10 21,10 z",

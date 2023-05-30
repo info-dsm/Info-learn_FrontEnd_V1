@@ -46,7 +46,13 @@ interface vType {
     isPnp: boolean;
     isClick: boolean;
     resume: number;
+    speed: vSpeed;
     shown: boolean;
+}
+interface vSpeed {
+    count: number;
+    before: number;
+    new: number;
 }
 
 export let movementTime = 0;
@@ -59,6 +65,11 @@ const DetailVideo = () => {
         isPnp: false,
         isClick: false,
         resume: 0,
+        speed: {
+            count: 0,
+            before: 0,
+            new: 0
+        },
         shown: false,
     })
     const [chapter, setChapter] = useState<chapterProps[]>();
@@ -103,7 +114,7 @@ const DetailVideo = () => {
         }
     }, [detail, state]);
 
-    const change = (name: string, data: number | boolean): void => {
+    const change = (name: string, data: vSpeed | number | boolean): void => {
         setV(value => {
             return {
                 ...value,
@@ -121,8 +132,10 @@ const DetailVideo = () => {
     const isPlaying = () => videoRef && videoRef.current && videoRef.current.currentTime > 0 && !videoRef.current?.paused && !videoRef.current?.ended;
     const getPlayTime = () => videoRef.current ? videoRef.current?.currentTime : 0;
     const resume = () => {
-        change("resume", Date.now() + 1000);
+        change('resume', v.resume + 1);
+        showVideo();
         isPlaying() ? videoRef.current?.pause() : videoRef.current?.play();
+        movement();
     }
     const full = () => {
         if (v.isFull) document.exitFullscreen();
@@ -159,14 +172,34 @@ const DetailVideo = () => {
         change('shown', false);
         setShow(true);
     }
+    const spd = (func: (video: HTMLVideoElement) => number) => {
+        changeVideo(video => {
+            const data = func(video);
+            change("speed", {
+                count: v.speed.count + 1,
+                before: video.playbackRate,
+                new: data
+            });
+            video.playbackRate = data;
+        })
+    }
 
     document.onkeydown = (event) => {
         console.log(event.key);
-        event.key === ' ' || event.key.toLowerCase() === 'k' ? resume() : undefined;
-        event.key === 'ArrowLeft' ? changeVideo(video => video.currentTime += 5) : undefined;
-        event.key === 'ArrowRight' ? changeVideo(video => video.currentTime += 5) : undefined;
-        event.key.toLowerCase() === 'f' ? full() : undefined;
-        event.key.toLowerCase() === 'm' ? mute() : undefined;
+        if(/^\+?\d+$/.test(event.key)) changeVideo(video => video.currentTime = v.maxTime * (+event.key / 10));
+        else if(event.key === ' ' || event.key.toLowerCase() === 'k') resume();
+        else if(event.key === 'ArrowLeft') changeVideo(video => video.currentTime += 5);
+        else if(event.key === 'ArrowRight') changeVideo(video => video.currentTime += 5);
+        else if(event.key.toLowerCase() === 'j') changeVideo(video => video.currentTime = Math.max(0, video.currentTime - 10));
+        else if(event.key.toLowerCase() === 'l') changeVideo(video => video.currentTime = Math.min(v.maxTime, video.currentTime + 10));
+        else if(event.key === '<') spd(video =>
+            video.playbackRate - 0.25 === 0 ? -0.25 : Math.max(-16, video.playbackRate - 0.25)
+        );
+        else if(event.key === '>') spd(video =>
+            video.playbackRate + 0.25 === 0 ? 0.25 : Math.min(16, video.playbackRate + 0.25)
+        );
+        else if(event.key.toLowerCase() === 'f') full();
+        else if(event.key.toLowerCase() === 'm') mute();
     }
 
     return (
@@ -195,10 +228,19 @@ const DetailVideo = () => {
                         onDoubleClick={full}
                         onClick={resume}
                     />
-                    {v.resume > Date.now() ? <ShowIcon>
-                        <Icon size={40} icon={!isPlaying() ? "yt-play" : "yt-pause"} color={"White"}/>
+                    {v.speed.count % 2 ? <ShowSpeed key={v.speed.count}>x{v.speed.new}</ShowSpeed> :
+                        v.speed.count !== 0 ? <ShowSpeed key={v.speed.count}>x{v.speed.new}</ShowSpeed> : undefined}
+                    {v.speed.new > v.speed.before ? <ShowIcon key={v.speed.new}>
+                        <Icon size={40} icon={"spd-up"} color={"White"}/>
+                    </ShowIcon> : v.speed.new < v.speed.before ? <ShowIcon key={v.speed.new}>
+                        <Icon size={40} icon={"spd-down"} color={"White"}/>
                     </ShowIcon> : undefined}
-                    {(!isPlaying() || show) && <CustomVDiv fade={v.shown}>
+                    {v.resume % 2 ? <ShowIcon key={v.resume}>
+                        <Icon size={40} icon={"yt-pause"} color={"White"}/>
+                    </ShowIcon> : v.resume !== 0 ? <ShowIcon key={v.resume}>
+                        <Icon size={40} icon={"yt-play"} color={"White"}/>
+                    </ShowIcon> : undefined}
+                    {(!isPlaying() || show) && <CustomVDiv fade={!!isPlaying() && v.shown}>
                         <TimeBar
                             type="range"
                             value={v.isClick ? undefined : getPlayTime()}
@@ -254,7 +296,12 @@ const DetailVideo = () => {
                             </PDiv>
                             <PDiv>
                                 <IBtn><Icon icon="pnp" color="White"/></IBtn>
-                                <IBtn><Icon icon="setting2" color="White"/></IBtn>
+                                <IBtn>
+                                    <SettingDiv>
+                                        <SettingInnerDiv/>
+                                    </SettingDiv>`
+                                    <Icon icon="setting2" color="White"/>
+                                </IBtn>
                                 <IBtn onClick={full}><Icon icon="full" color="White"/></IBtn>
                             </PDiv>
                         </IDiv>
@@ -272,6 +319,23 @@ const DetailVideo = () => {
 
 export default DetailVideo;
 
+const SettingDiv = styled.div`
+  bottom: 75px;
+  right: 25px;
+  position: absolute;
+  width: 200px;
+  height: 44px;
+  border-radius: 8px;
+  background: linear-gradient(to right, rgba(0, 128, 255, 1), rgba(184, 0, 255, 1));
+  padding: 2px;
+  overflow: hidden;
+`
+const SettingInnerDiv = styled.div`
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.8);
+`
 const FadeOut = keyframes`
   0% {
     opacity: 1;
@@ -291,6 +355,24 @@ const FadeIn = keyframes`
     opacity: 1;
   }
 `
+const SpeedShow = keyframes`
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 100%;
+  }
+  79% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 100%;
+  }
+  80% {
+    transform: translate(-50%, -50%) scale(2.5);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(3);
+    opacity: 0;
+  }
+`
 const IconShow = keyframes`
   0% {
     transform: translate(-50%, -50%) scale(1);
@@ -304,6 +386,24 @@ const IconShow = keyframes`
     transform: translate(-50%, -50%) scale(3);
     opacity: 0;
   }
+`
+const ShowSpeed = styled.div`
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  z-index: 10;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: ${SpeedShow} 1.25s;
+  color: white;
+  font-size: 26px;
+  width: 80px;
+  padding: 4px;
+  opacity: 0;
 `
 const ShowIcon = styled.div`
   position: absolute;
