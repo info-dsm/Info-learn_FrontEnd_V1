@@ -1,3 +1,4 @@
+import { Colors } from './../../../styles/theme/color';
 import styled from "styled-components";
 
 export const TILContainer = styled.div.attrs({
@@ -12,6 +13,16 @@ export const TILContainer = styled.div.attrs({
   flex-direction: column;
 `
 
+export const TILBlock = styled.div.attrs({
+  contentEditable: true,
+  spellCheck: true
+})`
+  &:empty::after {
+    content: attr(placeholder);
+    color: ${Colors.Gray500};
+  }
+`
+
 export const style = {
   Text: {
     minHeight: '21px',
@@ -20,5 +31,13 @@ export const style = {
     border: 'none',
     outline: 'none',
     margin: '1px 0'
+  },
+  Content: {
+    maxWidth: '100%',
+    width: '100%',
+    whiteSpace: 'pre-wrap',
+    wordBreak: 'break-word',
+    caretColor: 'rgb(55, 53, 47)',
+    padding: '3px 2px'
   }
 }

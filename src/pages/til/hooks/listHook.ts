@@ -3,6 +3,7 @@ import { useEnterHook } from "./enterHook";
 import { useNodeIdxHook, useNodeTextIdxHook } from "./nodeIdxHook";
 interface BodyType {
     contents: string;
+    placeholder: boolean;
     id: string;
     type: string;
     css: string;
@@ -15,18 +16,21 @@ export const useListHook = () => {
     const [BodyData, setBodyData] = useState<BodyType[]>([
         {
             contents: '여기는 DIV<span className="tmp" data-text-idx=1>이거는 span임</span>글글',
+            placeholder: false,
             id: '0',
             type: 'Text',
             css: '',
         },
         {
             contents: '<span data-text-idx=0>이거는 span임</span>',
+            placeholder: false,
             id: '1',
             type: 'Text',
             css: '',
         },
         {
             contents: '',
+            placeholder: false,
             id: '2',
             type: 'Text',
             css: '',
@@ -41,13 +45,14 @@ export const useListHook = () => {
                 [e.key]: true
             }
         })
+
         if (!keySet['Shift'] && e.key === 'Enter') {
             const element = document.getSelection();
             e.preventDefault();
 
             if (element?.isCollapsed) {
                 const { newContent, idx } = useEnterHook(element, cursorIdx.current)
-                
+
                 const random = Math.floor(Math.random() * 1000000000);
                 setBodyData([
                     ...BodyData.slice(0, idx),
@@ -57,6 +62,7 @@ export const useListHook = () => {
                     },
                     {
                         contents: newContent[1],
+                        placeholder: false,
                         id: `${random}`,
                         type: 'Text',
                         css: '',
@@ -75,7 +81,6 @@ export const useListHook = () => {
                 let endIdx = useNodeIdxHook(newRange?.endContainer.parentElement, 10)
                 let startNode = document.querySelector<HTMLElement>(`div[data-idx="${startIdx}"] div div div`)
                 let endNode = document.querySelector<HTMLElement>(`div[data-idx="${endIdx}"] div div div`)
-                //const newContent: [string, string] = ['', ''];
                 
                 while(!startNode?.textContent && startIdx !== endIdx) {
                     startNode = document.querySelector<HTMLElement>(`div[data-idx="${++startIdx}"] div div div`)
@@ -100,11 +105,9 @@ export const useListHook = () => {
                     element?.removeAllRanges();
                     element?.addRange(newRange as Range);
                     
-                    newRange?.detach();
                     const { newContent, idx } = useEnterHook(element, cursorIdx.current);
                     
                     const random = Math.floor(Math.random() * 1000000000);
-                    console.log(newContent[0])
                     setBodyData([
                         ...BodyData.slice(0, startIdx),
                         {
@@ -113,6 +116,7 @@ export const useListHook = () => {
                         },
                         {
                             contents: newContent[1],
+                            placeholder: false,
                             id: `${random}`,
                             type: 'Text',
                             css: '',
@@ -120,36 +124,36 @@ export const useListHook = () => {
                         ...BodyData.slice(endIdx + 1)
                     ])
                     cursorIdx.current = idx;
-                } else if(startIdx !== endIdx) {
+                } else if(startIdx !== endIdx && startNode?.textContent && endNode?.textContent) {
                     // 드래그 했는데 처음 인덱스와 끝 인덱스가 다를 경우
                     newRange?.setStart((startNode?.childNodes[startNum].nodeName  === 'SPAN' ? startNode?.childNodes[startNum].childNodes[0] : startNode?.childNodes[startNum]) as ChildNode, startCursor ?? 0)
                     newRange?.setEnd((endNode?.childNodes[endNum].nodeName === 'SPAN' ? endNode?.childNodes[endNum]?.childNodes[0] : endNode?.childNodes[endNum]) as ChildNode, endCursor ?? 0)
                     newRange?.deleteContents()
                     
-                    if(startNode?.childNodes) {
-                        let cnt = 0;
-                        for (const value of Object.entries(startNode.childNodes)) {
-                            if (value[1].textContent === '') {
-                                cnt += 1;
-                                delete startNode.childNodes[+value[0]]
-                            }
-                            else if (value[1].nodeName === 'SPAN' && value[1].childNodes[0].parentElement) {
-                                value[1].childNodes[0].parentElement.dataset.textIdx = `${Number(value[0]) - cnt}`
-                            }
-                        }
-                    }
+                    // if(startNode?.childNodes) {
+                    //     let cnt = 0;
+                    //     for (const value of Object.entries(startNode.childNodes)) {
+                    //         if (value[1].textContent === '') {
+                    //             cnt += 1;
+                    //             delete startNode.childNodes[+value[0]]
+                    //         }
+                    //         else if (value[1].nodeName === 'SPAN' && value[1].childNodes[0].parentElement) {
+                    //             value[1].childNodes[0].parentElement.dataset.textIdx = `${Number(value[0]) - cnt}`
+                    //         }
+                    //     }
+                    // }
 
-                    if(endNode?.childNodes) {
-                        let cnt = 0;
-                        for (const value of Object.entries(endNode.childNodes)) {
-                            if (value[1].nodeName === '#text' && value[1].textContent === '') {
-                                cnt += 1;
-                            }
-                            else if (value[1].nodeName === 'SPAN' && value[1].childNodes[0].parentElement) {
-                                value[1].childNodes[0].parentElement.dataset.textIdx = `${Number(value[0]) - cnt}`
-                            }
-                        }
-                    }
+                    // if(endNode?.childNodes) {
+                    //     let cnt = 0;
+                    //     for (const value of Object.entries(endNode.childNodes)) {
+                    //         if (value[1].nodeName === '#text' && value[1].textContent === '') {
+                    //             cnt += 1;
+                    //         }
+                    //         else if (value[1].nodeName === 'SPAN' && value[1].childNodes[0].parentElement) {
+                    //             value[1].childNodes[0].parentElement.dataset.textIdx = `${Number(value[0]) - cnt}`
+                    //         }
+                    //     }
+                    // }
 
                     setBodyData([
                         ...BodyData.slice(0, startIdx),
@@ -184,6 +188,7 @@ export const useListHook = () => {
                         },
                         {
                             contents: newContent[1],
+                            placeholder: false,
                             id: `${random}`,
                             type: 'Text',
                             css: '',
@@ -202,7 +207,7 @@ export const useListHook = () => {
 
             if (BodyData.length === 1) {
                 e.preventDefault()
-                console.log(document.getSelection())
+                // console.log(document.getSelection())
             }
         }
 
@@ -220,15 +225,24 @@ export const useListHook = () => {
     const select = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
         const element = document.getSelection()
         const Idx = useNodeIdxHook(element?.anchorNode?.parentElement, 10);
-        console.log(element?.isCollapsed)
+        
+        console.log(2, document.querySelector<HTMLElement>(`div[data-idx="${Idx}"] div div div`)?.innerHTML)
+        // console.log(BodyData[Idx])
         if(Idx !== -2 || !element?.getRangeAt(0).collapse) cursorIdx.current = -2;
-        // if(element?.isCollapsed) {
-        //     if(!element.anchorNode?.textContent) {
-        //         // placeholder 설정하는 방법 알아내서 여기에 추가 해야함!!!!!!!!!!!
-        //         const node = document.querySelector<HTMLElement>(`div[data-idx="${Idx}"] div div div`);
-        //         // node?.setAttribute('placeholder','명령어는 / 입력')
-        //     }
-        // } else {
+        setBodyData(BodyData => BodyData.map((v, i) => {
+            return {
+            ...v,
+            placeholder: i === Idx
+        }}))
+        if(element?.isCollapsed) {
+            if(!element.anchorNode?.textContent) {
+                // placeholder 설정하는 방법 알아내서 여기에 추가 해야함!!!!!!!!!!!
+                const node = document.querySelector<HTMLElement>(`div[data-idx="${Idx}"]`);
+                
+                // node?.setAttribute('placeholder','명령어는 / 입력')
+            }
+        }
+        // else {
         //     // 이거 뭔가 문제가 발생하고 있음
         //     // 수정해야함!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //     if(timer.current) {
@@ -270,7 +284,7 @@ export const useListHook = () => {
     }
 
     const EnterSelect = (idx: number) => {
-        const content = document.querySelector<HTMLElement>(`div[data-idx="${idx + 1}"] div div`)
+        const content = document.querySelector<HTMLElement>(`div[data-idx="${idx + 1}"] div div div`)
         if(content) {
             const selection = document.getSelection();
             // if(selection?.anchorNode?.nodeName === '#text') {
@@ -278,18 +292,64 @@ export const useListHook = () => {
             //     // const newRange = document.createRange();
             //     // newRange.setStart(tmp, startOffset);
             //     // newRange.setEnd(endContainer, endOffset);
-            //     console.log(selection?.anchorOffset);
-            //     console.log(selection.anchorNode.textContent)
+            // //     console.log(selection?.anchorOffset);
+            // //     console.log(selection.anchorNode.textContent)
             // } else {
+                // console.log($Container.current)
                 selection?.removeAllRanges();
                 selection?.selectAllChildren(content)
                 selection?.collapseToStart();
+
             // }
         }
     }
 
+    const InputEvent = (e: React.FormEvent<HTMLDivElement>) => {
+        console.log(33333333333)
+        const element = document.getSelection();
+        const Idx = useNodeIdxHook(element?.anchorNode?.parentElement, 10)
+        // getselection으로 관리 할 시 누군가 관리자모드로 수정할 위험이 있
+
+        // 이러니까 모든 텍스트가 가져와짐
+        // console.log(e.currentTarget.childNodes)
+        // 일단 방법 찾아보고
+        // 안되면 getselection쓰던지 해서 해야할듯
+    }
+
+    const callback = (mutationsList: any, observer: any) => {
+        console.log(1, mutationsList)
+        for (const mutation of mutationsList) {
+          if (mutation.type === 'attributes') {
+            // 변경된 속성이 개발자 도구에 의한 변경인지 확인
+            if (mutation.target.__proto__ !== HTMLDivElement.prototype) {
+              // 변경을 막으려는 요소의 속성을 이전 값으로 되돌림
+              mutation.target.setAttribute(mutation.attributeName, mutation.oldValue);
+            }
+          }
+        }
+      };
+
+    // 3. 옵저버 인스턴스 생성
+    const observer = new MutationObserver(callback); // 타겟에 변화가 일어나면 콜백함수를 실행하게 된다.
+
+    // 4. DOM의 어떤 부분을 감시할지를 옵션 설정
+    const config = {
+        childList: true,
+        subtree: true,
+        characterData: true,
+        characterDataOldValue: true,
+    };
+
+    useEffect(() => {
+        // 5. 감지 시작
+        observer.observe($Container.current as Element, config);
+
+        // 6. 감지 중지
+        return () => observer.disconnect();
+    }, [])
+
     useEffect(() => {
         EnterSelect(cursorIdx.current)
     }, [BodyData])
-return {keyDown,select,keyUp,$Container,setKeySet,BodyData}
+return {keyDown,select,keyUp,$Container,setKeySet,BodyData, InputEvent}
 }

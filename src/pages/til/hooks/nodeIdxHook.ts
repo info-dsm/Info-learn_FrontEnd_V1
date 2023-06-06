@@ -1,10 +1,11 @@
 export const useNodeIdxHook = (element: HTMLElement | null | undefined, limit: number): number => {
-    if(element?.dataset.idx) {
-        return Number(element?.dataset.idx)
+    while(element && limit-- !== 0) {
+        if(element?.dataset.idx) {
+            return Number(element?.dataset.idx)
+        }
+        element = element?.parentElement
     }
-    if(limit <= 0) return -2;
-    
-    return useNodeIdxHook(element?.parentElement, limit - 1);
+    return -2;
 }
 
 export const useNodeTextIdxHook = (element: Node | null | undefined) => {
