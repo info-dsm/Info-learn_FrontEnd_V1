@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import * as _ from "../LectureManage/LectureManageStyle";
 import {Text} from "../../../components/text";
 import Icon from "../../../assets/Icon";
@@ -14,6 +14,7 @@ import axios from "axios";
 import {AccessToken} from "../../Main";
 import {toast} from "react-hot-toast";
 import {useQuery} from "react-query";
+import {DeleteLecture} from "../api";
 
 type ValueType = 'title' | 'chapter';
 type modalType = 'cancel' | 'delete';
@@ -55,15 +56,10 @@ const VideoRegistration = () => {
     const [chapterFocus, setChapterFocus] = useState<string>('강의 챕터 선택');
     const [isRegi, setIsRegi] = useState<string>('등록');
     const [modal, setModal] = useState<{ [key in modalType]: boolean }>({cancel: false, delete: false});
-    const [duration, setDuration] = useState<number | undefined>();
     const state = useLocation().state;
     const navigate = useNavigate();
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const {data: chapter, refetch: chapterRefetch} = useQuery(['chapterGet'], () => getChapter(state.lectureId));
-
-    useEffect(() => {
-        setTimeout(() => setDuration(videoRef.current?.duration), 100)
-    }, [videoUrl]);
 
     const change = (name: string, data: string): void => {
         setValue(value => {
@@ -113,7 +109,7 @@ const VideoRegistration = () => {
         console.log(sequences);
         const videoJson = JSON.stringify({
             title: value.title,
-            playTime: duration,
+            playTime: videoRef.current?.duration,
             sequence: state.chapters[sequences[0].sequence - 1].videos.length + 1,
             videoUrl: {
                 fileName: inputFile?.name,
@@ -153,6 +149,7 @@ const VideoRegistration = () => {
         }
         videoPost().then(() => {
             toast.success('영상이 등록되었습니다!');
+            navigate(-1);
         }).catch((error) => {
             toast.error(error);
         })
@@ -172,7 +169,7 @@ const VideoRegistration = () => {
             right="삭제하기"
             onLeft={() => setModal({...modal, delete: false})}
             onRight={() => {
-                // deleteLecture(state.lectureId);
+                DeleteLecture(state.lectureId);
                 setTimeout(() => navigate('/'), 1000);
             }}
         />}

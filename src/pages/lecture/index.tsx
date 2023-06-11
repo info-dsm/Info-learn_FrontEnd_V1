@@ -73,7 +73,7 @@ const LectureAll = () => {
                         <Text color={selected.length === 0 ? 'white' : undefined} font={"Body3"}>전체</Text>
                     </Tag>
                     <ScrollDiv onMouseDown={down} ref={slider}>
-                        {tags && tags.tags.map((value: any, index: React.Key | null | undefined) =>
+                        {tags && tags.tags.map((value: { name: string }, index: React.Key | null | undefined) =>
                             <Tag selected={selected.indexOf(value.name) !== -1} key={index}
                                  onClick={() => selectTag(value.name)}>
                                 <Text color={selected.indexOf(value.name) !== -1 ? 'white' : undefined}

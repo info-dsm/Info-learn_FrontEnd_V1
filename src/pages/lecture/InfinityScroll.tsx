@@ -12,7 +12,7 @@ const InfinityScroll = (props: {tags: string[]}) => {
         ["lectures"],
         ({pageParam = null}) => getLectures(pageParam),
         {
-            getNextPageParam: (lastPage, page) => {
+            getNextPageParam: (lastPage) => {
                 return lastPage.length == 16 ? lastPage[lastPage.length - 1].createdAt : undefined;
             },
         }

@@ -15,6 +15,76 @@ const AppearTag = keyframes`
     transform: scale(1.0);
   }
 `
+
+const barAnim = (width: number) => keyframes`
+  0% {
+    width: 100%;
+  }
+  100% {
+    width: ${width}%;
+  }
+`
+export const HideBar = styled.div<{ width: number }>`
+  width: ${props => props.width}%;
+  height: 100%;
+  background-color: ${Colors["White"]};
+  transition: 1s;
+  animation: ease 1s ${props => barAnim(props.width)};
+`
+export const PBar = styled.div`
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  background: ${Colors["PrimaryGradient"]};
+  display: flex;
+  justify-content: flex-end;
+`
+export const OutP = styled.div`
+  width: 100%;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+  background-color: ${Colors["White"]};
+  padding: 4px;
+`
+export const EditDiv = styled.div`
+  display: flex;
+  gap: 10px;
+`
+export const TagDiv = styled.div`
+  width: 100%;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+`
+export const TDiv = styled.div`
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+`
+export const LBody = styled.div`
+  width: 1000px;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 120px;
+
+  @media only screen and (max-width: 1080px) {
+    width: 94%;
+  }
+`
+export const TitleImg = styled.div<{ src: string }>`
+  height: 460px;
+  width: 100%;
+  background-size: cover;
+  background-position: center center;
+  background-image: linear-gradient(180deg, rgba(242, 246, 248, 0) 50%, #F2F6F8 100%), url(${props => props.src});
+`
+
 export const IcoBtn = styled.div`
   display: flex;
   width: 24px;
@@ -155,7 +225,7 @@ export const Tag = styled.div`
     cursor: pointer;
   }
 `
-export const TagDiv = styled.div`
+export const TagDivs = styled.div`
   width: 100%;
   height: fit-content;
   display: flex;

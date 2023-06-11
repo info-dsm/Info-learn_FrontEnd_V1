@@ -1,6 +1,5 @@
 import {Colors} from "../../styles/theme/color";
 import React from "react";
-import * as _ from './style';
 import styled, {keyframes} from "styled-components";
 import {Fonts, fontsKeyOfType} from "../../styles/theme/font";
 

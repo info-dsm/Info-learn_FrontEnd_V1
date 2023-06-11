@@ -200,7 +200,7 @@ const LectureRegistration = () => {
                         }/>
                         <Button gray onClick={() => tagAdd()}>태그 등록</Button>
                     </_.TagInputDiv>
-                    <_.TagDiv>
+                    <_.TagDivs>
                         {tag.map((value, index) =>
                             <_.Tag key={index}>
                                 <Text color={Colors["FPrimary500"]}>#{value}</Text>
@@ -209,7 +209,7 @@ const LectureRegistration = () => {
                                 }/>
                             </_.Tag>
                         )}
-                    </_.TagDiv>
+                    </_.TagDivs>
                 </_.TagRDiv>
                 {state && state.chapters && state.chapters.map((value: chapterProps, index: number) =>
                     <_.Sequence key={index}>

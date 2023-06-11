@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import styled, {keyframes} from "styled-components";
 import {Text} from "../../../components/text";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {AccessToken} from "../../Main";
@@ -9,6 +8,7 @@ import {Colors} from "../../../styles/theme/color";
 import {Button} from "../../../components/button/Button";
 import Chapter, {chapterProps} from "../../../components/Chapter/Chapter";
 import * as _ from '../../../components/Chapter/style';
+import * as a from './LectureManageStyle';
 import useChapterTimes from "../hooks/useChapterTimes";
 
 export async function getLDetail(state: string) {
@@ -59,19 +59,19 @@ const DetailLecture = () => {
         <>
             {detail ?
                 <>
-                    <TitleImg src={detail.lectureThumbnailUrl}/>
-                    <LBody>
-                        <TDiv>
+                    <a.TitleImg src={detail.lectureThumbnailUrl}/>
+                    <a.LBody>
+                        <a.TDiv>
                             <Text font="Title1">{detail.title}</Text>
                             <Text font="Body3">{detail.explanation}</Text>
-                            <TagDiv>
+                            <a.TagDiv>
                                 {detail.tagNameList.map((dat: { name: string }, index: number) =>
                                     <Text color={Colors["FPrimary500"]} key={index}>#{dat.name}</Text>
                                 )}
-                            </TagDiv>
-                        </TDiv>
+                            </a.TagDiv>
+                        </a.TDiv>
                         {/*만약 선생님이라면 강의 상호작용 버튼 생성*/}
-                        <EditDiv>
+                        <a.EditDiv>
                             <Button gray onClick={() => sNavigate('/lecture/registration', {
                                 state: {
                                     lectureId: detail.lectureId,
@@ -88,7 +88,7 @@ const DetailLecture = () => {
                                     chapters: chapter
                                 }
                             })}>강의 영상 등록</Button>
-                        </EditDiv>
+                        </a.EditDiv>
                         <_.Container>
                             <_.TitleGap>
                                 <Text font="Body1">커리큘럼</Text>
@@ -116,14 +116,14 @@ const DetailLecture = () => {
                         <_.Container>
                             <_.TitleGap>
                                 <Text font="Body1">수강 진행도</Text>
-                                <Text font="Body1" gradient>{100 - progress}%</Text>
+                                <Text font="Body1" gradient>{100 - Math.floor(progress)}%</Text>
                             </_.TitleGap>
-                            <OutP><PBar><HideBar width={progress}></HideBar></PBar></OutP>
+                            <a.OutP><a.PBar><a.HideBar width={progress}></a.HideBar></a.PBar></a.OutP>
                         </_.Container>
                         {chapter && chapter.map((v: chapterProps, index) =>
                             <Chapter key={index} chapterId={v.chapterId} sequence={v.sequence} title={v.title} videos={v.videos} cTime={cAll[index]}/>
                         )}
-                    </LBody>
+                    </a.LBody>
                 </> :
                 <>
                     <div style={{width: "100%", height: "460px"}}></div>
@@ -139,72 +139,3 @@ const DetailLecture = () => {
 }
 
 export default DetailLecture
-
-const barAnim = (width: number) => keyframes`
-  0% {
-    width: 100%;
-  }
-  100% {
-    width: ${width}%;
-  }
-`
-const HideBar = styled.div<{ width: number }>`
-  width: ${props => props.width}%;
-  height: 100%;
-  background-color: ${Colors["White"]};
-  transition: 1s;
-  animation: ease 1s ${props => barAnim(props.width)};
-`
-const PBar = styled.div`
-  width: 100%;
-  height: 100%;
-  border-radius: 20px;
-  background: ${Colors["PrimaryGradient"]};
-  display: flex;
-  justify-content: flex-end;
-`
-const OutP = styled.div`
-  width: 100%;
-  height: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 20px;
-  background-color: ${Colors["White"]};
-  padding: 4px;
-`
-const EditDiv = styled.div`
-  display: flex;
-  gap: 10px;
-`
-const TagDiv = styled.div`
-  width: 100%;
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-`
-const TDiv = styled.div`
-  width: 100%;
-  height: fit-content;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-`
-const LBody = styled.div`
-  width: 1000px;
-  height: fit-content;
-  display: flex;
-  flex-direction: column;
-  gap: 120px;
-
-  @media only screen and (max-width: 1080px) {
-    width: 94%;
-  }
-`
-const TitleImg = styled.div<{ src: string }>`
-  height: 460px;
-  width: 100%;
-  background-size: cover;
-  background-position: center center;
-  background-image: linear-gradient(180deg, rgba(242, 246, 248, 0) 50%, #F2F6F8 100%), url(${props => props.src});
-`
