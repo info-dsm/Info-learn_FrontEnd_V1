@@ -158,14 +158,14 @@ const VideoRegistration = () => {
     return (
         <>
             {modal.cancel && <Modal
-                title={`강의 ${isRegi}을 그만둘까요?`}
+                title={`영상 ${isRegi}을 그만둘까요?`}
                 explanation="내용을 다시 작성해야 할 수도 있어요"
                 right="그만두기"
                 onLeft={() => setModal({...modal, cancel: false})}
                 onRight={() => navigate(-1)}
             />}{modal.delete && <Modal
-            title="강의를 정말 삭제하실건가요?"
-            explanation="강의를 삭제하면 되돌릴 수 없어요."
+            title="영상을 정말 삭제하실건가요?"
+            explanation="영상을 삭제하면 되돌릴 수 없어요."
             right="삭제하기"
             onLeft={() => setModal({...modal, delete: false})}
             onRight={() => {
