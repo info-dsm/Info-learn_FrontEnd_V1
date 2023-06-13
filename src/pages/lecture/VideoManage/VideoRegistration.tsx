@@ -61,6 +61,8 @@ const VideoRegistration = () => {
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const {data: chapter, refetch: chapterRefetch} = useQuery(['chapterGet'], () => getChapter(state.lectureId));
 
+    console.log(state);
+
     const change = (name: string, data: string): void => {
         setValue(value => {
             return {

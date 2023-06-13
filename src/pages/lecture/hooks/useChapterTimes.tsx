@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {chapterProps} from "../../../components/Chapter/Chapter";
+import useChapterSort from "./useChapterSort";
 
 interface detailProps {
     chapters: chapterProps[];
@@ -21,14 +22,13 @@ const useChapterTimes = (detail: detailProps, setChapter?: React.Dispatch<React.
     });
     useEffect(() => {
         if (detail) {
-            const cChapter = detail.chapters;
-            cChapter.sort((a: chapterProps, b: chapterProps) => a.sequence - b.sequence);
-            setChapter && setChapter(cChapter);
+            const {sorted} = useChapterSort(detail.chapters);
+            setChapter && setChapter(sorted);
             let videoNum = 0;
             let videoTime = 0;
             const chapterTime: number[] = [];
             const chapterNum: number[] = [];
-            cChapter.map((v: chapterProps) => {
+            sorted.map((v: chapterProps) => {
                 if (v.videos) {
                     let a = 0;
                     videoNum += v.videos.length;

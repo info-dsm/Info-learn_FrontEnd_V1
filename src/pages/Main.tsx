@@ -14,7 +14,7 @@ import axios from "axios";
 import * as _ from "./MainStyle";
 import {SkeletonPost} from "../components/posting/SkeletonPost";
 
-export const AccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJURUFDSEVSIiwianRpIjoiQWRtaW5pc3RyYXRvciIsInR5cGUiOiJhY2Nlc3MiLCJpYXQiOjE2ODY0ODEyMzQsImV4cCI6MTY4NjU2NzYzNH0.R6uEdB2edB8p8LPW59vu4nhTlNSqUZovO3YuLE0iP0A";
+export const AccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJURUFDSEVSIiwianRpIjoiQWRtaW5pc3RyYXRvciIsInR5cGUiOiJhY2Nlc3MiLCJpYXQiOjE2ODY2NTA0MTMsImV4cCI6MTY4NjczNjgxM30.lTWBNqHuczrZXmiQDfg5toglkKG0xQv3S3TXnvM8_1A";
 
 export async function getLectures(limit: number) {
     const lecturesRes = await axios({
