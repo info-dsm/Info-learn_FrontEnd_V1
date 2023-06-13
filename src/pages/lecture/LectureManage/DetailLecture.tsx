@@ -32,10 +32,8 @@ const DetailLecture = () => {
     const [state] = useSearchParams();
     const sNavigate = useNavigate();
     const {lNum, lTime, cNum, cTime, cAll} = useChapterTimes(detail, setChapter);
-    console.log(lNum);
 
     useEffect(() => {
-        console.log('change');
         if (detail && detail.lectureId !== state.get('lectureId')) {
             remove()
             refetch()
@@ -44,7 +42,6 @@ const DetailLecture = () => {
 
     useEffect(() => {
         if (detail && detail.chapters && lNum) {
-            console.log('progress set!')
             let watched = 0;
             detail.chapters.map((v: chapterProps) => {
                 v.videos?.map((v) => {

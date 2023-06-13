@@ -49,6 +49,7 @@ interface vType {
     speed: vSpeed;
     shown: boolean;
 }
+
 interface vSpeed {
     count: number;
     before: number;
@@ -72,10 +73,11 @@ const DetailVideo = () => {
         },
         shown: false,
     })
+    const [sOpen, setSOpen] = useState<boolean>(false);
     const [chapter, setChapter] = useState<chapterProps[]>();
     const [show, setShow] = useState<boolean>(false);
     const [volumeHover, setVolumeHover] = useState<boolean>(false);
-    const {data: detail, remove, refetch} = useQuery(['getLDetail'], () => getLDetail(state.get('lectureId') ?? ''));
+    const {data: detail, remove, refetch} = useQuery(['getLDetail', 'lectureId'], () => getLDetail(state.get('lectureId') ?? ''));
     const {
         data: videoData,
         remove: removeVideo,
@@ -115,12 +117,10 @@ const DetailVideo = () => {
     }, [detail, state]);
 
     const change = (name: string, data: vSpeed | number | boolean): void => {
-        setV(value => {
-            return {
-                ...value,
-                [name]: data
-            }
-        });
+        setV(value => ({
+            ...value,
+            [name]: data
+        }));
     }
 
     const changeVideo = (func: (video: HTMLVideoElement) => void) => {
@@ -163,12 +163,12 @@ const DetailVideo = () => {
         setTimeout(() => movementTime <= Date.now() ? hideVideo() : undefined, 3000);
     }
     const hideVideo = () => {
-        if(!isPlaying()) return;
+        if (!isPlaying()) return;
         change('shown', true);
         setTimeout(() => setShow(false), 500);
     }
     const showVideo = () => {
-        if(!isPlaying()) return;
+        if (!isPlaying()) return;
         change('shown', false);
         setShow(true);
     }
@@ -186,20 +186,20 @@ const DetailVideo = () => {
 
     document.onkeydown = (event) => {
         console.log(event.key);
-        if(/^\+?\d+$/.test(event.key)) changeVideo(video => video.currentTime = v.maxTime * (+event.key / 10));
-        else if(event.key === ' ' || event.key.toLowerCase() === 'k') resume();
-        else if(event.key === 'ArrowLeft') changeVideo(video => video.currentTime += 5);
-        else if(event.key === 'ArrowRight') changeVideo(video => video.currentTime += 5);
-        else if(event.key.toLowerCase() === 'j') changeVideo(video => video.currentTime = Math.max(0, video.currentTime - 10));
-        else if(event.key.toLowerCase() === 'l') changeVideo(video => video.currentTime = Math.min(v.maxTime, video.currentTime + 10));
-        else if(event.key === '<') spd(video =>
+        if (/^\+?\d+$/.test(event.key)) changeVideo(video => video.currentTime = v.maxTime * (+event.key / 10));
+        else if (event.key === ' ' || event.key.toLowerCase() === 'k') resume();
+        else if (event.key === 'ArrowLeft') changeVideo(video => video.currentTime += 5);
+        else if (event.key === 'ArrowRight') changeVideo(video => video.currentTime += 5);
+        else if (event.key.toLowerCase() === 'j') changeVideo(video => video.currentTime = Math.max(0, video.currentTime - 10));
+        else if (event.key.toLowerCase() === 'l') changeVideo(video => video.currentTime = Math.min(v.maxTime, video.currentTime + 10));
+        else if (event.key === '<') spd(video =>
             video.playbackRate - 0.25 === 0 ? -0.25 : Math.max(-16, video.playbackRate - 0.25)
         );
-        else if(event.key === '>') spd(video =>
+        else if (event.key === '>') spd(video =>
             video.playbackRate + 0.25 === 0 ? 0.25 : Math.min(16, video.playbackRate + 0.25)
         );
-        else if(event.key.toLowerCase() === 'f') full();
-        else if(event.key.toLowerCase() === 'm') mute();
+        else if (event.key.toLowerCase() === 'f') full();
+        else if (event.key.toLowerCase() === 'm') mute();
     }
 
     return (
@@ -248,6 +248,7 @@ const DetailVideo = () => {
                             min={0}
                             max={v.maxTime}
                             step={'any'}
+                            data={videoRef.current?.currentTime && Number(videoRef.current?.currentTime / v.maxTime * 100)}
                             onMouseDown={() => {
                                 change("isClick", true);
                                 if (isPlaying()) videoRef.current?.pause();
@@ -296,10 +297,10 @@ const DetailVideo = () => {
                             </PDiv>
                             <PDiv>
                                 <IBtn><Icon icon="pnp" color="White"/></IBtn>
-                                <IBtn>
-                                    <SettingDiv>
+                                <IBtn onClick={() => setSOpen(c => !c)}>
+                                    {sOpen && <SettingDiv>
                                         <SettingInnerDiv/>
-                                    </SettingDiv>`
+                                    </SettingDiv>}
                                     <Icon icon="setting2" color="White"/>
                                 </IBtn>
                                 <IBtn onClick={full}><Icon icon="full" color="White"/></IBtn>
@@ -326,15 +327,19 @@ const SettingDiv = styled.div`
   width: 200px;
   height: 44px;
   border-radius: 8px;
-  background: linear-gradient(to right, rgba(0, 128, 255, 1), rgba(184, 0, 255, 1));
-  padding: 2px;
   overflow: hidden;
 `
 const SettingInnerDiv = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), linear-gradient(to right, rgba(0, 128, 255, 1), rgba(184, 0, 255, 1));
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid transparent;
+  background-origin: border-box;
+  background-clip: content-box, border-box;
 `
 const FadeOut = keyframes`
   0% {
@@ -506,7 +511,18 @@ const IDiv = styled.div`
   align-items: center;
   padding: 8px 20px 12px;
 `
-const TimeBar = styled.input`
+const TimeBar = styled.input<{ data: number | undefined }>`
+  background: white;
+  height: 4px;
+  -webkit-appearance: none;
+  background: linear-gradient(to right, ${Colors["FPrimary500"]} ${props => props.data}%, rgba(255, 255, 255, 0.2) ${props => props.data}%);
+  transition: 0.1s;
+
+  &:hover {
+    transform: translateY(4px);
+    height: 12px;
+  }
+
   input[type=range] {
     -webkit-appearance: none;
     overflow: hidden;
@@ -526,16 +542,14 @@ const TimeBar = styled.input`
 
   &[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    background: rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
+    background: ${Colors["FPrimary500"]};
     cursor: pointer;
-    height: 16px;
-    width: 16px;
-    box-shadow: 1px 1px 10px ${Colors["Black"]};
+    height: 12px;
+    width: 12px;
     border-radius: 100%;
   }
 `
-const CustomVDiv = styled.div<{fade: boolean}>`
+const CustomVDiv = styled.div<{ fade: boolean }>`
   width: 100%;
   height: 120px;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 100%);
