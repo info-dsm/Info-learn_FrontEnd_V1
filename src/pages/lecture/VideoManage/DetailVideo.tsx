@@ -1,15 +1,14 @@
-import React, {useEffect, useRef, useState} from "react";
-import styled, {keyframes} from "styled-components";
-import Chapter, {chapterProps} from "../../../components/Chapter/Chapter";
+import React, {useEffect, useState} from "react";
+import styled from "styled-components";
+import Chapter, {chapterProps, videosType} from "../../../components/Chapter/Chapter";
 import axios from "axios";
 import {AccessToken} from "../../Main";
 import {getLDetail} from "../LectureManage/DetailLecture";
 import {useQuery} from "react-query";
 import {useSearchParams} from "react-router-dom";
-import {Colors} from "../../../styles/theme/color";
-import Icon from "../../../assets/Icon";
-import {Text} from "../../../components/text";
 import useChapterTimes from "../hooks/useChapterTimes";
+import useChapterSort from "../hooks/useChapterSort";
+import CustomVideo from "./CustomVideoManage/CustomVideo";
 
 async function getVDetail(id: number) {
     if (id) {
@@ -25,74 +24,17 @@ async function getVDetail(id: number) {
     }
 }
 
-async function putVideoComplete(id: number) {
-    if (id) {
-        const putStatusRes = await axios({
-            method: 'PUT',
-            url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/video/${id}/complete`,
-            headers: {
-                Authorization: `Bearer ${AccessToken}`
-            }
-        })
-        return putStatusRes.data
-    }
-}
-
-interface vType {
-    maxTime: number;
-    lastVolume: number;
-    // mute: false,
-    isFull: boolean;
-    isPnp: boolean;
-    isClick: boolean;
-    resume: number;
-    speed: vSpeed;
-    shown: boolean;
-}
-
-interface vSpeed {
-    count: number;
-    before: number;
-    new: number;
-}
-
-export let movementTime = 0;
-
 const DetailVideo = () => {
-    const [v, setV] = useState<vType>({
-        maxTime: 0,
-        lastVolume: 1,
-        isFull: false,
-        isPnp: false,
-        isClick: false,
-        resume: 0,
-        speed: {
-            count: 0,
-            before: 0,
-            new: 0
-        },
-        shown: false,
-    })
-    const [sOpen, setSOpen] = useState<boolean>(false);
     const [chapter, setChapter] = useState<chapterProps[]>();
-    const [show, setShow] = useState<boolean>(false);
-    const [volumeHover, setVolumeHover] = useState<boolean>(false);
     const {data: detail, remove, refetch} = useQuery(['getLDetail', 'lectureId'], () => getLDetail(state.get('lectureId') ?? ''));
     const {
         data: videoData,
         remove: removeVideo,
         refetch: reFetchVideo
-    } = useQuery(['getVDetail'], () => getVDetail(Number(state.get('videoId') ?? 0)));
+    } = useQuery(['getVDetail'], () => getVDetail(Number(videoId ?? 0)));
     const [state] = useSearchParams();
-    const videoRef = useRef<HTMLVideoElement | null>(null);
-    const fullRef = useRef<HTMLDivElement | null>(null);
     const {cAll} = useChapterTimes(detail, setChapter);
-
-    useEffect(() => {
-        if (videoData?.videoUrl) {
-            change("maxTime", videoData.hour * 3600 + videoData.minute * 60 + videoData.second);
-        }
-    }, [videoData])
+    const videoId = state.get('videoId');
 
     useEffect(() => {
         if (detail) {
@@ -101,9 +43,8 @@ const DetailVideo = () => {
                 refetch()
             }
             if (detail.chapters) {
-                const cChapter = detail.chapters;
-                cChapter.sort((a: chapterProps, b: chapterProps) => a.sequence - b.sequence);
-                setChapter(cChapter);
+                const {sorted} = useChapterSort(detail.chapters);
+                setChapter(sorted);
             }
         }
         if (videoData) {
@@ -116,198 +57,13 @@ const DetailVideo = () => {
         }
     }, [detail, state]);
 
-    const change = (name: string, data: vSpeed | number | boolean): void => {
-        setV(value => ({
-            ...value,
-            [name]: data
-        }));
-    }
-
-    const changeVideo = (func: (video: HTMLVideoElement) => void) => {
-        if (videoRef && videoRef.current) func(videoRef.current);
-    }
-    const zero = (data: number) => data < 10 ? `0${Math.floor(data)}` : `${Math.floor(data)}`;
-    const time = (data: number, hour: number) => hour ? `${(data / 3600).toFixed()}:${zero(data / 60)}:${zero(data % 60)}` : `${zero(data / 60)}:${zero(data % 60)}`;
-    const time2 = (hour: number, minute: number, second: number) => hour ? `${hour}:${zero(minute)}:${zero(second)}` : `${zero(minute)}:${zero(second)}`;
-    const isPlaying = () => videoRef && videoRef.current && videoRef.current.currentTime > 0 && !videoRef.current?.paused && !videoRef.current?.ended;
-    const getPlayTime = () => videoRef.current ? videoRef.current?.currentTime : 0;
-    const resume = () => {
-        change('resume', v.resume + 1);
-        showVideo();
-        isPlaying() ? videoRef.current?.pause() : videoRef.current?.play();
-        movement();
-    }
-    const full = () => {
-        if (v.isFull) document.exitFullscreen();
-        else fullRef.current?.requestFullscreen();
-        change("isFull", !v.isFull);
-    }
-    const isMuted = () => !getVolume();
-    const mute = () => {
-        changeVideo(video => {
-            if (video.volume) {
-                change("lastVolume", video.volume);
-                video.volume = +!video.volume;
-            } else {
-                change("lastVolume", 0);
-                video.volume = v.lastVolume;
-            }
-        });
-        const volume = document.getElementById('volume') as HTMLInputElement;
-        volume.value = `${getVolume()}`
-        volume.style.background = `linear-gradient(to right, white ${getVolume() * 100}%, gray ${getVolume() * 100}%)`
-    }
-    const getVolume = () => videoRef.current?.volume ?? 1;
-    const movement = () => {
-        movementTime = Date.now() + 3000;
-        setTimeout(() => movementTime <= Date.now() ? hideVideo() : undefined, 3000);
-    }
-    const hideVideo = () => {
-        if (!isPlaying()) return;
-        change('shown', true);
-        setTimeout(() => setShow(false), 500);
-    }
-    const showVideo = () => {
-        if (!isPlaying()) return;
-        change('shown', false);
-        setShow(true);
-    }
-    const spd = (func: (video: HTMLVideoElement) => number) => {
-        changeVideo(video => {
-            const data = func(video);
-            change("speed", {
-                count: v.speed.count + 1,
-                before: video.playbackRate,
-                new: data
-            });
-            video.playbackRate = data;
-        })
-    }
-
-    document.onkeydown = (event) => {
-        console.log(event.key);
-        if (/^\+?\d+$/.test(event.key)) changeVideo(video => video.currentTime = v.maxTime * (+event.key / 10));
-        else if (event.key === ' ' || event.key.toLowerCase() === 'k') resume();
-        else if (event.key === 'ArrowLeft') changeVideo(video => video.currentTime += 5);
-        else if (event.key === 'ArrowRight') changeVideo(video => video.currentTime += 5);
-        else if (event.key.toLowerCase() === 'j') changeVideo(video => video.currentTime = Math.max(0, video.currentTime - 10));
-        else if (event.key.toLowerCase() === 'l') changeVideo(video => video.currentTime = Math.min(v.maxTime, video.currentTime + 10));
-        else if (event.key === '<') spd(video =>
-            video.playbackRate - 0.25 === 0 ? -0.25 : Math.max(-16, video.playbackRate - 0.25)
-        );
-        else if (event.key === '>') spd(video =>
-            video.playbackRate + 0.25 === 0 ? 0.25 : Math.min(16, video.playbackRate + 0.25)
-        );
-        else if (event.key.toLowerCase() === 'f') full();
-        else if (event.key.toLowerCase() === 'm') mute();
-    }
+    const idList = chapter?.flatMap((v: chapterProps) => v.videos?.map((c: videosType) => c.videoId));
+    console.log(idList);
 
     return (
         <Container>
             <VideoBox className="vd">
-                <CDiv
-                    ref={fullRef}
-                    onMouseMove={() => {
-                        showVideo();
-                        movement();
-                    }}
-                    onMouseLeave={() => {
-                        hideVideo();
-                        setVolumeHover(false);
-                    }}
-                >
-                    <Video
-                        onContextMenu={(e) => e.preventDefault()}
-                        src={videoData?.videoUrl as string}
-                        onEnded={() => videoData.status !== 'COMPLETE' && putVideoComplete(Number(state.get('videoId') ?? 0)).then(() => refetch())}
-                        ref={videoRef}
-                        onTimeUpdate={(e) => {
-                            if (videoRef?.current?.readyState === 4)
-                                change("currentTime", e.currentTarget.currentTime);
-                        }}
-                        onDoubleClick={full}
-                        onClick={resume}
-                    />
-                    {v.speed.count % 2 ? <ShowSpeed key={v.speed.count}>x{v.speed.new}</ShowSpeed> :
-                        v.speed.count !== 0 ? <ShowSpeed key={v.speed.count}>x{v.speed.new}</ShowSpeed> : undefined}
-                    {v.speed.new > v.speed.before ? <ShowIcon key={v.speed.new}>
-                        <Icon size={40} icon={"spd-up"} color={"White"}/>
-                    </ShowIcon> : v.speed.new < v.speed.before ? <ShowIcon key={v.speed.new}>
-                        <Icon size={40} icon={"spd-down"} color={"White"}/>
-                    </ShowIcon> : undefined}
-                    {v.resume % 2 ? <ShowIcon key={v.resume}>
-                        <Icon size={40} icon={"yt-pause"} color={"White"}/>
-                    </ShowIcon> : v.resume !== 0 ? <ShowIcon key={v.resume}>
-                        <Icon size={40} icon={"yt-play"} color={"White"}/>
-                    </ShowIcon> : undefined}
-                    {(!isPlaying() || show) && <CustomVDiv fade={!!isPlaying() && v.shown}>
-                        <TimeBar
-                            type="range"
-                            value={v.isClick ? undefined : getPlayTime()}
-                            onChange={(e) => changeVideo(video => video.currentTime = +e.target.value)}
-                            min={0}
-                            max={v.maxTime}
-                            step={'any'}
-                            data={videoRef.current?.currentTime && Number(videoRef.current?.currentTime / v.maxTime * 100)}
-                            onMouseDown={() => {
-                                change("isClick", true);
-                                if (isPlaying()) videoRef.current?.pause();
-                                console.log("down");
-                            }}
-                            onMouseUp={() => {
-                                change("isClick", false);
-                                if (!isPlaying()) videoRef.current?.play();
-                                console.log("up");
-                            }}
-                        />
-                        <IDiv>
-                            <PDiv>
-                                <IBtn><Icon icon="back" color="White"/></IBtn>
-                                <IBtn
-                                    onClick={resume}>
-                                    <Icon icon={isPlaying() ? 'pause' : 'start'} color="White"/>
-                                </IBtn>
-                                <IBtn><Icon icon="front" color="White"/></IBtn>
-                                <PDiv onMouseEnter={() => setVolumeHover(true)}>
-                                    <IBtn onClick={mute}>
-                                        <Icon
-                                            icon={isMuted() ? 'nv' : videoRef.current && videoRef.current?.volume < 0.5 ? 'sv' : 'lv'}
-                                            color="White"/>
-                                    </IBtn>
-                                    {volumeHover ? <VolumeBar
-                                        id={'volume'}
-                                        data={getVolume() * 100}
-                                        type={"range"}
-                                        // value={isPlaying() ? undefined : isMuted() ? 0 : 1}
-                                        defaultValue={videoRef.current?.volume}
-                                        min={0}
-                                        max={1}
-                                        step={'any'}
-                                        onMouseDown={e => change("lastVolume", +e.currentTarget.value)}
-                                        onMouseUp={e => change("lastVolume", +e.currentTarget.value)}
-                                        onChange={(e) => {
-                                            changeVideo(video => video.volume = +e.target.value);
-                                            e.target.style.background = `linear-gradient(to right, white ${getVolume() * 100}%, gray ${getVolume() * 100}%)`
-                                        }}
-                                    /> : undefined}
-                                </PDiv>
-                                {videoData && <Text color="White">
-                                    {time(getPlayTime(), videoData.hour)} / {time2(videoData.hour, videoData.minute, videoData.second)}
-                                </Text>}
-                            </PDiv>
-                            <PDiv>
-                                <IBtn><Icon icon="pnp" color="White"/></IBtn>
-                                <IBtn onClick={() => setSOpen(c => !c)}>
-                                    {sOpen && <SettingDiv>
-                                        <SettingInnerDiv/>
-                                    </SettingDiv>}
-                                    <Icon icon="setting2" color="White"/>
-                                </IBtn>
-                                <IBtn onClick={full}><Icon icon="full" color="White"/></IBtn>
-                            </PDiv>
-                        </IDiv>
-                    </CustomVDiv>}
-                </CDiv>
+                <CustomVideo videoData={videoData} videoId={Number(videoId)} idList={idList}/>
             </VideoBox>
             <ListBox className="lt">
                 {chapter?.map((v: chapterProps, i) =>
@@ -320,254 +76,6 @@ const DetailVideo = () => {
 
 export default DetailVideo;
 
-const SettingDiv = styled.div`
-  bottom: 75px;
-  right: 25px;
-  position: absolute;
-  width: 200px;
-  height: 44px;
-  border-radius: 8px;
-  overflow: hidden;
-`
-const SettingInnerDiv = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), linear-gradient(to right, rgba(0, 128, 255, 1), rgba(184, 0, 255, 1));
-  border-radius: 8px;
-  border: 2px solid transparent;
-  background-origin: border-box;
-  background-clip: content-box, border-box;
-`
-const FadeOut = keyframes`
-  0% {
-    opacity: 1;
-  }
-  80% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 0;
-  }
-`
-const FadeIn = keyframes`
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-`
-const SpeedShow = keyframes`
-  0% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 100%;
-  }
-  79% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 100%;
-  }
-  80% {
-    transform: translate(-50%, -50%) scale(2.5);
-    opacity: 0;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(3);
-    opacity: 0;
-  }
-`
-const IconShow = keyframes`
-  0% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 100%;
-  }
-  80% {
-    transform: translate(-50%, -50%) scale(2.5);
-    opacity: 0;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(3);
-    opacity: 0;
-  }
-`
-const ShowSpeed = styled.div`
-  position: absolute;
-  top: 20%;
-  left: 50%;
-  z-index: 10;
-  transform: translate(-50%, -50%);
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: ${SpeedShow} 1.25s;
-  color: white;
-  font-size: 26px;
-  width: 80px;
-  padding: 4px;
-  opacity: 0;
-`
-const ShowIcon = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  z-index: 10;
-  transform: translate(-50%, -50%);
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: ${IconShow} 1.25s;
-  padding: 6px;
-  opacity: 0;
-`
-const VolumeShow = keyframes`
-  0% {
-    width: 15px;
-  }
-  100% {
-    width: 70px;
-  }
-`
-const VolumeBar = styled.input<{ data: number }>`
-  width: 70px;
-  height: 5px;
-  margin-left: -10px;
-  -webkit-appearance: none;
-  appearance: none;
-  cursor: pointer;
-  outline: none;
-  border-radius: 15px;
-  background: linear-gradient(to right, white ${props => props.data}%, gray ${props => props.data}%);
-  animation: ${VolumeShow} 200ms ease-out;
-
-  //input[type=range] {
-  //  -webkit-appearance: none;
-  //  overflow: hidden;
-  //  width: 100%;
-  //  height: 4px;
-  //  cursor: pointer;
-  //  border-radius: 0;
-  //}
-
-  &[type=range]:focus {
-    outline: none;
-  }
-
-  &[type=range]::-webkit-slider-runnable-track {
-    -webkit-appearance: none;
-    background: none;
-  }
-
-  &[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    background: white;
-    cursor: pointer;
-    height: 14px;
-    width: 14px;
-    //backdrop-filter: blur(10px);
-      //box-shadow: 1px 1px 10px ${Colors["Black"]};
-    border-radius: 100%;
-  }
-
-  &[type=range]::-webkit-slider-thumb::before {
-    content: '';
-    width: 70px;
-    height: 5px;
-    background: white;
-  }
-
-  &[type=range]::-webkit-slider-thumb::after {
-    content: '';
-    width: 70px;
-    height: 5px;
-    background: rgba(255, 255, 255, .2);
-  }
-`
-const IBtn = styled.div`
-  width: 24px !important;
-  height: 24px;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
-const PDiv = styled.div`
-  width: fit-content !important;
-  height: fit-content;
-  display: flex;
-  gap: 24px;
-  align-items: center;
-  justify-content: start;
-`
-const IDiv = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 20px 12px;
-`
-const TimeBar = styled.input<{ data: number | undefined }>`
-  background: white;
-  height: 4px;
-  -webkit-appearance: none;
-  background: linear-gradient(to right, ${Colors["FPrimary500"]} ${props => props.data}%, rgba(255, 255, 255, 0.2) ${props => props.data}%);
-  transition: 0.1s;
-
-  &:hover {
-    transform: translateY(4px);
-    height: 12px;
-  }
-
-  input[type=range] {
-    -webkit-appearance: none;
-    overflow: hidden;
-    width: 100%;
-    height: 6px;
-    cursor: pointer;
-    border-radius: 0;
-  }
-
-  &[type=range]:focus {
-    outline: none;
-  }
-
-  &[type=range]::-webkit-slider-runnable-track {
-    -webkit-appearance: none;
-  }
-
-  &[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    background: ${Colors["FPrimary500"]};
-    cursor: pointer;
-    height: 12px;
-    width: 12px;
-    border-radius: 100%;
-  }
-`
-const CustomVDiv = styled.div<{ fade: boolean }>`
-  width: 100%;
-  height: 120px;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 100%);
-  position: absolute;
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  animation: ${props => props.fade ? FadeOut : FadeIn} 625ms;
-`
-const CDiv = styled.div`
-  border-radius: 8px;
-  overflow: hidden;
-  width: 100%;
-  height: fit-content;
-  aspect-ratio: 16 / 9;
-  position: relative;
-`
 const Container = styled.div`
   display: flex;
   width: 100%;
@@ -594,9 +102,7 @@ const Container = styled.div`
     height: fit-content;
     padding: 40px 0 120px;
   }
-
 `
-
 const VideoBox = styled.div`
   width: 77%;
   height: 100%;
@@ -604,7 +110,6 @@ const VideoBox = styled.div`
   justify-content: center;
   padding: 40px;
 `
-
 const ListBox = styled.div`
   width: 23%;
   height: 100%;
@@ -613,10 +118,4 @@ const ListBox = styled.div`
   padding: 40px 20px;
   gap: 40px;
   overflow-y: scroll;
-`
-
-const Video = styled.video`
-  background-color: black;
-  width: 100%;
-  height: 100%;
 `

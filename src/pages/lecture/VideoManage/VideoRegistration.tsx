@@ -15,20 +15,7 @@ import {AccessToken} from "../../Main";
 import {toast} from "react-hot-toast";
 import {useQuery} from "react-query";
 import {DeleteLecture} from "../api";
-
-type ValueType = 'title' | 'chapter';
-type modalType = 'cancel' | 'delete';
-
-export interface arrProps {
-    sequence: number;
-    title: string;
-}
-
-interface chapterProps {
-    chapterId: number;
-    title: string;
-    sequence: number;
-}
+import ChapterManage from "../chapterManage";
 
 export async function getChapter(lectureId: string) {
     if (lectureId) {
@@ -46,7 +33,7 @@ export async function getChapter(lectureId: string) {
 
 const VideoRegistration = () => {
     const [value, setValue] = useState<{
-        [key in ValueType]: string
+        [key in 'title' | 'chapter']: string
     }>({
         title: '',
         chapter: ''
@@ -54,8 +41,9 @@ const VideoRegistration = () => {
     const [inputFile, setFile] = useState<File>();
     const [videoUrl, setVideoUrl] = useState<string | ArrayBuffer | null>('');
     const [chapterFocus, setChapterFocus] = useState<string>('강의 챕터 선택');
-    const [isRegi, setIsRegi] = useState<string>('등록');
-    const [modal, setModal] = useState<{ [key in modalType]: boolean }>({cancel: false, delete: false});
+    const [isRegi] = useState<string>('등록');
+    const [modal, setModal] = useState<{ [key in 'cancel' | 'delete']: boolean }>({cancel: false, delete: false});
+    const [isCManage, setIsCManage] = useState<boolean>(false);
     const state = useLocation().state;
     const navigate = useNavigate();
     const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -64,12 +52,11 @@ const VideoRegistration = () => {
     console.log(state);
 
     const change = (name: string, data: string): void => {
-        setValue(value => {
-            return {
+        setValue(value => ({
                 ...value,
                 [name]: data
             }
-        });
+        ));
     }
 
     const chapterAdd = () => {
@@ -107,7 +94,7 @@ const VideoRegistration = () => {
             toast.error('영상을 올려주세요!');
             return
         }
-        const sequences = chapter.chapters.filter((v: chapterProps) => chapterFocus.slice(5,).trim() === v.title)
+        const sequences = chapter.chapters.filter((v: chapterProps2) => chapterFocus.slice(5,).trim() === v.title)
         console.log(sequences);
         const videoJson = JSON.stringify({
             title: value.title,
@@ -173,8 +160,8 @@ const VideoRegistration = () => {
             onRight={() => {
                 DeleteLecture(state.lectureId);
                 setTimeout(() => navigate('/'), 1000);
-            }}
-        />}
+            }}/>}
+            {isCManage && <ChapterManage/>}
             <_.Content>
                 <_.TextDiv>
                     <Text font="Title1" gradient>강의 영상 등록</Text>
@@ -201,6 +188,7 @@ const VideoRegistration = () => {
                             <Text>챕터</Text>
                             <BigDropDown change={setChapterFocus} value={chapterFocus} arr={chapter && chapter.chapters} width="100%" noneMsg="챕터가"/>
                         </_.DropCoverDiv>
+                        <Button width="100%" gray onClick={() => setIsCManage(true)}>챕터 관리</Button>
                         <_.AddCDiv>
                             <Input width="100%" value={value.chapter} name="chapter" change={change} placeholder="추가 할 강의 챕터를 입력해주세요" keyDown={(e) =>
                                 e.key === 'Enter' && !e.nativeEvent.isComposing && chapterAdd()

@@ -16,12 +16,6 @@ import * as _ from "./LectureManageStyle";
 type ValueType = 'title' | 'explanation' | 'tag';
 type modalType = 'cancel' | 'delete';
 
-interface chapterProps {
-    title: string,
-    sequence: number,
-    videos: { videoId: number, title: string, playTime: number, sequence: number }[]
-}
-
 export const Reading = (e: React.ChangeEvent<HTMLInputElement>, setFile: React.Dispatch<React.SetStateAction<File | undefined>>, setImgUrl: React.Dispatch<React.SetStateAction<string | ArrayBuffer | null>>) => {
     const fileReader = new FileReader();
 
