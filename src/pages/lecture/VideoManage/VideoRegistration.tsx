@@ -47,9 +47,9 @@ const VideoRegistration = () => {
     const state = useLocation().state;
     const navigate = useNavigate();
     const videoRef = useRef<HTMLVideoElement | null>(null);
-    const {data: chapter, refetch: chapterRefetch} = useQuery(['chapterGet'], () => getChapter(state.lectureId));
+    const {data: chapter, refetch: chapterRefetch} = useQuery(['chapterGet'], () => getChapter(state.lecture_id));
 
-    console.log(state);
+    console.log(chapter);
 
     const change = (name: string, data: string): void => {
         setValue(value => ({
@@ -60,8 +60,9 @@ const VideoRegistration = () => {
     }
 
     const chapterAdd = () => {
+        console.log(chapter.chapters.length);
         const sequenceJson = JSON.stringify({
-            lectureId: state.lectureId,
+            lecture_id: state.lecture_id,
             title: value.chapter,
             sequence: chapter.chapters.length + 1
         });
@@ -98,12 +99,12 @@ const VideoRegistration = () => {
         console.log(sequences);
         const videoJson = JSON.stringify({
             title: value.title,
-            playTime: videoRef.current?.duration,
+            play_time: videoRef.current?.duration,
             sequence: state.chapters[sequences[0].sequence - 1].videos.length + 1,
-            videoUrl: {
-                fileName: inputFile?.name,
-                contentType: inputFile?.type,
-                fileSize: inputFile?.size
+            video_url: {
+                file_name: inputFile?.name,
+                content_type: inputFile?.type,
+                file_size: inputFile?.size
             }
         });
         const videoPost = async () => {
@@ -124,7 +125,7 @@ const VideoRegistration = () => {
             }
             await axios({
                 method: 'POST',
-                url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/video/${sequences[0].chapterId}`,
+                url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/video/${sequences[0].chapter_id}`,
                 data: videoJson,
                 headers: {
                     "Content-Type": "application/json",
@@ -158,7 +159,7 @@ const VideoRegistration = () => {
             right="삭제하기"
             onLeft={() => setModal({...modal, delete: false})}
             onRight={() => {
-                DeleteLecture(state.lectureId);
+                DeleteLecture(state.lecture_id);
                 setTimeout(() => navigate('/'), 1000);
             }}/>}
             {isCManage && <ChapterManage/>}

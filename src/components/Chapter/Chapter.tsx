@@ -6,7 +6,7 @@ import {useNavigate, useSearchParams} from "react-router-dom";
 import {Colors} from "../../styles/theme/color";
 
 export interface videosType {
-    videoId: number;
+    video_id: number;
     title: string;
     hour: number;
     minute: number;
@@ -16,7 +16,7 @@ export interface videosType {
 }
 
 export interface chapterProps {
-    chapterId: number;
+    chapter_id: number;
     title: string;
     sequence: number;
     videos?: videosType[];
@@ -39,16 +39,16 @@ const Chapter = ({title, sequence, videos, watching, cTime}: chapterProps) => {
             <_.ChapterContainer>
                 <_.InContainer>
                     {videos?.map((v) => {
-                        const style = watching === v.videoId ? 'White' : v.status === 'comCOMPLETE' ? 'Gray500' : 'Black';
+                        const style = watching === v.video_id ? 'White' : v.status === 'comCOMPLETE' ? 'Gray500' : 'Black';
 
                         return (
                             <_.VideoContainer
-                                key={v.videoId}
-                                watch={watching === v.videoId}
+                                key={v.video_id}
+                                watch={watching === v.video_id}
                                 bool={v.status === 'COMPLETE'}
                                 onClick={() => sNavigate({
                                     pathname: "/video/about",
-                                    search: `?lectureId=${state.get('lectureId')}&videoId=${v.videoId}`,
+                                    search: `?lectureId=${state.get('lectureId')}&videoId=${v.video_id}`,
                                 })}
                             >
                                 <_.TitleGap>

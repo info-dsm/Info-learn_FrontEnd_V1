@@ -25,6 +25,8 @@ export async function DeleteLecture(lectureId: string) {
         toast.success('강의를 삭제하였습니다!', {
             id: deleteStatus
         });
+    }).catch(()=>{
+        console.log("에러 : " + lectureId);
     });
 }
 
@@ -33,8 +35,8 @@ interface putProps {
     inputJson: string | undefined;
     inputFile: File | undefined;
     lectureId: string;
-    tagList: { tagId: string }[];
-    deleteList: { tagId: string }[];
+    tagList: { tag_id: string }[];
+    deleteList: { tag_id: string }[];
 }
 
 export async function PutLecture({titleJson, inputJson, inputFile, lectureId, tagList, deleteList}: putProps) {
@@ -115,7 +117,8 @@ export async function PostLecture({postJson, inputFile}: { postJson: string, inp
             Authorization: `Bearer ${AccessToken}`
         }
     }).then(response => {
-        PutS3({url: response.data.preSignedUrl.url, file: inputFile});
+        PutS3({url: response.data.pre_signed_url.url, file: inputFile});
+        console.log(response.data.pre_signed_url.url);
         return response
     }).catch(error => {
         if (error.response === undefined) toast.error("인터넷 연결 상태를 확인해 주세요", {id: upLoadStatus});
@@ -137,6 +140,8 @@ export async function PostLecture({postJson, inputFile}: { postJson: string, inp
             toast.success('강의가 등록되었습니다!', {
                 id: upLoadStatus,
             });
+        }).catch((e)=>{
+            toast.error(e.response);
         })
     }
 }

@@ -16,20 +16,20 @@ interface vSpeed {
 }
 
 interface vDataProps {
-    videoId: number;
+    video_id: number;
     title: string;
     hour: number;
     minute: number;
     second: number;
     sequence: number;
     status: string;
-    videoUrl: string;
+    video_url: string;
 }
 
 interface chapterProps {
     title: string,
     sequence: number,
-    videos: { videoId: number, title: string, playTime: number, sequence: number }[]
+    videos: { video_id: number, title: string, play_time: number, sequence: number }[]
 }
 
 interface arrProps {
@@ -38,7 +38,7 @@ interface arrProps {
 }
 
 interface chapterProps2 {
-    chapterId: number;
+    chapter_id: number;
     title: string;
     sequence: number;
 }

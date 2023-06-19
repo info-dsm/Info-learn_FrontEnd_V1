@@ -34,7 +34,7 @@ const DetailLecture = () => {
     const {lNum, lTime, cNum, cTime, cAll} = useChapterTimes(detail, setChapter);
 
     useEffect(() => {
-        if (detail && detail.lectureId !== state.get('lectureId')) {
+        if (detail && detail.lecture_id !== state.get('lectureId')) {
             remove()
             refetch()
         }
@@ -56,13 +56,13 @@ const DetailLecture = () => {
         <>
             {detail ?
                 <>
-                    <a.TitleImg src={detail.lectureThumbnailUrl}/>
+                    <a.TitleImg src={detail.lecture_thumbnail_url}/>
                     <a.LBody>
                         <a.TDiv>
                             <Text font="Title1">{detail.title}</Text>
                             <Text font="Body3">{detail.explanation}</Text>
                             <a.TagDiv>
-                                {detail.tagNameList.map((dat: { name: string }, index: number) =>
+                                {detail.tag_name_list.map((dat: { name: string }, index: number) =>
                                     <Text color={Colors["FPrimary500"]} key={index}>#{dat.name}</Text>
                                 )}
                             </a.TagDiv>
@@ -71,17 +71,17 @@ const DetailLecture = () => {
                         <a.EditDiv>
                             <Button gray onClick={() => sNavigate('/lecture/registration', {
                                 state: {
-                                    lectureId: detail.lectureId,
+                                    lecture_id: detail.lecture_id,
                                     title: detail.title,
                                     explanation: detail.explanation,
-                                    lectureThumbnailUrl: detail.lectureThumbnailUrl,
-                                    tagNameList: detail.tagNameList,
+                                    lecture_thumbnail_url: detail.lecture_thumbnail_url,
+                                    tag_name_list: detail.tag_name_list,
                                     chapters: chapter
                                 }
                             })}>강의 수정</Button>
                             <Button blue onClick={() => sNavigate('/lecture/videoRegistration', {
                                 state: {
-                                    lectureId: detail.lectureId,
+                                    lecture_id: detail.lecture_id,
                                     chapters: chapter
                                 }
                             })}>강의 영상 등록</Button>
@@ -115,10 +115,14 @@ const DetailLecture = () => {
                                 <Text font="Body1">수강 진행도</Text>
                                 <Text font="Body1" gradient>{100 - Math.floor(progress)}%</Text>
                             </_.TitleGap>
-                            <a.OutP><a.PBar><a.HideBar width={progress}></a.HideBar></a.PBar></a.OutP>
+                            <a.OutP>
+                                <a.PBar>
+                                    <a.HideBar width={progress}></a.HideBar>
+                                </a.PBar>
+                            </a.OutP>
                         </_.Container>
                         {chapter && chapter.map((v: chapterProps, index) =>
-                            <Chapter key={index} chapterId={v.chapterId} sequence={v.sequence} title={v.title} videos={v.videos} cTime={cAll[index]}/>
+                            <Chapter key={index} chapter_id={v.chapter_id} sequence={v.sequence} title={v.title} videos={v.videos} cTime={cAll[index]}/>
                         )}
                     </a.LBody>
                 </> :
