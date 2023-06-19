@@ -193,8 +193,13 @@ export const TimeBar = styled.input`
   transition: 0.1s;
 
   &:hover {
-    transform: translateY(4px);
-    height: 12px;
+    transform: translateY(2px);
+    height: 8px;
+    &[type=range]::-webkit-slider-thumb {
+      border-radius: 100%;
+      height: 14px;
+      width: 14px; 
+    }
   }
 
   input[type=range] {
@@ -218,9 +223,10 @@ export const TimeBar = styled.input`
     -webkit-appearance: none;
     background: ${Colors["FPrimary500"]};
     cursor: pointer;
-    height: 12px;
-    width: 12px;
-    border-radius: 100%;
+    height: 4px;
+    width: 4px;
+    border-radius: 0;
+    transition: 0.1s;
   }
 `
 export const CustomVDiv = styled.div<{ fade: boolean }>`

@@ -7,6 +7,7 @@ import FrontendImg from "../assets/img/Front.svg";
 import iOSImg from "../assets/img/iOS.svg";
 import AndroidImg from "../assets/img/Android.svg";
 import SecurityImg from "../assets/img/Secure.svg";
+// import DevopsImg from "../assets/img/Devops.svg"
 import HeadImg from "../assets/img/BackgroundImg.jpg";
 import {Post} from "../components/posting/Post";
 import {useQuery} from "react-query";
@@ -48,7 +49,8 @@ const Main = () => {
         {name: "프론트엔드", imageUrl: FrontendImg},
         {name: "안드로이드", imageUrl: AndroidImg},
         {name: "iOS", imageUrl: iOSImg},
-        {name: "보안", imageUrl: SecurityImg}
+        {name: "보안", imageUrl: SecurityImg},
+        // {name: "데브옵스", imageUrl: DevopsImg}
     ];
     const newTil = [
         {imageUrl: HeadImg, writer: "승우최", date: "2023.03.03", title: "정처기를 공부해 보았다", subTitle: "정처기를 합격하기 위한 발버둥!", tag: [{name: "Study"}]},
@@ -78,7 +80,7 @@ const Main = () => {
                 <FlexDiv margin="80px 0 0" gap={60} width="100%" className="category">
                     {titleCategory.map((category) => (
                         <FlexDiv key={category.name} direction="column" align="center" gap={20} style={{cursor: 'pointer'}}>
-                            <Image src={category.imageUrl}/>
+                            <Image BackImg={category.imageUrl}/>
                             <Text>{category.name}</Text>
                         </FlexDiv>
                     ))}
@@ -157,10 +159,14 @@ const PostDiv = styled.div`
     width: 100%;
   }
 `
-const Image = styled.img`
+const Image = styled.span<{BackImg:string}>`
   width: 80px;
   height: 80px;
   transition: 0.2s;
+  background-image: url(${props=> props.BackImg});
+  background-position: center center;
+  background-size: 100%;
+  border-radius: 12px;
 `
 const FlexDiv = styled.div<flex>`
   display: flex;
@@ -177,8 +183,8 @@ const FlexDiv = styled.div<flex>`
     ${props => props.isTitle ? `font-size:40px;font-weight:600;color:${Colors["Gray600"]}` : null};
   }
 
-  &:hover > img {
-    transform: scale(1.2);
+  &:hover > span {
+    background-size: 120%;
   }
 `
 const TextDiv = styled.div`
