@@ -133,7 +133,7 @@ const BackBlur = styled.div<{ opacity: number; event: string; }>`
   height: calc(100vh - 50px);
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(40px);
-  z-index: 2;
+  z-index: 4;
   opacity: ${props => props.opacity};
   transition: opacity .3s ease-in;
 `
@@ -170,7 +170,7 @@ const BgDiv = styled.div<InputType>`
   left: 0;
   background-color: ${Colors["White"]};
   transition: 0.3s;
-  z-index: 3;
+  z-index: 5;
   overflow-y: scroll;
   display: flex;
   flex-direction: column;
