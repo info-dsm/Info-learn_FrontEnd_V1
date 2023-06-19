@@ -55,7 +55,7 @@ const CustomVideo = ({videoData, videoId, idList}: { videoData: vDataProps, vide
     }, [sStatus])
 
     useEffect(() => {
-        if (videoData?.videoUrl) {
+        if (videoData?.video_url) {
             change("maxTime", videoData.hour * 3600 + videoData.minute * 60 + videoData.second);
         }
     }, [videoData])
@@ -143,7 +143,7 @@ const CustomVideo = ({videoData, videoId, idList}: { videoData: vDataProps, vide
     }
     const afterVideo = () => {
         const c = currentIdx();
-        if (c && idList && c < idList?.length - 1 || c === 0) {
+        if (c && idList && c < idList?.length - 1 || (idList && c === 0 && idList?.length > 1)) {
             vNavigate({
                 pathname: "/video/about",
                 search: `?lectureId=${state.get('lectureId')}&videoId=${(idList && idList[c + 1])}`,
@@ -178,7 +178,7 @@ const CustomVideo = ({videoData, videoId, idList}: { videoData: vDataProps, vide
         >
             <_.Video
                 onContextMenu={(e) => e.preventDefault()}
-                src={videoData?.videoUrl as string}
+                src={videoData?.video_url as string}
                 onEnded={() => videoData.status !== 'COMPLETE' && putVideoComplete(Number(videoId ?? 0))}
                 ref={videoRef}
                 onTimeUpdate={(e) => {

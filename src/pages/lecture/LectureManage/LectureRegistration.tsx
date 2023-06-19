@@ -54,8 +54,8 @@ const LectureRegistration = () => {
                 explanation: state.explanation,
                 tag: ''
             });
-            setTag(state.tagNameList.map((value: { name: string }) => value.name));
-            setImgUrl(state.lectureThumbnailUrl);
+            setTag(state.tag_name_list.map((value: { name: string }) => value.name));
+            setImgUrl(state.lecture_thumbnail_url);
             setIsRegi('수정');
         } else {
             setValue({
@@ -73,7 +73,7 @@ const LectureRegistration = () => {
     useEffect(() => {
         if (!isLoading && resData !== undefined) {
             console.log('enter navigate code!');
-            navigate(`/lecture/detail?lectureId=${resData.lectureId}`);
+            navigate(`/lecture/detail?lectureId=${resData.lecture_id}`);
         }
     }, [isLoading, resData]);
 
@@ -110,39 +110,39 @@ const LectureRegistration = () => {
     const makeJson = () => {
         if (state) {
             console.log('edit clicked!')
-            const titleRequest = state.title !== value.title ? {
+            const title_request = state.title !== value.title ? {
                 title: value.title,
-                searchTitle: korTypeToEng(value.title)
+                search_title: korTypeToEng(value.title)
             } : null;
-            const explanationRequest = state.explanation !== value.explanation ? {
+            const explanation_request = state.explanation !== value.explanation ? {
                 explanation: value.explanation,
-                searchExplanation: korTypeToEng(value.explanation)
+                search_explanation: korTypeToEng(value.explanation)
             } : null;
             const titleJson = JSON.stringify({
-                titleRequest,
-                explanationRequest
+                title_request,
+                explanation_request
             })
             const inputJson = JSON.stringify({
-                fileName: inputFile?.name,
-                contentType: inputFile?.type,
-                fileSize: inputFile?.size
+                file_name: inputFile?.name,
+                content_type: inputFile?.type,
+                file_size: inputFile?.size
             })
-            const stayList = state.tagNameList.filter((value: { name: string }) => tag.includes(value.name)).map((value: { name: string }) => value.name);
-            const tagList = tag.filter((value: string) => !stayList.includes(value)).map((value: string) => ({"tagId": value}));
-            const deleteList = state.tagNameList.filter((value: { name: string }) => !tag.includes(value.name)).map((value: { name: string }) => ({"tagId": value.name}));
-            putLecture({titleJson, inputJson, inputFile, lectureId: state.lectureId, tagList, deleteList});
+            const stayList = state.tag_name_list.filter((value: { name: string }) => tag.includes(value.name)).map((value: { name: string }) => value.name);
+            const tagList = tag.filter((value: string) => !stayList.includes(value)).map((value: string) => ({"tag_id": value}));
+            const deleteList = state.tag_name_list.filter((value: { name: string }) => !tag.includes(value.name)).map((value: { name: string }) => ({"tag_id": value.name}));
+            putLecture({titleJson, inputJson, inputFile, lectureId: state.lecture_id, tagList, deleteList});
             setTimeout(() => navigate(-1), 1000);
         } else {
             const postJson = JSON.stringify({
                 title: value.title,
                 explanation: value.explanation,
-                searchTitle: korTypeToEng(value.title),
-                searchExplanation: korTypeToEng(value.explanation),
-                tagNameList: tag,
-                lectureThumbnail: {
-                    fileName: inputFile?.name,
-                    contentType: inputFile?.type,
-                    fileSize: inputFile?.size
+                search_title: korTypeToEng(value.title),
+                search_explanation: korTypeToEng(value.explanation),
+                tag_name_list: tag,
+                lecture_thumbnail: {
+                    file_name: inputFile?.name,
+                    content_type: inputFile?.type,
+                    file_size: inputFile?.size
                 }
             });
             inputFile && postLecture({postJson, inputFile});
@@ -164,7 +164,7 @@ const LectureRegistration = () => {
             right="삭제하기"
             onLeft={() => setModal({...modal, delete: false})}
             onRight={() => {
-                deleteLecture(state.lectureId);
+                deleteLecture(state.lecture_id);
                 setTimeout(() => navigate('/'), 1000);
             }}
         />}
@@ -216,7 +216,7 @@ const LectureRegistration = () => {
                                             <_.IcoBtn>
                                                 <Icon icon="pencil" size={16} clicked={() => navigate('/lecture/videoRegistration', {
                                                     state: {
-                                                        lectureId: state.lectureId,
+                                                        lectureId: state.lecture_id,
                                                         chapters: state.chapters,
                                                         editChapter: value.title,
                                                         editVideo: v
@@ -224,7 +224,7 @@ const LectureRegistration = () => {
                                                 })}/>
                                             </_.IcoBtn>
                                             <_.IcoBtn>
-                                                <Icon icon="trash" size={16} clicked={()=>DeleteVideo(v.videoId)}/>
+                                                <Icon icon="trash" size={16} clicked={() => DeleteVideo(v.video_id)}/>
                                             </_.IcoBtn>
                                         </_.IDiv>
                                     </_.VCell>

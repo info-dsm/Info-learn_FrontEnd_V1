@@ -38,7 +38,7 @@ const DetailVideo = () => {
 
     useEffect(() => {
         if (detail) {
-            if (detail.lectureId !== state.get('lectureId')) {
+            if (detail.lecture_id !== state.get('lectureId')) {
                 remove()
                 refetch()
             }
@@ -48,7 +48,7 @@ const DetailVideo = () => {
             }
         }
         if (videoData) {
-            if (detail && detail.lectureId !== state.get('lectureId')) {
+            if (detail && detail.lecture_id !== state.get('lectureId')) {
                 remove()
                 refetch()
             }
@@ -57,7 +57,7 @@ const DetailVideo = () => {
         }
     }, [detail, state]);
 
-    const idList = chapter?.flatMap((v: chapterProps) => v.videos?.map((c: videosType) => c.videoId));
+    const idList = chapter?.flatMap((v: chapterProps) => v.videos?.map((c: videosType) => c.video_id));
     console.log(idList);
 
     return (
@@ -67,7 +67,7 @@ const DetailVideo = () => {
             </VideoBox>
             <ListBox className="lt">
                 {chapter?.map((v: chapterProps, i) =>
-                    <Chapter key={v.chapterId} {...v} watching={Number(state.get('videoId') ?? 0)} cTime={cAll[i]}/>
+                    <Chapter key={v.chapter_id} {...v} watching={Number(state.get('videoId') ?? 0)} cTime={cAll[i]}/>
                 )}
             </ListBox>
         </Container>

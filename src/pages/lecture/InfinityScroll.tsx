@@ -13,7 +13,7 @@ const InfinityScroll = (props: {tags: string[]}) => {
         ({pageParam = null}) => getLectures(pageParam),
         {
             getNextPageParam: (lastPage) => {
-                return lastPage.length == 16 ? lastPage[lastPage.length - 1].createdAt : undefined;
+                return lastPage.length == 16 ? lastPage[lastPage.length - 1].created_at : undefined;
             },
         }
     );
@@ -27,7 +27,7 @@ const InfinityScroll = (props: {tags: string[]}) => {
         if(data === undefined) return data;
         if(props.tags.length === 0) return data;
         return data.filter(value => {
-            const tags = value.tagNameList.map(value => value.name);
+            const tags = value.tag_name_list.map(value => value.name);
             for (const tag of props.tags) if (!tags.includes(tag)) return false;
             return true;
         });
@@ -39,9 +39,9 @@ const InfinityScroll = (props: {tags: string[]}) => {
         <>
             <PostDiv>
                 {filtering(lectures)?.map(data =>
-                    <Post isLecture img={data.lectureThumbnailUrl} name={data.createdBy} date={data.createdAt}
-                          title={data.title} subTitle={data.explanation} tag={data.tagNameList}
-                          lectureId={data.lectureId} key={data.lectureId}/>
+                    <Post isLecture img={data.lecture_thumbnail_url} name={data.created_by} date={data.created_at}
+                          title={data.title} subTitle={data.explanation} tag={data.tag_name_list}
+                          lectureId={data.lecture_id} key={data.lecture_id}/>
                 )}
                 {!dataList && hasNextPage || isLoading || isFetching ? <PostDiv ref={bottomRef}>
                     <SkeletonPost/>

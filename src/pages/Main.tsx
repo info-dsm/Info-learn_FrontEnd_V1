@@ -14,7 +14,7 @@ import axios from "axios";
 import * as _ from "./MainStyle";
 import {SkeletonPost} from "../components/posting/SkeletonPost";
 
-export const AccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJURUFDSEVSIiwianRpIjoiQWRtaW5pc3RyYXRvciIsInR5cGUiOiJhY2Nlc3MiLCJpYXQiOjE2ODcwOTM0MjksImV4cCI6MTY4NzE3OTgyOX0.tLZqKN-GwZSLp2RbZtt3XZzDa7Mp_NUwNThAY-07vnw";
+export const AccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJURUFDSEVSIiwianRpIjoiQWRtaW5pc3RyYXRvciIsInR5cGUiOiJhY2Nlc3MiLCJpYXQiOjE2ODcxNzc4NTgsImV4cCI6MTY4NzI2NDI1OH0.ptGzF48yt2CpymZKJxGO3FEfIPW2kyyM2-CHuNtkfXc";
 
 export async function getLectures(limit: number) {
     const lecturesRes = await axios({
@@ -29,15 +29,15 @@ export async function getLectures(limit: number) {
 }
 
 export interface lecturesProps {
-    lectureId: number;
+    lecture_id: number;
     title: string;
     explanation: string;
-    lectureThumbnailUrl: string;
-    tagNameList: {
+    lecture_thumbnail_url: string;
+    tag_name_list: {
         name: string;
     }[]
-    createdAt: string;
-    createdBy: string;
+    created_at: string;
+    created_by: string;
 }
 
 const Main = () => {
@@ -90,8 +90,8 @@ const Main = () => {
                 </FlexDiv>
                 <PostDiv>
                     {lecture && lecture.map((data: lecturesProps) =>
-                        <Post isLecture img={data.lectureThumbnailUrl} name={data.createdBy} date={data.createdAt} title={data.title} subTitle={data.explanation} tag={data.tagNameList}
-                              lectureId={data.lectureId} key={data.lectureId}/>
+                        <Post isLecture img={data.lecture_thumbnail_url} name={data.created_by} date={data.created_at} title={data.title} subTitle={data.explanation} tag={data.tag_name_list}
+                              lectureId={data.lecture_id} key={data.lecture_id}/>
                     )}
                     {!lecture || isLoading ? <PostDiv>
                         <SkeletonPost/>
