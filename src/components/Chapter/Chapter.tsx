@@ -5,19 +5,21 @@ import Icon from "../../assets/Icon";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {Colors} from "../../styles/theme/color";
 
+export interface videosType {
+    videoId: number;
+    title: string;
+    hour: number;
+    minute: number;
+    second: number;
+    sequence: number;
+    status: string | null;
+}
+
 export interface chapterProps {
     chapterId: number;
     title: string;
     sequence: number;
-    videos?: {
-        videoId: number;
-        title: string;
-        hour: number;
-        minute: number;
-        second: number;
-        sequence: number;
-        status: string | null;
-    }[];
+    videos?: videosType[];
     watching?: number;
     cTime: number;
 }
@@ -28,10 +30,8 @@ const Chapter = ({title, sequence, videos, watching, cTime}: chapterProps) => {
     const Hour = Math.floor(cTime / 3600);
     const Minute = Math.round(cTime / 60) % 60;
 
-    videos?.sort((a, b) => a.sequence - b.sequence);
-
     return (
-        <_.Container>
+        <_.Container id={title}>
             <_.TitleGap>
                 <Text font='Body1'>섹션 {sequence}. {title}</Text>
                 <Text font='Body4' color={Colors["Gray500"]}>{videos?.length}강 • {Hour !== 0 && `${Hour}시간`} {Minute}분</Text>

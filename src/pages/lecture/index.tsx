@@ -9,9 +9,10 @@ import InfinityScroll from "./InfinityScroll";
 import {Link} from "react-router-dom";
 import {useQuery} from "react-query";
 import {GetTags} from "./api";
+import {SkeletonTag} from "../../components/posting/SkeletonTag";
 
 const LectureAll = () => {
-    const {data: tags} = useQuery(['getTag'], () => GetTags(20));
+    const {data: tags, isLoading} = useQuery(['getTag'], () => GetTags(20));
     const slider = useRef<HTMLDivElement>(null);
     const [selected, setSelected] = useState<string[]>([]);
     const [startPos, setStartPos] = useState<{ start: number, scroll: number }>();
@@ -72,17 +73,30 @@ const LectureAll = () => {
                         <Text color={selected.length === 0 ? 'white' : undefined} font={"Body3"}>전체</Text>
                     </Tag>
                     <ScrollDiv onMouseDown={down} ref={slider}>
-                        {tags && tags.tags.map((value: any, index: React.Key | null | undefined) =>
+                        {tags && tags.tags.map((value: { name: string }, index: React.Key | null | undefined) =>
                             <Tag selected={selected.indexOf(value.name) !== -1} key={index}
                                  onClick={() => selectTag(value.name)}>
                                 <Text color={selected.indexOf(value.name) !== -1 ? 'white' : undefined}
                                       font="Body3">{value.name}</Text>
                             </Tag>
                         )}
+                        {isLoading ? <>
+                            <SkeletonTag/>
+                            <SkeletonTag/>
+                            <SkeletonTag/>
+                            <SkeletonTag/>
+                            <SkeletonTag/>
+                            <SkeletonTag/>
+                            <SkeletonTag/>
+                            <SkeletonTag/>
+                            <SkeletonTag/>
+                            <SkeletonTag/>
+                        </> : undefined}
                     </ScrollDiv>
                 </TagDiv>
                 <InfinityScroll tags={selected}/>
             </ContentDiv>
+
         </>
     )
 }

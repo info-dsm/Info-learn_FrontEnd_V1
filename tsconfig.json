@@ -22,6 +22,8 @@
   },
   "types": ["node", "jest", "@testing-library/jest-dom"],
   "include": [
-    "src"
-, "src/components/text.ts"  ]
+    "src",
+    "src/components/text.ts",
+    "@types/index.d.ts"
+  ]
 }

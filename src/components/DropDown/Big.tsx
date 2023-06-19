@@ -3,7 +3,6 @@ import Icon from "../../assets/Icon";
 import {Text} from "../text";
 import * as _ from './style';
 import {Colors, colorsKeyOfType} from "../../styles/theme/color";
-import {arrProps} from "../../pages/lecture/VideoManage/VideoRegistration";
 
 interface DropProps {
     arr: arrProps[];

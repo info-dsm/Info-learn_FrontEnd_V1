@@ -1,8 +1,7 @@
 import {Text} from "../text";
 import {Colors} from "../../styles/theme/color";
-import React, {useState} from "react";
+import React from "react";
 import triangle from "../../assets/img/Triangle.png";
-import Icon from "../../assets/Icon";
 import * as _ from './style';
 import * as s from './sStyle';
 import {useNavigate} from "react-router-dom";
@@ -88,7 +87,6 @@ export const Post = ({img, name, date, title, subTitle, tag, isLecture, isSearch
                             <_.TagDiv>
                                 {tag.map((data, index) => <Text key={index} color={Colors["FPrimary500"]} font="Body4">#{data.name}</Text>)}
                             </_.TagDiv>
-                            {/*{isHover && <Icon icon="heart-fill" color="Gray300" size={16}/>}*/}
                             <div style={{height: "16px", width: "0"}}></div>
                         </_.BottomDiv>
                     </_.PostBody>
