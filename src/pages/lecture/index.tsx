@@ -64,7 +64,7 @@ const LectureAll = () => {
             </TextDiv>
             <ContentDiv onMouseUp={up} onMouseLeave={up} onMouseMove={move}>
                 <TitleDiv>
-                    <Text font="Title1" gradient>전체</Text>
+                    <Text font="Title1" gradient>{selected.length === 1 ? selected[0] : selected.length > 1 ? selected[0] + " +" : "전체"}</Text>
                     <Link to="/lecture/registration" style={{textDecoration: "none"}}><Button gray>강의
                         등록하기</Button></Link>
                 </TitleDiv>
