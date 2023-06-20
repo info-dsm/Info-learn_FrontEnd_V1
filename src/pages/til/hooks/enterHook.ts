@@ -1,13 +1,8 @@
 import { useNodeIdxHook, useNodeTextIdxHook } from "./nodeIdxHook";
 
 
-export const useEnterHook = (element: Selection | null, cursorIdx: number) => {
-    let idx: number;
-    if (cursorIdx === -2) {
-        idx = useNodeIdxHook(element?.anchorNode?.parentElement, 10);
-    } else {
-        idx = cursorIdx + 1;
-    }
+export const useEnterHook = (element: Selection | null) => {
+    const idx: number = useNodeIdxHook(element?.anchorNode?.parentElement, 10);
 
     const newContent: [string, string] = ['', ''];
     const node = document.querySelector<HTMLElement>(`div[data-idx="${idx}"] div div div`)
@@ -15,9 +10,7 @@ export const useEnterHook = (element: Selection | null, cursorIdx: number) => {
     if (element?.anchorNode?.nodeName === '#text') {
         const cursor = element.anchorOffset;
         const newRange = document.createRange();
-        const last = node?.childNodes[node?.childNodes.length - 1];
         const num: number = useNodeTextIdxHook(element.anchorNode)
-        console.log(element.anchorNode?.parentNode?.nodeName === 'SPAN' ? node?.childNodes[num].childNodes[0] : node?.childNodes[num], cursor)
         newRange.setStart((element.anchorNode?.parentNode?.nodeName === 'SPAN' ? node?.childNodes[num].childNodes[0] : node?.childNodes[num]) as ChildNode, cursor)
         newRange.setEnd(node as ParentNode , node?.childNodes.length as number)
         
@@ -52,7 +45,7 @@ export const useEnterHook = (element: Selection | null, cursorIdx: number) => {
             }
         }
         DIV.append(tmpContent);
-
+        
         newContent[0] = node?.textContent ? node?.innerHTML as string : ''
         newContent[1] = DIV?.textContent ? DIV?.innerHTML as string : ''
     }

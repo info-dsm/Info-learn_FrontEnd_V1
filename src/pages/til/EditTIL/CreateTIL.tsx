@@ -11,21 +11,21 @@ interface BodyType {
 }
 
 const CreateTIL = () => {
-    const {keyDown,select,keyUp,$Container,setKeySet,BodyData,InputEvent} = useListHook();
+    const {keyDown,select,keyUp,$Container,onBlur,ViewBodyData,InputEvent} = useListHook();
 
     return (
         <_.TILContainer
-            id='Id'
             ref={$Container}
+            onBlur={() => onBlur()}
+            onSelect={(e) => select(e)}
             onKeyDown={keyDown}
             onKeyUp={keyUp}
             onInput={e => InputEvent(e)}
-            onBlur={() => setKeySet({})}
-            onSelect={(e) => select(e)}
+            onDrop={(e) => e.preventDefault()}
             suppressContentEditableWarning={true}
         >
             {
-                BodyData?.map((v: BodyType, i: number) => (
+                ViewBodyData?.map((v: BodyType, i: number) => (
                     <div
                         key={v.id}
                         data-block-id={v.id}
