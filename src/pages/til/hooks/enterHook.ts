@@ -34,16 +34,18 @@ export const useEnterHook = (Data: React.MutableRefObject<PastBodyType>) => {
     if (range.startIdx === range.endIdx) {
         const node = document.querySelector<HTMLElement>(`div[data-idx="${idx}"] div div div`)
         
-        newRange?.setStart((node?.childNodes[range.startNodeIdx].nodeName === 'SPAN' ? node?.childNodes[range.startNodeIdx].childNodes[0] : node?.childNodes[range.startNodeIdx]) as ChildNode, range.startCursorIdx ?? 0)
-        newRange?.setEnd((node?.childNodes[range.endNodeIdx].nodeName === 'SPAN' ? node?.childNodes[range.endNodeIdx]?.childNodes[0] : node?.childNodes[range.endNodeIdx]) as ChildNode, range.endCursorIdx ?? 0)
-        newRange?.deleteContents()
+        if(!element?.isCollapsed) {
+            newRange?.setStart((node?.childNodes[range.startNodeIdx].nodeName === 'SPAN' ? node?.childNodes[range.startNodeIdx].childNodes[0] : node?.childNodes[range.startNodeIdx]) as ChildNode, range.startCursorIdx ?? 0)
+            newRange?.setEnd((node?.childNodes[range.endNodeIdx].nodeName === 'SPAN' ? node?.childNodes[range.endNodeIdx]?.childNodes[0] : node?.childNodes[range.endNodeIdx]) as ChildNode, range.endCursorIdx ?? 0)
+            newRange?.deleteContents()
 
-        newRange?.setStart((node?.childNodes[range.startNodeIdx].nodeName === 'SPAN' ? node?.childNodes[range.startNodeIdx].childNodes[0] : node?.childNodes[range.startNodeIdx]) as ChildNode, range.startCursorIdx ?? 0)
-        newRange?.setEnd((node?.childNodes[range.startNodeIdx].nodeName === 'SPAN' ? node?.childNodes[range.startNodeIdx].childNodes[0] : node?.childNodes[range.startNodeIdx]) as ChildNode, range.startCursorIdx ?? 0)
+            newRange?.setStart((node?.childNodes[range.startNodeIdx].nodeName === 'SPAN' ? node?.childNodes[range.startNodeIdx].childNodes[0] : node?.childNodes[range.startNodeIdx]) as ChildNode, range.startCursorIdx ?? 0)
+            newRange?.setEnd((node?.childNodes[range.startNodeIdx].nodeName === 'SPAN' ? node?.childNodes[range.startNodeIdx].childNodes[0] : node?.childNodes[range.startNodeIdx]) as ChildNode, range.startCursorIdx ?? 0)
 
-        element?.removeAllRanges();
-        element?.addRange(newRange as Range);
-
+            element?.removeAllRanges();
+            element?.addRange(newRange as Range);
+        }
+        
         if (element?.anchorNode?.nodeName === '#text') {
             const cursor = element.anchorOffset;
             const newRange = document.createRange();
