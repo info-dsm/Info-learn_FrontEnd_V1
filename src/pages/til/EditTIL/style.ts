@@ -20,6 +20,7 @@ export const TILBlock = styled.div.attrs({
   &:empty::after {
     content: attr(placeholder);
     color: ${Colors.Gray500};
+    cursor: text;
   }
 `
 
