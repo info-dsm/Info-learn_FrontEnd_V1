@@ -72,11 +72,11 @@ export const useEnterHook = (Data: React.MutableRefObject<PastBodyType>) => {
 
         newRange?.setStart((startNode?.childNodes[range.startNodeIdx].nodeName === 'SPAN' ? startNode?.childNodes[range.startNodeIdx].childNodes[0] : startNode?.childNodes[range.startNodeIdx]) as ChildNode, range.startCursorIdx ?? 0)
         newRange?.setEnd(startNode as HTMLElement, startNode?.childNodes.length ?? 1)
-        newRange?.extractContents()
+        newRange?.deleteContents()
 
         newRange?.setStart(endNode as HTMLElement, 0)
         newRange?.setEnd((endNode?.childNodes[range.endNodeIdx].nodeName === 'SPAN' ? endNode?.childNodes[range.endNodeIdx]?.childNodes[0] : endNode?.childNodes[range.endNodeIdx]) as ChildNode, range.endCursorIdx ?? 0)
-        newRange?.extractContents()
+        newRange?.deleteContents()
 
         useNodeSet(startNode)
         useNodeSet(endNode)

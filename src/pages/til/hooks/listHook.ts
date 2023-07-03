@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useEnterHook } from "./enterHook";
-import { useNodeIdxHook } from "./nodeIdxHook";
 import useNodeSet from "./nodeSet";
 import useRangeData from "./rangeData";
 
@@ -26,6 +25,7 @@ interface PastBodyType {
 
 export const useListHook = () => {
     const timer = useRef<NodeJS.Timer | null>(null);
+    const TimeData = useRef<number>(0);
     const $Container = useRef<HTMLDivElement | null>(null);
     const cursorIdx = useRef<number>(-2)
     const curosrState = useRef<string>('outside');
@@ -111,7 +111,7 @@ export const useListHook = () => {
             if (timer.current) {
                 clearInterval(timer.current)
                 timer.current = null;
-                pastData.push({
+                pastData.unshift({
                     ...useRangeData(),
                     data: rangeData.data,
                 });
@@ -121,7 +121,7 @@ export const useListHook = () => {
             
             setPastBodyData(pastBodyData => [
                 TmpBodyData.current,
-                ...pastData.reverse(),
+                ...pastData,
                 ...pastBodyData
             ])
             setViewBodyData((TmpBodyData.current as PastBodyType).data)
@@ -139,7 +139,7 @@ export const useListHook = () => {
             e.preventDefault();
             if (curosrState.current === 'write' && timer.current) {
                 curosrState.current = 'before';
-
+                console.log('?????')
                 clearInterval(timer.current)
                 timer.current = null;
                 setPastBodyData([{
@@ -156,7 +156,7 @@ export const useListHook = () => {
                 }
             }
             else if (pastBodyData.length) {
-                console.log(BodyData)
+                console.log(pastBodyData)
                 setBodyData(pastBodyData[0].data)
                 if (JSON.stringify(BodyData) === JSON.stringify(ViewBodyData)) {
                     curosrState.current = 'cursorRedefine';
@@ -177,90 +177,269 @@ export const useListHook = () => {
         else if (e.key === 'Backspace') {
             const element = document.getSelection();
             const range = useRangeData()
+            
             if (range.startIdx === 0 && element?.anchorOffset === 0 && range.startNodeIdx === 0) {
                 e.preventDefault()
             }
             else if (element?.isCollapsed && element.anchorOffset === 0 && range.startNodeIdx === 0) {
                 e.preventDefault();
+                const nowTime = Date.now();
+                const rangeData: PastBodyType = JSON.parse(JSON.stringify(TmpBodyData.current));
                 
-                const node = document.querySelector<HTMLElement>(`div[data-idx="${range.startIdx}"] div div div`)
-                let data: BodyType[];
-                if (node?.innerHTML === '') {
-                    data = [
-                        ...BodyData.slice(0, range.startIdx),
-                        ...BodyData.slice(range.startIdx + 1)
-                    ];
-                    setPastBodyData([{
-                        data,
-                        startIdx: range.startIdx - 1,
-                        startNodeIdx: 0,
-                        startCursorIdx: 0,
-                        endIdx: range.startIdx - 1,
-                        endNodeIdx: 0,
-                        endCursorIdx: 0,
-                        direction: false
-                    },
-                    {
+                if(rangeData.data[range.startIdx].contents === '') {
+                    const pastData: PastBodyType[] = [{
+                        ...rangeData,
                         data: BodyData,
-                        ...range
-                    },
-                    ...pastBodyData
-                    ])
-                    curosrState.current = 'cursorRedefine';
-                } else {
+                    }];
+                    
+                    if (timer.current) {
+                        clearInterval(timer.current)
+                        timer.current = null;
+                        pastData.unshift({
+                            ...range,
+                            data: rangeData.data,
+                        });
+                    }
+
                     const node = document.querySelector<HTMLElement>(`div[data-idx="${range.startIdx - 1}"] div div div`)
-
+                    const nodeIdx = (node?.childNodes.length ?? 1) - 1
+                    const nodeCursorIdx = node?.childNodes.length !== 0 ? node?.childNodes[node?.childNodes.length - 1].textContent?.length ?? 0 : 0
+                    
                     const DIV = document.createElement('div');
-                    DIV.innerHTML = BodyData[range.startIdx - 1].contents + BodyData[range.startIdx].contents
-
-                    let cnt = 0;
-                    for (const value of Object.entries(DIV.childNodes)) {
-                        if (value[1].textContent === '') {
-                            cnt += 1;
-                            DIV.removeChild(value[1])
-                        }
-                        else {
-                            if (value[1].nodeName === 'SPAN' && value[1].childNodes[0].parentElement) {
-                                value[1].childNodes[0].parentElement.dataset.textIdx = `${Number(value[0]) - cnt}`
-                            }
-                        }
+                    DIV.innerHTML = rangeData.data[range.startIdx - 1].contents + rangeData.data[range.startIdx].contents
+                    useNodeSet(DIV);
+                    
+                    const Data = {
+                        data: [
+                            ...rangeData.data.slice(0, range.startIdx),
+                            ...rangeData.data.slice(range.startIdx + 1)
+                        ],
+                        startIdx: range.startIdx - 1,
+                        startNodeIdx: nodeIdx,
+                        startCursorIdx: nodeCursorIdx,
+                        endIdx: range.startIdx - 1,
+                        endNodeIdx: nodeIdx,
+                        endCursorIdx: nodeCursorIdx,
+                        direction: false
                     }
                     
-                    data = [
-                        ...BodyData.slice(0, range.startIdx - 1),
-                        {
-                            ...BodyData[range.startIdx - 1],
-                            contents: DIV.innerHTML
-                        },
-                        ...BodyData.slice(range.startIdx + 1)
-                    ];
-                    setPastBodyData([
-                        {
-                            data: data,
-                            startIdx: range.startIdx - 1,
-                            startNodeIdx: (node?.childNodes.length ?? 1) - 1,
-                            startCursorIdx: node?.childNodes.length !== 0 ? node?.childNodes[node?.childNodes.length - 1].textContent?.length ?? 0 : 0,
-                            endIdx: range.startIdx - 1,
-                            endNodeIdx: (node?.childNodes.length ?? 1) - 1,
-                            endCursorIdx: node?.childNodes.length !== 0 ? node?.childNodes[node?.childNodes.length - 1].textContent?.length ?? 0 : 0,
-                            direction: false
-                        },
-                        {
-                            data: BodyData,
-                            ...range
-                        },
+                    TmpBodyData.current = Data;
+                    setPastBodyData(pastBodyData => [
+                        Data,
+                        ...pastData,
                         ...pastBodyData
                     ])
-                    curosrState.current = 'cursorRedefine'
+                    setBodyData(Data.data);
+                    setViewBodyData(Data.data);
+                    cursorIdx.current = range.startIdx - 1;
+                    curosrState.current = 'cursorRedefine';
                 }
-                setBodyData(data);
-                setViewBodyData(data);
-                cursorIdx.current = range.startIdx - 1;
+                else if(nowTime - TimeData.current >= 100) {
+                    TimeData.current = nowTime;
+
+                    const pastData: PastBodyType[] = [{
+                        ...rangeData,
+                        data: BodyData,
+                    }];
+                    
+                    if (timer.current) {
+                        clearInterval(timer.current)
+                        timer.current = null;
+                        pastData.unshift({
+                            ...range,
+                            data: rangeData.data,
+                        });
+                    }
+
+                    const node = document.querySelector<HTMLElement>(`div[data-idx="${range.startIdx - 1}"] div div div`)
+                    const nodeIdx = (node?.childNodes.length ?? 1) - 1
+                    const nodeCursorIdx = node?.childNodes.length !== 0 ? node?.childNodes[node?.childNodes.length - 1].textContent?.length ?? 0 : 0
+                    
+                    const DIV = document.createElement('div');
+                    DIV.innerHTML = rangeData.data[range.startIdx - 1].contents + rangeData.data[range.startIdx].contents
+                    useNodeSet(DIV);
+                    
+                    const Data = {
+                        data: [
+                            ...rangeData.data.slice(0, range.startIdx - 1),
+                            {
+                                ...rangeData.data[range.startIdx - 1],
+                                contents: DIV.innerHTML
+                            },
+                            ...rangeData.data.slice(range.startIdx + 1)
+                        ],
+                        startIdx: range.startIdx - 1,
+                        startNodeIdx: nodeIdx,
+                        startCursorIdx: nodeCursorIdx,
+                        endIdx: range.startIdx - 1,
+                        endNodeIdx: nodeIdx,
+                        endCursorIdx: nodeCursorIdx,
+                        direction: false
+                    }
+                    
+                    TmpBodyData.current = Data;
+                    setPastBodyData(pastBodyData => [
+                        Data,
+                        ...pastData,
+                        ...pastBodyData
+                    ])
+                    setBodyData(Data.data);
+                    setViewBodyData(Data.data);
+                    cursorIdx.current = range.startIdx - 1;
+                    curosrState.current = 'cursorRedefine';
+                }
             }
             else if (!element?.isCollapsed) {
-                ''// 우선 마우스 범위설정부터 해야함 select에서 하셈
+                e.preventDefault();
+                const nowTime = Date.now();
+                const newRange = document.createRange();
+                if(nowTime - TimeData.current >= 100) {
+                    TimeData.current = nowTime
+
+                    const rangeData: PastBodyType = JSON.parse(JSON.stringify(TmpBodyData.current));
+                    const pastData: PastBodyType[] = [{
+                        ...rangeData,
+                        data: BodyData,
+                    }];
+                    
+                    if (timer.current) {
+                        clearInterval(timer.current)
+                        timer.current = null;
+                        pastData.unshift({
+                            ...range,
+                            data: rangeData.data,
+                        });
+                    }
+                    
+                    const DIV = document.createElement('div');
+                    const startNode = document.querySelector<HTMLElement>(`div[data-idx="${range.startIdx}"] div div div`)
+                    const endNode = document.querySelector<HTMLElement>(`div[data-idx="${range.endIdx}"] div div div`)
+                    
+                    if(range.startIdx === range.endIdx) {
+                        newRange?.setStart((startNode?.childNodes[range.startNodeIdx].nodeName === 'SPAN' ? startNode?.childNodes[range.startNodeIdx].childNodes[0] : startNode?.childNodes[range.startNodeIdx]) as ChildNode, range.startCursorIdx ?? 0)
+                        newRange?.setEnd((startNode?.childNodes[range.endNodeIdx].nodeName === 'SPAN' ? startNode?.childNodes[range.endNodeIdx]?.childNodes[0] : startNode?.childNodes[range.endNodeIdx]) as ChildNode, range.endCursorIdx ?? 0)
+                        newRange?.deleteContents()
+
+                        DIV.innerHTML = (startNode?.innerHTML ?? '')
+                    } else {
+                        newRange?.setStart((startNode?.childNodes[range.startNodeIdx].nodeName === 'SPAN' ? startNode?.childNodes[range.startNodeIdx].childNodes[0] : startNode?.childNodes[range.startNodeIdx]) as ChildNode, range.startCursorIdx ?? 0)
+                        newRange?.setEnd(startNode as HTMLElement, startNode?.childNodes.length ?? 1)
+                        newRange?.deleteContents()
+
+                        newRange?.setStart(endNode as HTMLElement, 0)
+                        newRange?.setEnd((endNode?.childNodes[range.endNodeIdx].nodeName === 'SPAN' ? endNode?.childNodes[range.endNodeIdx]?.childNodes[0] : endNode?.childNodes[range.endNodeIdx]) as ChildNode, range.endCursorIdx ?? 0)
+                        newRange?.deleteContents()
+                        
+                        DIV.innerHTML = (startNode?.innerHTML ?? '') + (endNode?.innerHTML ?? '')
+                    }
+                    
+                    useNodeSet(DIV);
+                    useNodeSet(startNode);
+
+                    const nodeIdx = (startNode?.childNodes.length ?? 1) - 1
+                    const nodeCursorIdx = startNode?.childNodes.length !== 0 ? startNode?.childNodes[startNode?.childNodes.length - 1].textContent?.length ?? 0 : 0
+                    
+                    const Data = {
+                        data: [
+                            ...rangeData.data.slice(0, range.startIdx),
+                            {
+                                ...rangeData.data[range.startIdx],
+                                contents: DIV.innerHTML
+                            },
+                            ...rangeData.data.slice(range.endIdx + 1)
+                        ],
+                        startIdx: range.startIdx,
+                        startNodeIdx: nodeIdx,
+                        startCursorIdx: nodeCursorIdx,
+                        endIdx: range.startIdx,
+                        endNodeIdx: nodeIdx,
+                        endCursorIdx: nodeCursorIdx,
+                        direction: false
+                    }
+                    
+                    TmpBodyData.current = Data;
+                    setPastBodyData(pastBodyData => [
+                        Data,
+                        ...pastData,
+                        ...pastBodyData
+                    ])
+                    setBodyData(Data.data);
+                    setViewBodyData(Data.data);
+                    cursorIdx.current = range.startIdx - 1;
+                    curosrState.current = 'cursorRedefine';
+                }
             }
         }
+        else if(e.key === 'Process' && e.code.match(/^Key[A-Z]/) || (e.key !== 'Process' && e.key.length === 1 && (e.key.match(/[^a-zA-Z0-9가-힣ㄱ-ㅎ]/) || e.key.match(/\w/)))) {
+            const range = useRangeData();
+            
+            if(range.startIdx !== range.endIdx) {
+                const rangeData = JSON.parse(JSON.stringify(TmpBodyData.current));
+                const pastData: PastBodyType[] = [{
+                    ...rangeData,
+                    data: BodyData,
+                }];
+                console.log(e.key, e.code)
+                if (timer.current) {
+                    clearInterval(timer.current)
+                    timer.current = null;
+                    pastData.unshift({
+                        ...range,
+                        data: rangeData.data,
+                    });
+                }
+
+                const newRange = document.createRange();
+                const startNode = document.querySelector<HTMLElement>(`div[data-idx="${range.startIdx}"] div div div`)
+                const endNode = document.querySelector<HTMLElement>(`div[data-idx="${range.endIdx}"] div div div`)
+
+                newRange?.setStart((startNode?.childNodes[range.startNodeIdx].nodeName === 'SPAN' ? startNode?.childNodes[range.startNodeIdx].childNodes[0] : startNode?.childNodes[range.startNodeIdx]) as ChildNode, range.startCursorIdx ?? 0)
+                newRange?.setEnd(startNode as HTMLElement, startNode?.childNodes.length ?? 1)
+                newRange?.deleteContents()
+                
+                newRange?.setStart(endNode as HTMLElement, 0)
+                newRange?.setEnd((endNode?.childNodes[range.endNodeIdx].nodeName === 'SPAN' ? endNode?.childNodes[range.endNodeIdx]?.childNodes[0] : endNode?.childNodes[range.endNodeIdx]) as ChildNode, range.endCursorIdx ?? 0)
+                newRange?.deleteContents()
+
+                useNodeSet(startNode)
+                const nodeIdx = (startNode?.childNodes.length ?? 1) - 1
+                const nodeCursorIdx = startNode?.childNodes.length !== 0 ? startNode?.childNodes[startNode?.childNodes.length - 1].textContent?.length ?? 0 : 0
+
+                const DIV = document.createElement('div');
+                DIV.innerHTML = (startNode?.innerHTML ?? '') + (endNode?.innerHTML ?? '')
+                useNodeSet(DIV)
+                
+                const Data = {
+                    data: [
+                        ...rangeData.data.slice(0, range.startIdx),
+                        {
+                            ...rangeData.data[range.startIdx],
+                            contents: DIV.innerHTML
+                        },
+                        ...rangeData.data.slice(range.endIdx + 1)
+                    ],
+                    startIdx: range.startIdx,
+                    startNodeIdx: nodeIdx,
+                    startCursorIdx: nodeCursorIdx,
+                    endIdx: range.startIdx,
+                    endNodeIdx: nodeIdx,
+                    endCursorIdx: nodeCursorIdx,
+                    direction: false
+                }
+                
+                TmpBodyData.current = Data;
+                setPastBodyData(pastBodyData => [
+                    Data,
+                    ...pastData,
+                    ...pastBodyData
+                ])
+                setBodyData(Data.data);
+                setViewBodyData(Data.data);
+                cursorIdx.current = range.startIdx - 1;
+                curosrState.current = 'cursorRedefine';
+            }
+        }
+        console.log(e.key)
     }
 
     const keyUp = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -274,7 +453,7 @@ export const useListHook = () => {
 
     const select = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
         const element = document.getSelection()
-        const Idx = useNodeIdxHook(element?.anchorNode?.parentElement, 10);
+        const range = useRangeData();
 
         // 노드를 연속으로 삭제하면 문제가 있음
         // 클릭했을 경우 timer가 작동중이면 멈추고 새로 해야함
@@ -283,7 +462,6 @@ export const useListHook = () => {
 
         if (!element?.isCollapsed && curosrState.current !== 'cursorSet') {
             const newRange = document.createRange();
-            const range = useRangeData();
             const direction = range.direction;
             let { startIdx, startNodeIdx, startCursorIdx, endIdx, endNodeIdx, endCursorIdx } = range;
             let startNode = document.querySelector<HTMLElement>(`div[data-idx="${startIdx}"] div div div`)
@@ -316,7 +494,7 @@ export const useListHook = () => {
             curosrState.current = 'cursorSet'
         }
         
-        if (cursorIdx.current !== Idx || curosrState.current === 'cursorSet') {
+        if ((cursorIdx.current !== range.startIdx || curosrState.current === 'cursorSet') && curosrState.current !== 'cursorRedefine') {
             if (timer.current) {
                 const TmpData = JSON.parse(JSON.stringify(TmpBodyData.current));
 
@@ -336,13 +514,13 @@ export const useListHook = () => {
             setViewBodyData(ViewBodyData => ViewBodyData.map((v, i) => {
                 return {
                     ...v,
-                    placeholder: i === Idx
+                    placeholder: i === range.startIdx
                 }
             }))
             
             curosrState.current = 'standBy';
         }
-        cursorIdx.current = Idx;
+        cursorIdx.current = range.startIdx;
         if (curosrState.current === 'outside') curosrState.current = 'standBy';
 
         if (curosrState.current !== 'write' && timer.current === null) {
@@ -355,81 +533,52 @@ export const useListHook = () => {
 
     const InputEvent = (e: React.FormEvent<HTMLDivElement>) => {
         const element = document.getSelection();
-        const idx = useNodeIdxHook(element?.anchorNode?.parentElement, 10);
-        const content = document.querySelector<HTMLElement>(`div[data-idx="${idx}"] div div div`)
+        const range = useRangeData();
+        const content = document.querySelector<HTMLElement>(`div[data-idx="${range.startIdx}"] div div div`)
         
-        if (element?.isCollapsed) {
-            if (content && content.childNodes) {
-                let cnt = 0;
-                for (const value of Object.entries(content.childNodes)) {
-                    if (value[1].textContent === '') {
-                        cnt += 1;
-                        content.removeChild(value[1])
-                    }
-                    else {
-                        if (value[1].nodeName === 'SPAN' && value[1].childNodes[0].parentElement) {
-                            value[1].childNodes[0].parentElement.dataset.textIdx = `${Number(value[0]) - cnt}`
-                        }
-                    }
-                }
-            }
-            if (content?.textContent === '') {
-                content.innerHTML = ''
-            }
+        if(content?.textContent === '') {
+            content.innerHTML = ''
         }
 
         TmpBodyData.current = {
             ...TmpBodyData.current,
-            data: timer.current ?
-                [
-                    ...TmpBodyData.current.data.slice(0, idx),
+            data:[
+                    ...TmpBodyData.current.data.slice(0, range.startIdx),
                     {
-                        ...TmpBodyData.current.data[idx],
+                        ...TmpBodyData.current.data[range.startIdx],
                         contents: content?.innerHTML ?? ''
                     },
-                    ...TmpBodyData.current.data.slice(idx + 1)
-                ]
-                :
-                [
-                    ...ViewBodyData.slice(0, idx),
-                    {
-                        ...ViewBodyData[idx],
-                        contents: content?.innerHTML ?? ''
-                    },
-                    ...ViewBodyData.slice(idx + 1)
-                ]
+                    ...TmpBodyData.current.data.slice(range.startIdx + 1)
+            ]
         };
-        // 입력중인상태 일때 일정 초마다 저장되게 로직을 바꿔야함
-        // 그러면 중간에 같은 idx일때도 바꿔도 아무 문제 없을 거임
-        if (JSON.stringify(TmpBodyData.current.data) !== JSON.stringify(BodyData) && !keySet['Control']) {
-            if (timer.current) {
-                clearInterval(timer.current);
-                timer.current = null;
-            }
 
+        if (JSON.stringify(TmpBodyData.current.data) !== JSON.stringify(BodyData) && !keySet['Control']) {         
             curosrState.current = 'write';
-            timer.current = setInterval(() => {
-                const range = JSON.parse(JSON.stringify(TmpBodyData.current));
 
-                setPastBodyData(pastBodyData => [
-                    {
-                        ...range,
-                        data: BodyData,
-                    },
-                    ...pastBodyData
-                ]);
-
-                clearInterval(timer.current as NodeJS.Timer);
-                timer.current = null;
-                setBodyData((TmpBodyData.current as PastBodyType).data)
-                TmpBodyData.current = {
-                    data: TmpBodyData.current.data,
-                    ...useRangeData()
-                };
-                console.log((TmpBodyData.current as PastBodyType).data)
-
-                curosrState.current = 'standBy';
-            }, 1000)
+            if (!timer.current) {
+                timer.current = setInterval(() => {
+                    const range = JSON.parse(JSON.stringify(TmpBodyData.current));
+    
+                    setPastBodyData(pastBodyData => [
+                        {
+                            ...range,
+                            data: BodyData,
+                        },
+                        ...pastBodyData
+                    ]);
+    
+                    clearInterval(timer.current as NodeJS.Timer);
+                    timer.current = null;
+                    setBodyData((TmpBodyData.current as PastBodyType).data)
+                    TmpBodyData.current = {
+                        data: TmpBodyData.current.data,
+                        ...useRangeData()
+                    };
+                    console.log((TmpBodyData.current as PastBodyType).data)
+    
+                    curosrState.current = 'standBy';
+                }, 2000)
+            }            
         }
     }
 
@@ -479,11 +628,11 @@ export const useListHook = () => {
             const { startIdx, startNodeIdx, startCursorIdx, endIdx, endNodeIdx, endCursorIdx, direction } = pastBodyData[0];
             const startNode = document.querySelector<HTMLElement>(`div[data-idx="${startIdx}"] div div div`);
             const endNode = document.querySelector<HTMLElement>(`div[data-idx="${endIdx}"] div div div`);
-            const setStartNode = startNode?.childNodes[startNodeIdx]?.nodeName === 'SPAN' ? startNode?.childNodes[startNodeIdx].childNodes[0] : startNode?.childNodes[startNodeIdx];
-            const setEndNode = endNode?.childNodes[endNodeIdx]?.nodeName === 'SPAN' ? endNode?.childNodes[endNodeIdx].childNodes[0] : endNode?.childNodes[endNodeIdx];
-            console.log(pastBodyData[0])
-            newRange?.setStart(setStartNode as ChildNode ?? startNode, startCursorIdx);
-            newRange?.setEnd(setEndNode as ChildNode ?? endNode, endCursorIdx);
+            const setStartNode = startNode?.childNodes[startNodeIdx]?.nodeName === 'SPAN' && startNode?.childNodes[startNode?.childNodes.length - 1].textContent?.length !== 0 ? startNode?.childNodes[startNodeIdx].childNodes[0] : startNode?.childNodes[startNodeIdx];
+            const setEndNode = endNode?.childNodes[endNodeIdx]?.nodeName === 'SPAN' && endNode?.childNodes[endNode?.childNodes.length - 1].textContent?.length !== 0 ? endNode?.childNodes[endNodeIdx].childNodes[0] : endNode?.childNodes[endNodeIdx];
+
+            newRange?.setStart((setStartNode ?? startNode) as HTMLElement, startCursorIdx);
+            newRange?.setEnd((setEndNode ?? endNode) as HTMLElement, endCursorIdx);
 
             element?.removeAllRanges();
             element?.addRange(newRange as Range);
