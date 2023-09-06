@@ -1,8 +1,8 @@
 import React, {useEffect, useRef, useState} from "react";
 import styled from "styled-components";
-import {TextButton} from "./TextButton";
+import {TextButton} from "./button/TextButton";
 import {Link} from "react-router-dom";
-import TextLogo from "../assets/textLogo.png";
+import TextLogo from "../assets/img/TextLogo.png";
 import {Text} from "./text";
 import {Colors} from "../styles/theme/color";
 import Icon from "../assets/Icon";
@@ -28,7 +28,7 @@ const Header = () => {
     const [dropdownState, setDropdownState] = useState({
         headerColor: false,
         opacity: 0,
-        padding: '0 24%',
+        padding: '0',
         height: '0',
         event: 'none'
     });
@@ -73,8 +73,8 @@ const Header = () => {
             <Headers>
                 <FlexDiv>
                     <Link to="/"><Image src={TextLogo}/></Link>
-                    <TextButton><Link to="/le"><Text font="Body4">강의</Text></Link></TextButton>
-                    <TextButton><Link to="/community"><Text font="Body4">커뮤니티</Text></Link></TextButton>
+                    <TextButton><Link to="/lecture"><Text font="Body4">강의</Text></Link></TextButton>
+                    <TextButton><Link to="/TIL"><Text font="Body4">TIL</Text></Link></TextButton>
                 </FlexDiv>
                 <FlexDiv style={{gap: "40px"}}>
                     <IconButton id="isAlam"><Icon icon="bell"/></IconButton>
@@ -97,7 +97,11 @@ const DropInput = ({padding, height, opacity, isInput}: InputType) => {
         searchInput.current?.focus();
     }
     useEffect(() => {
-        setTimeout(inputClear, 200);
+        if (isInput) {
+            setTimeout(inputClear, 200);
+        } else {
+            searchInput.current?.blur();
+        }
     }, [isInput]);
 
     return (
@@ -129,7 +133,7 @@ const BackBlur = styled.div<{ opacity: number; event: string; }>`
   height: calc(100vh - 50px);
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(40px);
-  z-index: 2;
+  z-index: 4;
   opacity: ${props => props.opacity};
   transition: opacity .3s ease-in;
 `
@@ -166,7 +170,7 @@ const BgDiv = styled.div<InputType>`
   left: 0;
   background-color: ${Colors["White"]};
   transition: 0.3s;
-  z-index: 3;
+  z-index: 5;
   overflow-y: scroll;
   display: flex;
   flex-direction: column;
@@ -198,10 +202,13 @@ const Headers = styled.header`
   }
 `
 const HeadDiv = styled.div<{ BackColor: boolean; }>`
+  position: absolute;
+  top: 0;
+  left: 0;
   display: flex;
   width: 100%;
   justify-content: center;
-  background-color: ${props => props.BackColor ? Colors["White"] : Colors["Gray100"]};
+  background-color: ${props => props.BackColor ? Colors["White"] : "rgba(0,0,0,0)"};
 `
 const Image = styled.img`
   height: 30px;

@@ -2,70 +2,109 @@ import React from "react";
 import styled from "styled-components";
 import {Text} from "../components/text";
 import {Colors} from "../styles/theme/color";
-import BackendImg from "../assets/Java.png";
-import FrontendImg from "../assets/Frontend.png";
-import iOSImg from "../assets/iOS.png";
-import AndroidImg from "../assets/Android.png";
-import SecurityImg from "../assets/Security.png";
-import HeadImg from "../assets/city-4991094.jpg";
-import {Post} from "../components/Post";
+import BackendImg from "../assets/img/Back.svg";
+import FrontendImg from "../assets/img/Front.svg";
+import iOSImg from "../assets/img/iOS.svg";
+import AndroidImg from "../assets/img/Android.svg";
+import SecurityImg from "../assets/img/Secure.svg";
+// import DevopsImg from "../assets/img/Devops.svg"
+import HeadImg from "../assets/img/BackgroundImg.jpg";
+import {Post} from "../components/posting/Post";
+import {useQuery} from "react-query";
+import axios from "axios";
+import * as _ from "./MainStyle";
+import {SkeletonPost} from "../components/posting/SkeletonPost";
+
+export const AccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJURUFDSEVSIiwianRpIjoiQWRtaW5pc3RyYXRvciIsInR5cGUiOiJhY2Nlc3MiLCJpYXQiOjE2ODcxNzc4NTgsImV4cCI6MTY4NzI2NDI1OH0.ptGzF48yt2CpymZKJxGO3FEfIPW2kyyM2-CHuNtkfXc";
+
+export async function getLectures(limit: number) {
+    const lecturesRes = await axios({
+        method: 'GET',
+        url: `${process.env.REACT_APP_BASE_URL}/api/infolearn/v1/lecture?limit=${limit}`,
+        headers: {
+            Authorization: `Bearer ${AccessToken}`,
+            'ngrok-skip-browser-warning': '69420'
+        }
+    })
+    return lecturesRes.data.lectures
+}
+
+export interface lecturesProps {
+    lecture_id: number;
+    title: string;
+    explanation: string;
+    lecture_thumbnail_url: string;
+    tag_name_list: {
+        name: string;
+    }[]
+    created_at: string;
+    created_by: string;
+}
 
 const Main = () => {
+    const {data: lecture, isLoading} = useQuery(['getLectures'], () => getLectures(4));
+
     const titleCategory = [
         {name: "백엔드", imageUrl: BackendImg},
         {name: "프론트엔드", imageUrl: FrontendImg},
         {name: "안드로이드", imageUrl: AndroidImg},
         {name: "iOS", imageUrl: iOSImg},
-        {name: "보안", imageUrl: SecurityImg}
-    ];
-    const newLecture = [
-        {imageUrl: HeadImg, writer: "태곤임", date: "2023.04.01", title: "아마도 요즘 유행하는 패스트캠퍼스 리엑트 강의", subTitle: "소중한 강의...!", tag: ["#React"]},
-        {imageUrl: HeadImg, writer: "태곤임", date: "2023.04.01", title: "싱글벙글 HTML로 코딩하기", subTitle: "전세계 최대의 난제인 HTML로 코딩할 수 있는가...", tag: ["#Frontend", "HTML", "#CSS"]},
-        {imageUrl: HeadImg, writer: "태곤임", date: "2023.04.01", title: "싱글벙글 HTML로 코딩하기", subTitle: "전세계 최대의 난제인 HTML로 코딩할 수 있는가...", tag: ["#Frontend", "HTML", "#CSS"]},
-        {imageUrl: HeadImg, writer: "태곤임", date: "2023.04.01", title: "싱글벙글 HTML로 코딩하기", subTitle: "전세계 최대의 난제인 HTML로 코딩할 수 있는가...", tag: ["#Frontend", "HTML", "#CSS"]},
+        {name: "보안", imageUrl: SecurityImg},
+        // {name: "데브옵스", imageUrl: DevopsImg}
     ];
     const newTil = [
-        {imageUrl: HeadImg, writer: "승우최", date: "2023.03.03", title: "정처기를 공부해 보았다", subTitle: "정처기를 합격하기 위한 발버둥!", tag: ["#Study"]},
-        {imageUrl: HeadImg, writer: "Mooner510", date: "2023.03.03", title: "Frontend 씹어먹기", subTitle: "아 프론트엔드 Easy 하네요", tag: ["#Frontend"]},
-        {imageUrl: HeadImg, writer: "원준도", date: "2023.03.03", title: "30만원 맛있다", subTitle: "아 30만원짜리 맛있네요 개추", tag: ["#Study", "#Monkey"]},
-        {imageUrl: HeadImg, writer: "조지은", date: "2023.03.02", title: "마라탕이란 무엇인가?", subTitle: "내가 지금까지 마라탕과 살아가며 정리한 것이다.", tag: ["#Study", "#Maratang", "#Jo"]},
-        {imageUrl: HeadImg, writer: "Hood", date: "2023.03.02", title: "This is my hood life", subTitle: "My best friend is Hyun Suk Kim.", tag: ["#일상"]},
-        {imageUrl: HeadImg, writer: "짱지", date: "2023.03.02", title: "히히", subTitle: "맛있는 //", tag: ["#Frontend"]},
-        {imageUrl: HeadImg, writer: "서무성", date: "2023.03.02", title: "편안한 마음", subTitle: "마참내 나의 강의 사이트가 만들어진다고 하는데...", tag: ["#Project"]},
-        {imageUrl: HeadImg, writer: "현석조", date: "2023.03.01", title: "원준이와 함께 하고픈 일", subTitle: "원준이 맥북 해킹으로 먹고 싶농", tag: ["#Security"]},
+        {imageUrl: HeadImg, writer: "승우최", date: "2023.03.03", title: "정처기를 공부해 보았다", subTitle: "정처기를 합격하기 위한 발버둥!", tag: [{name: "Study"}]},
+        {imageUrl: HeadImg, writer: "Mooner510", date: "2023.03.03", title: "Frontend 씹어먹기", subTitle: "아 프론트엔드 Easy 하네요", tag: [{name: "Study"}]},
+        {imageUrl: HeadImg, writer: "원준도", date: "2023.03.03", title: "30만원 맛있다", subTitle: "아 30만원짜리 맛있네요 개추", tag: [{name: "Study"}]},
+        {imageUrl: HeadImg, writer: "조지은", date: "2023.03.02", title: "마라탕이란 무엇인가?", subTitle: "내가 지금까지 마라탕과 살아가며 정리한 것이다.", tag: [{name: "Study"}]},
+        {imageUrl: HeadImg, writer: "Hood", date: "2023.03.02", title: "This is my hood life", subTitle: "My best friend is Hyun Suk Kim.", tag: [{name: "Study"}]},
+        {imageUrl: HeadImg, writer: "짱지", date: "2023.03.02", title: "히히", subTitle: "맛있는 //", tag: [{name: "Study"}]},
+        {imageUrl: HeadImg, writer: "서무성", date: "2023.03.02", title: "편안한 마음", subTitle: "마참내 나의 강의 사이트가 만들어진다고 하는데...", tag: [{name: "Study"}]},
+        {imageUrl: HeadImg, writer: "현석조", date: "2023.03.01", title: "원준이와 함께 하고픈 일", subTitle: "원준이 맥북 해킹으로 먹고 싶농", tag: [{name: "Study"}]},
     ];
     const tag = ['HTML', 'CSS', 'Javascript', 'Typescript', 'React', 'Java', 'Kotlin', 'Go', 'Next', 'Nest', 'Spring', 'C', 'Dart'];
+
     return (
         <>
             <TextDiv>
-                <DefaultWidth>
+                <_.DefaultWidth>
                     <FlexDiv wrap="wrap">
-                        <Text gradient={true}>인포런.</Text>
+                        <Text gradient>인포런.</Text>
+                        &nbsp;&nbsp;
                         <Text>듣고싶은 강의를</Text>
                     </FlexDiv>
                     <Text>들을 수 있는 가장 좋은 방법.</Text>
-                </DefaultWidth>
+                </_.DefaultWidth>
             </TextDiv>
             <Content>
-                <FlexDiv margin="80px 0 0" gap={60} width="100%">
+                <FlexDiv margin="80px 0 0" gap={60} width="100%" className="category">
                     {titleCategory.map((category) => (
-                        <FlexDiv key={category.name} direction="column" align="center" gap={20}>
-                            <Image src={category.imageUrl}/>
+                        <FlexDiv key={category.name} direction="column" align="center" gap={20} style={{cursor: 'pointer'}}>
+                            <Image BackImg={category.imageUrl}/>
                             <Text>{category.name}</Text>
                         </FlexDiv>
                     ))}
                 </FlexDiv>
                 <FlexDiv margin="100px 0 20px" wrap="wrap">
-                    <Text gradient={true} font="Title2">최신 강의.</Text>
+                    <Text gradient font="Title2">최신 강의.</Text>
+                    &nbsp;&nbsp;
                     <Text font="Title2">따끈따끈한 강의 이야기.</Text>
                 </FlexDiv>
                 <PostDiv>
-                    {newLecture.map((data, index) =>
-                        <Post isLecture={true} img={data.imageUrl} name={data.writer} date={data.date} title={data.title} subTitle={data.subTitle} tag={data.tag} key={index}/>
+                    {lecture && lecture.map((data: lecturesProps) =>
+                        <Post isLecture img={data.lecture_thumbnail_url} name={data.created_by} date={data.created_at} title={data.title} subTitle={data.explanation} tag={data.tag_name_list}
+                              lectureId={data.lecture_id} key={data.lecture_id}/>
                     )}
+                    {!lecture || isLoading ? <PostDiv>
+                        <SkeletonPost/>
+                        <SkeletonPost/>
+                        <SkeletonPost/>
+                        <SkeletonPost/>
+                    </PostDiv> : undefined}
                 </PostDiv>
                 <FlexDiv margin="100px 0 0" wrap="wrap">
-                    <Text gradient={true} font="Title2">최신 TIL.</Text>
+                    <Text gradient font="Title2">최신 TIL.</Text>
+                    &nbsp;&nbsp;
                     <Text font="Title2">새로나온 지식 이야기.</Text>
                 </FlexDiv>
                 <TagDiv>
@@ -73,7 +112,7 @@ const Main = () => {
                 </TagDiv>
                 <PostDiv>
                     {newTil.map((data, index) =>
-                        <Post img={data.imageUrl} name={data.writer} date={data.date} title={data.title} subTitle={data.subTitle} tag={data.tag} key={index}/>
+                        <Post img={data.imageUrl} name={data.writer} date={data.date} title={data.title} subTitle={data.subTitle} tag={data.tag} lectureId={index} key={index}/>
                     )}
                 </PostDiv>
             </Content>
@@ -120,15 +159,14 @@ const PostDiv = styled.div`
     width: 100%;
   }
 `
-const DefaultWidth = styled.div`
-  width: 1000px;
-  @media only screen and (max-width: 1080px) {
-    width: 94%;
-  }
-`
-const Image = styled.img`
+const Image = styled.span<{BackImg:string}>`
   width: 80px;
   height: 80px;
+  transition: 0.2s;
+  background-image: url(${props=> props.BackImg});
+  background-position: center center;
+  background-size: 100%;
+  border-radius: 12px;
 `
 const FlexDiv = styled.div<flex>`
   display: flex;
@@ -143,6 +181,10 @@ const FlexDiv = styled.div<flex>`
 
   p {
     ${props => props.isTitle ? `font-size:40px;font-weight:600;color:${Colors["Gray600"]}` : null};
+  }
+
+  &:hover > span {
+    background-size: 120%;
   }
 `
 const TextDiv = styled.div`
@@ -164,6 +206,7 @@ const TextDiv = styled.div`
     color: ${Colors["White"]};
   }
 `
+
 const Content = styled.div`
   display: flex;
   flex-direction: column;
@@ -171,5 +214,9 @@ const Content = styled.div`
   width: 1000px;
   @media only screen and (max-width: 1080px) {
     width: 94%;
+  }
+
+  .category {
+    overflow-x: scroll;
   }
 `

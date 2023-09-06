@@ -1,6 +1,31 @@
 import styled, { keyframes } from "styled-components";
 import { Colors, colorsKeyOfType } from "../../../styles/theme/color";
 
+interface flex {
+  gap?: number;
+  justify?: string;
+  align?: string;
+  direction?: string;
+  wrap?: string;
+  width?: string;
+  height?: string;
+  margin?: string;
+  padding?: string;
+}
+
+export const FlexDiv = styled.div<flex>`
+  display: flex;
+  justify-content: ${props => props.justify ?? "flex-start"};
+  align-items: ${props => props.align ?? "flex-start"};
+  flex-wrap: ${props => props.wrap ?? "nowrap"};
+  flex-direction: ${props => props.direction ?? "row"};
+  gap: ${props => props.gap ?? 0}px;
+  width: ${props => props.width ?? "auto"};
+  height: ${props => props.height ?? "auto"};
+  margin: ${props => props.margin ?? "0"};
+  padding: ${props => props.padding ?? "0"};
+`
+
 export const Circle = styled.div`
   width: 400px;
   height: 400px;
@@ -32,65 +57,25 @@ export const BlurBox = styled.div`
   justify-content: center;
 `
 
-export const slideInDown = keyframes`
+export const Containter = styled.div`
+  position: absolute;
+  margin: 18.5vh 0 0 0;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in-out;
+  animation-name: ${() => slideIn};
+`
+
+const slideIn = keyframes`
   0% {
     opacity: 0;
-    transform: translateY(-100px);
+    transform: translateX(470px);
     pointer-events: none;
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0);
     pointer-events:auto;
-  }
-`;
-
-export const Containter = styled.div`
-  position: absolute;
-  margin: 18.5vh 0 0 0;
-  & * {
-    animation-duration: 0;
-    animation-fill-mode: forwards;
-    animation-name: slideInRight;
-  }
-  & > :first-child {
-    animation: none;
-  }
-`
-
-export const LoginBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  & button {
-    animation-duration: 0.65s;
-  }
-`
-
-export const Title = styled.span`
-  font-weight: 600;
-  font-size: 40px;
-  color: ${Colors.Black};
-  animation-duration: 1.25s;
-`
-
-export const SubTitle = styled.span`
-  font-weight: 400;
-  font-size: 16px;
-  color: ${Colors.Gray400};
-  margin: 10px 0 0 0;
-  animation-duration: 1.1s;
-`
-
-export const Flexbox = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin: 80px 0 56px 0;
-  gap: 16px;
-  & > :first-child {
-    animation-duration: 0.95s;
-  }
-  & > :last-child {
-    animation-duration: 0.8s;
   }
 `
 
@@ -103,20 +88,12 @@ export const Icon = styled.i<IconBoxProps>`
   font-size: ${(props) => props.size ?? 24}px;
   color: ${(props) => props.fill ? Colors[props.fill] : Colors.Black};
 `
-export const BeforeIcon = styled(Icon)<{ bool?: boolean }>`
-  position: absolute;
-  top: 12px;
-  left: -64px;
-  cursor: pointer;
-  animation-duration: 1.3s;
-`
 
 export const BottomBox = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
   margin-top: 20px;
-  animation-duration: 0.5s;
 `
 
 export const ExText = styled.span`

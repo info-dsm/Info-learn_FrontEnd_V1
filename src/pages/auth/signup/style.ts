@@ -1,17 +1,29 @@
 import styled, { keyframes } from "styled-components";
 import { Colors, colorsKeyOfType } from "../../../styles/theme/color";
 
-export const Flexbox = styled.div`
+interface flex {
+  gap?: number;
+  justify?: string;
+  align?: string;
+  direction?: string;
+  wrap?: string;
+  width?: string;
+  height?: string;
+  margin?: string;
+  padding?: string;
+}
+
+export const FlexDiv = styled.div<flex>`
   display: flex;
-  flex-direction: column;
-  margin: 80px 0 56px 0;
-  gap: 16px;
-  & > :first-child {
-    animation-duration: 0.95s;
-  }
-  & > :last-child {
-    animation-duration: 0.8s;
-  }
+  justify-content: ${props => props.justify ?? "flex-start"};
+  align-items: ${props => props.align ?? "flex-start"};
+  flex-wrap: ${props => props.wrap ?? "nowrap"};
+  flex-direction: ${props => props.direction ?? "row"};
+  gap: ${props => props.gap ?? 0}px;
+  width: ${props => props.width ?? "auto"};
+  height: ${props => props.height ?? "auto"};
+  margin: ${props => props.margin ?? "0"};
+  padding: ${props => props.padding ?? "0"};
 `
 
 export const Circle = styled.div`
@@ -45,52 +57,15 @@ export const BlurBox = styled.div`
   justify-content: center;
 `
 
-export const SignBox = styled.div<{ bool: boolean, visible?: boolean }>`
+export const SignBox = styled.div<{ bool: boolean, visible?: boolean, reverse?: boolean}>`
   position: absolute;
   margin: 18.5vh 0 0 0;
   z-index: ${({bool}) => bool ? 99 : 10};
-  & * {
-    animation-duration: 0;
-    animation-fill-mode: forwards;
-    animation-name: ${({ bool }) => bool ? slideInDown : slideOutUp};
-  }
-  & > :first-child {
-    animation: none;
-  }
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in-out;
+  animation-name: ${({ bool, reverse }) =>  bool ? slideIn(reverse) : slideOut(reverse)};
   visibility: ${({visible}) => visible ? 'hidden' : 'visible'};
-`
-
-export const SignUpMain = styled.div`
-  display: flex;
-  flex-direction: column;
-  & button {
-    animation-duration: 0.65s;
-  }
-`
-
-export const Title = styled.span`
-  font-weight: 600;
-  font-size: 40px;
-  color: ${Colors.Black};
-  animation-duration: 1.25s;
-`
-
-export const SubTitle = styled.span`
-  font-weight: 400;
-  font-size: 16px;
-  color: ${Colors.Gray400};
-  margin: 10px 0 0 0;
-  animation-duration: 1.1s;
-`
-
-export const MarginBox = styled(SignUpMain) <{ margin?: string }>`
-  margin: ${(props) => props.margin ?? '20px 0'};
-`
-
-export const Text = styled.div`
-  font-weight: 400;
-  font-size: 16px;
-  color: ${Colors.Black};
 `
 
 export const InputOutBox = styled.div`
@@ -132,7 +107,6 @@ export const BeforeIcon = styled(Icon)<{ bool?: boolean }>`
   top: 12px;
   left: -64px;
   cursor: pointer;
-  animation-duration: 1.3s;
 `
 
 export const BottomBox = styled.div`
@@ -140,7 +114,6 @@ export const BottomBox = styled.div`
   align-items: center;
   gap: 10px;
   margin-top: 20px;
-  animation-duration: 0.5s;
 `
 
 export const ExText = styled.span`
@@ -158,28 +131,28 @@ export const MoveText = styled.div`
   cursor: pointer;
 `
 
-export const slideInDown = keyframes`
+const slideIn = (bool?: boolean) => keyframes`
   0% {
     opacity: 0;
-    transform: translateY(-100px);
+    transform: translateX(${bool ? '-470px' : '470px'});
     pointer-events: none;
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0);
     pointer-events:auto;
   }
 `;
 
-export const slideOutUp = keyframes`
+const slideOut = (bool?: boolean) => keyframes`
   0% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0);
     pointer-events:auto;
   }
   100% {
     opacity: 0;
-    transform: translateY(-100px);
+    transform: translateX(${bool ? '470px' : '-470px'});
     pointer-events: none;
   }
 `;

@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import {Colors} from "../styles/theme/color";
-import logo from "../assets/Logo.png";
+import logo from "../assets/img/Logo.png";
 import {Text} from "./text";
 
 const Footer = () => {
